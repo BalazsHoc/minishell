@@ -12,12 +12,7 @@
 
 #include "minishell.h"
 
-static void	handle_sigint(int sig)
-{
-    (void)sig;
-    printf("\n");
-    exit(0);
-}
+int	g_signal_number;
 
 static void	prompt(void)
 {
@@ -36,17 +31,47 @@ static void	prompt(void)
 	}
 }
 
+static void	handle_signal(int sig)
+{
+    if (sig == SIGINT)
+	{
+		g_signal_number = 2;
+		printf("\n");
+		prompt();
+
+	}
+	if (sig == SIGQUIT)
+	{
+		g_signal_number = 3;
+		printf("fasz\n");
+	}
+	if (sig == SIGTERM)
+	{
+		g_signal_number = 15;
+		printf("krva\n");
+	}
+}
+
+
 int	main(void)
 {
-	char				*line;
+	char	*line;
 	
+	g_signal_number = 0;
 	while (1)
 	{
-		signal(SIGINT, handle_sigint);
+		signal(SIGINT, handle_signal);
+		signal(SIGTERM, handle_signal);
+		signal(SIGQUIT, handle_signal);
+		if (g_signal_number == 4)
+			exit(0);
 		prompt();
 		line = get_next_line(0, false);
 		if (!line)
+		{
+			get_next_line(0, true);
 			break ;
+		}
 		printf("%s", line);
 		free(line);
 	}
