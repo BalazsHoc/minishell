@@ -12,6 +12,8 @@
 
 NAME = minishell
 
+LIBFT_PATH = srcs/libft/
+LIBFT = $(LIBFT_PATH)libft.a
 GET_NEXT_LINE_PATH = srcs/get_next_line/
 GET_NEXT_LINE = $(GET_NEXT_LINE_PATH)get_next_line.a
 
@@ -26,16 +28,19 @@ OBJ = $(SRCS:.c=.o)
 	@$(CC) $(CFLAGS) -c -o $@ $<
 
 $(NAME): $(OBJ)
+	@make -C $(LIBFT_PATH) all
 	@make -C $(GET_NEXT_LINE_PATH) all
 	@$(CC) $(CFLAGS) $(OBJ) $(GET_NEXT_LINE) -o $(NAME)
 
 all: $(NAME)
 
 clean:
+	@make -C $(LIBFT_PATH) clean
 	@make -C $(GET_NEXT_LINE_PATH) clean
 	@rm -f $(OBJ)
 
 fclean: clean
+	@make -C $(LIBFT_PATH) fclean
 	@make -C $(GET_NEXT_LINE_PATH) fclean
 	@rm -f $(NAME)
 

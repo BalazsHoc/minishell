@@ -12,11 +12,11 @@
 
 #include "minishell.h"
 
-int	g_signal_number;
+int g_signal_number;
 
-static void	prompt(void)
+static void prompt(void)
 {
-	pid_t	child_pid;
+	pid_t child_pid;
 
 	child_pid = fork();
 	if (child_pid == -1)
@@ -31,14 +31,13 @@ static void	prompt(void)
 	}
 }
 
-static void	handle_signal(int sig)
+static void handle_signal(int sig)
 {
-    if (sig == SIGINT)
+	if (sig == SIGINT)
 	{
 		g_signal_number = 2;
 		printf("\n");
 		prompt();
-
 	}
 	if (sig == SIGQUIT)
 	{
@@ -52,12 +51,14 @@ static void	handle_signal(int sig)
 	}
 }
 
-
-int	main(void)
+int main(int argc, char **argv, char **env)
 {
-	char	*line;
-	
+	char *line;
+
 	g_signal_number = 0;
+	(void)argc;
+	(void)argv;
+	(void)env;
 	while (1)
 	{
 		signal(SIGINT, handle_signal);
@@ -70,8 +71,9 @@ int	main(void)
 		if (!line)
 		{
 			get_next_line(0, true);
-			break ;
+			break;
 		}
+		// from_tokenization(line);
 		printf("%s", line);
 		free(line);
 	}
