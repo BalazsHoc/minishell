@@ -14,7 +14,7 @@
 # define MINISHELL_H
 #endif
 
-# include "SRCS/get_next_line/get_next_line.h"
+# include "srcs/get_next_line/get_next_line.h"
 # include <stdlib.h>
 # include <stdio.h>
 # include <unistd.h>
