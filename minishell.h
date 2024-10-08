@@ -12,9 +12,13 @@
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
+#endif
 
+# include "SRCS/get_next_line/get_next_line.h"
 # include <stdlib.h>
 # include <stdio.h>
 # include <unistd.h>
-
-#endif
+# include <stdbool.h>
+# include <fcntl.h>
+# include <stdint.h>
+# include <limits.h>

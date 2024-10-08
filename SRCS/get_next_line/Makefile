@@ -5,40 +5,34 @@
 #                                                     +:+ +:+         +:+      #
 #    By: bhocsak <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/10/08 10:14:43 by bhocsak           #+#    #+#              #
-#    Updated: 2024/10/08 10:14:45 by bhocsak          ###   ########.fr        #
+#    Created: 2024/09/06 15:36:33 by bhocsak           #+#    #+#              #
+#    Updated: 2024/09/06 15:37:42 by bhocsak          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = minishell
-
-GET_NEXT_LINE_PATH = SRCS/get_next_line/
-GET_NEXT_LINE = $(GET_NEXT_LINE_PATH)get_next_line.a
-
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g
 
-SRCS = main.c
+SOURCES = 	get_next_line.c get_next_line_utils.c
 
-OBJ = $(SRCS:.c=.o)
-
-%.o : %.c
-	@$(CC) $(CFLAGS) -c -o $@ $<
-
-$(NAME): $(OBJ)
-	@make -C $(GET_NEXT_LINE_PATH) all
-	@$(CC) $(CFLAGS) $(OBJ) $(GET_NEXT_LINE) -o $(NAME)
+OBJECTS = $(SOURCES:.c=.o)
+NAME = get_next_line.a
 
 all: $(NAME)
 
+$(NAME): $(OBJECTS)
+	@ar rcs $(NAME) $(OBJECTS)
+
+%.o: %.c
+	@$(CC) $(CFLAGS) -c $< -o $@
+
 clean:
-	@make -C $(GET_NEXT_LINE_PATH) clean
-	@rm -f $(OBJ)
+	@rm -f $(OBJECTS)
 
 fclean: clean
-	@make -C $(GET_NEXT_LINE_PATH) fclean
 	@rm -f $(NAME)
 
 re: fclean all
+	@make
 
-.PHONY: all clean fceal re
+.PHONY: all clean fclean re
