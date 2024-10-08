@@ -1,28 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bhocsak <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/08 10:13:34 by bhocsak           #+#    #+#             */
-/*   Updated: 2024/10/08 10:13:39 by bhocsak          ###   ########.fr       */
+/*   Created: 2024/10/08 13:24:49 by bhocsak           #+#    #+#             */
+/*   Updated: 2024/10/08 13:25:02 by bhocsak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#include "minishell.h"
 
-# include "srcs/get_next_line/get_next_line.h"
-# include <stdlib.h>
-# include <stdio.h>
-# include <unistd.h>
-# include <stdbool.h>
-# include <fcntl.h>
-# include <stdint.h>
-# include <limits.h>
-# include <signal.h>
+// void	handle_sigint(int sig, char *line)
+// {
 
-// void	handle_sigint(int sig, char *line);
-
-#endif
+// 	if (line)
+// 		free(line);
+// 	exit(1);
+// }

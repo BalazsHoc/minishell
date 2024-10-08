@@ -14,13 +14,6 @@
 
 static void	prompt(void)
 {
-	printf("minishell$ ");
-	// while(1)
-	// 	wait();
-}
-
-static void	opened_parent(void)
-{
 	pid_t	child_pid;
 
 	child_pid = fork();
@@ -31,18 +24,18 @@ static void	opened_parent(void)
 	}
 	else if (child_pid == 0)
 	{
-		prompt();
+		printf("minishell$ ");
 		exit(1);
 	}
 }
 
 int	main(void)
 {
-	char	*line;
-
+	char				*line;
+	
 	while (1)
 	{
-		opened_parent();
+		prompt();
 		line = get_next_line(0, false);
 		if (!line)
 			break ;
