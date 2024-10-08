@@ -14,33 +14,35 @@
 
 static void	prompt(void)
 {
-	printf("\nminishell$ ");
+	printf("minishell$ ");
 	// while(1)
 	// 	wait();
 }
 
-// static void	opened_parent(void)
-// {
-// 	pid_t	child_pid;
+static void	opened_parent(void)
+{
+	pid_t	child_pid;
 
-// 	child_pid = fork();
-// 	if (child_pid == -1)
-// 	{
-// 		perror("fork failed");
-// 		exit(EXIT_FAILURE);
-// 	}
-// 	if (child_pid == 0)
-// 		prompt();
-// }
+	child_pid = fork();
+	if (child_pid == -1)
+	{
+		perror("fork failed");
+		exit(EXIT_FAILURE);
+	}
+	else if (child_pid == 0)
+	{
+		prompt();
+		exit(1);
+	}
+}
 
 int	main(void)
 {
 	char	*line;
 
-	prompt();
 	while (1)
 	{
-		// opened_parent();
+		opened_parent();
 		line = get_next_line(0, false);
 		if (!line)
 			break ;
