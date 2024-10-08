@@ -12,6 +12,13 @@
 
 #include "minishell.h"
 
+static void	handle_sigint(int sig)
+{
+    (void)sig;
+    printf("\n");
+    exit(0);
+}
+
 static void	prompt(void)
 {
 	pid_t	child_pid;
@@ -35,6 +42,7 @@ int	main(void)
 	
 	while (1)
 	{
+		signal(SIGINT, handle_sigint);
 		prompt();
 		line = get_next_line(0, false);
 		if (!line)

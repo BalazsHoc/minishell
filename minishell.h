@@ -23,6 +23,6 @@
 # include <limits.h>
 # include <signal.h>
 
-// void	handle_sigint(int sig, char *line);
+//void	handle_sigint(int sig);
 
 #endif

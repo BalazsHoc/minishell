@@ -12,10 +12,9 @@
 
 #include "minishell.h"
 
-// void	handle_sigint(int sig, char *line)
-// {
-
-// 	if (line)
-// 		free(line);
-// 	exit(1);
-// }
+void	handle_sigint(int sig)
+{
+    (void)sig;
+    printf("\n");
+    exit(1);
+}
