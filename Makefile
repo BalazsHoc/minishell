@@ -18,7 +18,8 @@ GET_NEXT_LINE_PATH = srcs/get_next_line/
 GET_NEXT_LINE = $(GET_NEXT_LINE_PATH)get_next_line.a
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g
+RL_FLAGS = -lreadline -lncurses
 
 SRCS = main.c
 
@@ -30,7 +31,7 @@ OBJ = $(SRCS:.c=.o)
 $(NAME): $(OBJ)
 	@make -C $(LIBFT_PATH) all
 	@make -C $(GET_NEXT_LINE_PATH) all
-	@$(CC) $(CFLAGS) $(OBJ) $(GET_NEXT_LINE) -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJ) $(LIBFT) $(GET_NEXT_LINE) -o $(NAME) $(RL_FLAGS)
 
 all: $(NAME)
 

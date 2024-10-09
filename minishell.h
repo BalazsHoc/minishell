@@ -14,6 +14,8 @@
 # define MINISHELL_H
 
 # include "srcs/get_next_line/get_next_line.h"
+#include <readline/readline.h>
+#include <readline/history.h>
 # include <stdlib.h>
 # include <stdio.h>
 # include <unistd.h>

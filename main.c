@@ -39,42 +39,31 @@ static void handle_signal(int sig)
 		printf("\n");
 		prompt();
 	}
-	if (sig == SIGQUIT)
-	{
-		g_signal_number = 3;
-		printf("fasz\n");
-	}
-	if (sig == SIGTERM)
-	{
-		g_signal_number = 15;
-		printf("krva\n");
-	}
 }
 
 int main(int argc, char **argv, char **env)
 {
-	char *line;
+	char	*line;
 
-	g_signal_number = 0;
 	(void)argc;
 	(void)argv;
 	(void)env;
+	g_signal_number = 0;
 	while (1)
 	{
 		signal(SIGINT, handle_signal);
-		signal(SIGTERM, handle_signal);
-		signal(SIGQUIT, handle_signal);
-		if (g_signal_number == 4)
-			exit(0);
 		prompt();
 		line = get_next_line(0, false);
 		if (!line)
 		{
-			get_next_line(0, true);
+			printf("\n");
 			break;
 		}
-		// from_tokenization(line);
-		printf("%s", line);
+		if (line[0] == '\n')
+			g_signal_number = 0;
+		else
+			printf("%s", line);
+		// from_tokenization(line, env);
 		free(line);
 	}
 	return (0);
