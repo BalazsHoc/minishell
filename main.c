@@ -51,13 +51,14 @@ int main(int argc, char **argv, char **env)
 	g_signal_number = 0;
 	while (1)
 	{
+		//signals();
 		signal(SIGINT, handle_signal);
 		prompt();
 		line = get_next_line(0, false);
 		if (!line)
 		{
 			printf("\n");
-			break;
+			break ;
 		}
 		if (line[0] == '\n')
 			g_signal_number = 0;
