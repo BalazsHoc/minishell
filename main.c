@@ -39,6 +39,8 @@ static void handle_signal(int sig)
 		printf("\n");
 		prompt();
 	}
+	if (sig == SIGQUIT)
+		return ;
 }
 
 int main(int argc, char **argv, char **env)
@@ -51,8 +53,8 @@ int main(int argc, char **argv, char **env)
 	g_signal_number = 0;
 	while (1)
 	{
-		//signals();
 		signal(SIGINT, handle_signal);
+		signal(SIGQUIT, handle_signal);
 		prompt();
 		line = get_next_line(0, false);
 		if (!line)
