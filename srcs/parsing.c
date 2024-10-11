@@ -79,7 +79,7 @@ void	init_cmds(t_pipex *data, char *line, int count)
 	{
 		data->cmnds[i] = malloc(sizeof(char *) * (count_elem(line, i) + 1));
 		if (!data->cmnds[i])
-			return (perror("malloc fail!\n"),error_code(data, line));
+			return (perror("malloc fail!\n"), error_code(data, line));
 		data->cmnds[i][count_elem(line, i)] = NULL;
 		data->cmnds[i] = fill_cmnds(data->cmnds[i], line, i);
 		if (!data->cmnds[i])
@@ -88,31 +88,31 @@ void	init_cmds(t_pipex *data, char *line, int count)
 	}
 }
 
-void	init_paths(t_pipex *data, char *line, int count, char **env)
-{
-	int	i;
-	// char *path;
+// void	init_paths(t_pipex *data, char *line, int count, char **env)
+// {
+// 	int	i;
+// 	// char *path;
 
-	i = 0;
-	data->paths = malloc(sizeof(char *) * (count + 1));
-	if (!data->paths)
-		return (perror("malloc fail!\n"), error_code(data, line));
-	data->paths[count] = NULL;
-	while (i < count)
-	{
-		data->paths[i] = find_path(env, data->cmnds[i][0]);
-		if (!data->cmnds[i])
-			return (perror("malloc fail!\n"), error_code(data, line));
-		// data->cmnds[i][count_elem(line, i)] = NULL;
-		// data->cmnds[i] = fill_cmnds(data->cmnds[i], line, i);
-		i++;
-	}
-}
+// 	i = 0;
+// 	data->paths = malloc(sizeof(char *) * (count + 1));
+// 	if (!data->paths)
+// 		return (perror("malloc fail!\n"), error_code(data, line));
+// 	data->paths[count] = NULL;
+// 	while (i < count)
+// 	{
+// 		data->paths[i] = find_path(env, data->cmnds[i][0]);
+// 		if (!data->cmnds[i])
+// 			return (perror("malloc fail!\n"), error_code(data, line));
+// 		// data->cmnds[i][count_elem(line, i)] = NULL;
+// 		// data->cmnds[i] = fill_cmnds(data->cmnds[i], line, i);
+// 		i++;
+// 	}
+// }
 
 void	parsing(char *line, char **env)
 {
 	t_pipex	*data;
-	int cmnd_count;
+	int		cmnd_count;
 
 	data = malloc(sizeof(t_pipex) * 1);
 	if (!data)
@@ -121,8 +121,8 @@ void	parsing(char *line, char **env)
 	data->paths = NULL;
 	data->cmnds = NULL;
 	init_cmds(data, line, cmnd_count);
-	init_paths(data, line, cmnd_count, env);
-	// print_that_shit(data);
+	// init_paths(data, line, cmnd_count, env);
+	print_that_shit(data);
 	if (env)
 		;
 	free_struct(data);
