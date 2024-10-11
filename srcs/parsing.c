@@ -124,6 +124,6 @@ void	parsing(char *line, char **env)
 	// init_paths(data, line, cmnd_count, env);
 	print_that_shit(data);
 	if (env)
-		;
+		(void)env;
 	free_struct(data);
 }

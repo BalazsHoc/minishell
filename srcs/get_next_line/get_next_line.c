@@ -121,7 +121,7 @@ char	*get_next_line(int fd, bool flag)
 		buf = gnl_fromnl(buf);
 		return (output);
 	}
-	return (gnl_free(&buf), output);
+	return (gnl_free(&buf), free(output), NULL);
 }
 // #include <fcntl.h>
 // #include <stdio.h>
