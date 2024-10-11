@@ -15,8 +15,8 @@
 
 # include "srcs/get_next_line/get_next_line.h"
 # include "srcs/libft/libft.h"
-#include <readline/readline.h>
-#include <readline/history.h>
+# include <readline/readline.h>
+# include <readline/history.h>
 # include <stdlib.h>
 # include <stdio.h>
 # include <unistd.h>
@@ -25,20 +25,29 @@
 # include <stdint.h>
 # include <limits.h>
 # include <signal.h>
+# include <errno.h>
 
 # include <sys/types.h>
 # include <sys/wait.h>
 
-//void	handle_signal(int sig);
-
 typedef struct pipex_s
 {
-	char ***cmnds;
-	char **paths;
+	char	***cmnds;
+	char	**paths;
 
-} pipex_t;
+}	t_pipex;
 
+int		main(int argc, char **argv, char **env);
 
-void 	pipex(char *line, char **env);
+// parsing.c
+void	parsing(char *line, char **env);
+
+// parsing_utils.c
+int		count_chars(char *line);
+int		count_elem(char *line, int i);
+int		is_space(char c);
+int		count_cmnds(char *line);
+// free.c
+void	free_struct(t_pipex *data);
 
 #endif
