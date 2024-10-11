@@ -21,7 +21,7 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror -g
 RL_FLAGS = -lreadline -lncurses
 
-SRCS = main.c
+SRCS = main.c srcs/pipex.c
 
 OBJ = $(SRCS:.c=.o)
 

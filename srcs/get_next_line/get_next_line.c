@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "../../minishell.h"
 
 void	*gnl_calloc(size_t nmemb, size_t size)
 {

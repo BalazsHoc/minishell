@@ -14,6 +14,7 @@
 # define MINISHELL_H
 
 # include "srcs/get_next_line/get_next_line.h"
+# include "srcs/libft/libft.h"
 #include <readline/readline.h>
 #include <readline/history.h>
 # include <stdlib.h>
@@ -36,5 +37,8 @@ typedef struct pipex_s
 	char **paths;
 
 } pipex_t;
+
+
+void 	pipex(char *line, char **env);
 
 #endif
