@@ -30,4 +30,11 @@
 
 //void	handle_signal(int sig);
 
+typedef struct pipex_s
+{
+	char ***cmnds;
+	char **paths;
+
+} pipex_t;
+
 #endif
