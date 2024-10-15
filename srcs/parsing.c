@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.c                                            :+:      :+:    :+:   */
+/*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bhocsak <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -37,8 +37,8 @@ char	**fill_cmnds(char **arr, char *line, int i)
 			arr[++index] = malloc(sizeof(char) * (count_chars(line + j) + 1));
 			if (!arr[index])
 				return (perror("malloc fail\n"), NULL);
-			arr[index] = ft_memcpy(arr[index], line + j,
-					(size_t)count_chars(line + j));
+			ft_memcpy(arr[index], line + j, (size_t)count_chars(line + j));
+			arr[index][count_chars(line + j)] = '\0';
 			j += count_chars(line + j);
 		}
 		if (line[j] == '|')
