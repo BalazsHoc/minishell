@@ -12,15 +12,10 @@
 
 #include "minishell.h"
 
-int	g_signal_number;
-
 static void	handle_signal(int sig)
 {
 	if (sig == SIGINT)
-	{
-		g_signal_number = 2;
 		write(1, "\nminishell$ ", 12);
-	}
 	if (sig == SIGQUIT)
 		return ;
 }
@@ -37,11 +32,7 @@ int	main(int argc, char **argv, char **env)
 	while (1)
 	{
 		write(1, "minishell$ ", 11);
-		if (g_signal_number != 2)
-		{
-			line = get_next_line(0, false);
-			g_signal_number = 0;
-		}
+		line = get_next_line(0, false);
 		if (!line)
 		{
 			printf("\n");
