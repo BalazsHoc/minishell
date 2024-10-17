@@ -39,15 +39,33 @@ typedef struct pipex_s
 
 int		main(int argc, char **argv, char **env);
 
-// parsing.c
+//	parsing.c
+
 void	parsing(char *line, char **env);
 
-// parsing_utils.c
+//	parsing_utils.c
+
 int		count_chars(char *line);
 int		count_elem(char *line, int i);
 int		is_space(char c);
 int		count_cmnds(char *line);
-// free.c
+
+
+//	free.c
+
 void	free_struct(t_pipex *data);
+void	free_a(char *str, char **list, char ***list_list);
+void	free_list_list(char ***arr);
+void	free_list(char **arr);
+void	free_str(char **s);
+
+//	find_path.c
+
+char *find_path(char **env, char *cmnd);
+
+//	exit_child.c
+
+void	error_code(t_pipex *data, char *line);
+void	exit_child(int errnum, char *line, t_pipex *data);
 
 #endif

@@ -70,7 +70,7 @@ int	count_chars(char *line)
 	count = 0;
 	while (line[count])
 	{
-		if (is_space(line[count]))
+		if (is_space(line[count]) || line[count] == '\n')
 			break ;
 		count++;
 	}

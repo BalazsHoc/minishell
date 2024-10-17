@@ -12,15 +12,6 @@
 
 #include "../minishell.h"
 
-void	error_code(t_pipex *data, char *line)
-{
-	if (!data)
-		return (free(line));
-	free_struct(data);
-	free(line);
-	exit(EXIT_FAILURE);
-}
-
 char	**fill_cmnds(char **arr, char *line, int i)
 {
 	int	j;
@@ -37,6 +28,7 @@ char	**fill_cmnds(char **arr, char *line, int i)
 			arr[++index] = malloc(sizeof(char) * (count_chars(line + j) + 1));
 			if (!arr[index])
 				return (perror("malloc fail\n"), NULL);
+			printf("COUNT CHAR: %d\n", count_chars(line + j));
 			ft_memcpy(arr[index], line + j, (size_t)count_chars(line + j));
 			arr[index][count_chars(line + j)] = '\0';
 			j += count_chars(line + j);
@@ -62,6 +54,7 @@ void	print_that_shit(t_pipex *data)
 		j = 0;
 		while (data->cmnds[i][j])
 			printf("elem: %s\n", data->cmnds[i][j++]);
+		printf("PATH: %s\n", data->paths[i]);
 		i++;
 	}
 }
@@ -88,26 +81,29 @@ void	init_cmds(t_pipex *data, char *line, int count)
 	}
 }
 
-// void	init_paths(t_pipex *data, char *line, int count, char **env)
-// {
-// 	int	i;
-// 	// char *path;
+void	init_paths(t_pipex *data, char *line, int count, char **env)
+{
+	int	i;
+	// char *path;
 
-// 	i = 0;
-// 	data->paths = malloc(sizeof(char *) * (count + 1));
-// 	if (!data->paths)
-// 		return (perror("malloc fail!\n"), error_code(data, line));
-// 	data->paths[count] = NULL;
-// 	while (i < count)
-// 	{
-// 		data->paths[i] = find_path(env, data->cmnds[i][0]);
-// 		if (!data->cmnds[i])
-// 			return (perror("malloc fail!\n"), error_code(data, line));
-// 		// data->cmnds[i][count_elem(line, i)] = NULL;
-// 		// data->cmnds[i] = fill_cmnds(data->cmnds[i], line, i);
-// 		i++;
-// 	}
-// }
+	i = -1;
+	data->paths = malloc(sizeof(char *) * (count + 1));
+	if (!data->paths)
+		return (perror("malloc fail!\n"), error_code(data, line));
+	data->paths[count] = NULL;
+	while (++i < count)
+	{
+		data->paths[i] = find_path(env, data->cmnds[i][0]);
+		if (!data->paths[i])
+		{
+			printf("zsh: command not found %s\n", data->cmnds[i][0]);
+			exit_child(1, line, data);
+			data->paths[i] = ft_strdup("pathnfound");
+		}
+		if (!data->paths[i])
+			return (perror("malloc fail!\n"), error_code(data, line));
+	}
+}
 
 void	parsing(char *line, char **env)
 {
@@ -121,7 +117,7 @@ void	parsing(char *line, char **env)
 	data->paths = NULL;
 	data->cmnds = NULL;
 	init_cmds(data, line, cmnd_count);
-	// init_paths(data, line, cmnd_count, env);
+	init_paths(data, line, cmnd_count, env);
 	print_that_shit(data);
 	if (env)
 		(void)env;
