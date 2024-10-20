@@ -22,7 +22,7 @@ int	count_cmnds(char *line)
 	while (line[i])
 	{
 		if (line[i] == '|' && line[i + 1] == '|')
-			i++;
+			i += 2;
 		if (line[i] == '|' )
 			count++;
 		i++;
@@ -53,11 +53,10 @@ int	count_elem(char *line, int i)
 			count++;
 		else if (k == 0 && j == 0 && !is_space(line[j]))
 			count++;
-		if (line[j] == '|')
-		{
+		else if (is_or(line + j) && ++count != INT_MIN)
+			j++;
+		else if (line[j] == '|' && ++k != INT_MIN)
 			i--;
-			k++;
-		}
 		j++;
 	}
 	return (count);
@@ -76,3 +75,32 @@ int	count_chars(char *line)
 	}
 	return (count);
 }
+
+int syntax_check(char *line, int i)
+{
+	int count;
+	int space;
+
+	count = 0;
+	space = 0;
+	while (line[++i])
+	{
+		if (line[i] == '|' && ++count)
+		{
+			if (space)
+				return (0);
+			space = 0;
+		}
+		else if (count && line[i] == ' ')
+			space++;
+		else if (line[i] != '|')
+		{
+			count = 0;
+			space = 0;
+		}
+		if (count == 3)
+			return (0);
+	}
+	return (1);
+}
+

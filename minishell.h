@@ -32,9 +32,14 @@
 
 typedef struct pipex_s
 {
-	char	***cmnds;
+	// char	***operations;
+	char 	***cmnds;
 	char	**paths;
 
+	// char	*infile;
+	// char	*outfile;
+	// char	**redirections;
+	// char 	**cmnds;
 }	t_pipex;
 
 int		main(int argc, char **argv, char **env);
@@ -49,7 +54,12 @@ int		count_chars(char *line);
 int		count_elem(char *line, int i);
 int		is_space(char c);
 int		count_cmnds(char *line);
+int 	syntax_check(char *line, int i);
 
+//	parsing_utils_2.c
+
+int		is_or(char *cur);
+int		cmnds_start(char **arr);
 
 //	free.c
 

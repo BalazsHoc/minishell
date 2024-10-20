@@ -23,21 +23,18 @@ char	**fill_cmnds(char **arr, char *line, int i)
 	index = -1;
 	while (line[++j] && i >= 0)
 	{
-		if (k == 0 && !is_space(line[j]) && line[j] != '|')
+		if (k == 0 && !is_space(line[j])
+			&& (line[j] != '|' || is_or(line + j)))
 		{
 			arr[++index] = malloc(sizeof(char) * (count_chars(line + j) + 1));
 			if (!arr[index])
 				return (perror("malloc fail\n"), NULL);
-			printf("COUNT CHAR: %d\n", count_chars(line + j));
 			ft_memcpy(arr[index], line + j, (size_t)count_chars(line + j));
-			arr[index][count_chars(line + j)] = '\0';
+			arr[index][count_chars(line + j)] = '\0'; 
 			j += count_chars(line + j);
 		}
-		if (line[j] == '|')
-		{
+		if (line[j] == '|' && k++ != INT_MIN)
 			i--;
-			k++;
-		}
 	}
 	return (arr);
 }
@@ -52,6 +49,7 @@ void	print_that_shit(t_pipex *data)
 	while (data->cmnds[i])
 	{
 		j = 0;
+
 		while (data->cmnds[i][j])
 			printf("elem: %s\n", data->cmnds[i][j++]);
 		printf("PATH: %s\n", data->paths[i]);
@@ -74,6 +72,7 @@ void	init_cmds(t_pipex *data, char *line, int count)
 		if (!data->cmnds[i])
 			return (perror("malloc fail!\n"), error_code(data, line));
 		data->cmnds[i][count_elem(line, i)] = NULL;
+		printf("COUNT ELEM: %d\n", count_elem(line, i));
 		data->cmnds[i] = fill_cmnds(data->cmnds[i], line, i);
 		if (!data->cmnds[i])
 			return (error_code(data, line));
@@ -84,7 +83,6 @@ void	init_cmds(t_pipex *data, char *line, int count)
 void	init_paths(t_pipex *data, char *line, int count, char **env)
 {
 	int	i;
-	// char *path;
 
 	i = -1;
 	data->paths = malloc(sizeof(char *) * (count + 1));
@@ -93,12 +91,17 @@ void	init_paths(t_pipex *data, char *line, int count, char **env)
 	data->paths[count] = NULL;
 	while (++i < count)
 	{
-		data->paths[i] = find_path(env, data->cmnds[i][0]);
-		if (!data->paths[i])
-		{
-			printf("zsh: command not found %s\n", data->cmnds[i][0]);
-			exit_child(1, line, data);
+		if (cmnds_start(data->cmnds[i]) == -1)
 			data->paths[i] = ft_strdup("pathnfound");
+		else
+		{
+			data->paths[i] = find_path(env, data->cmnds[i][cmnds_start(data->cmnds[i])]);
+			if (!data->paths[i])
+			{
+				data->paths[i] = ft_strdup("pathnfound");
+				printf("zsh: command not found %s\n", data->cmnds[i][cmnds_start(data->cmnds[i])]);
+				exit_child(1, line, data);
+			}
 		}
 		if (!data->paths[i])
 			return (perror("malloc fail!\n"), error_code(data, line));
@@ -110,16 +113,21 @@ void	parsing(char *line, char **env)
 	t_pipex	*data;
 	int		cmnd_count;
 
+	line = ft_strtrim(line, " \t\f\v\r");
+	if (!*line)
+		return ;
+	if (!syntax_check(line, -1) || (line[0] == '|' && line[1] != '|'))
+		return (perror("bash: syntax error near unexpected token `|'"), error_code(NULL, line));
 	data = malloc(sizeof(t_pipex) * 1);
 	if (!data)
 		return (perror("malloc fail!\n"), error_code(NULL, line));
 	cmnd_count = count_cmnds(line);
+	printf("COUNT: %d\n", cmnd_count);
 	data->paths = NULL;
 	data->cmnds = NULL;
 	init_cmds(data, line, cmnd_count);
 	init_paths(data, line, cmnd_count, env);
 	print_that_shit(data);
-	if (env)
-		(void)env;
+	// parsing_2(line, data, env);
 	free_struct(data);
 }
