@@ -35,6 +35,8 @@ char	**fill_cmnds(char **arr, char *line, int i)
 		}
 		if (line[j] == '|' && k++ != INT_MIN)
 			i--;
+		if (!line[j])
+			break;
 	}
 	return (arr);
 }
@@ -51,7 +53,7 @@ void	print_that_shit(t_pipex *data)
 		j = 0;
 
 		while (data->cmnds[i][j])
-			printf("elem: %s\n", data->cmnds[i][j++]);
+			printf("ELEM: %d: %s\n", i,data->cmnds[i][j++]);
 		printf("PATH: %s\n", data->paths[i]);
 		i++;
 	}
@@ -68,16 +70,14 @@ void	init_cmds(t_pipex *data, char *line, int count)
 	data->cmnds[count] = NULL;
 	while (i < count)
 	{
-		printf("COUNT: %d\n", i);
 		data->cmnds[i] = malloc(sizeof(char *) * (count_elem(line, i) + 1));
 		if (!data->cmnds[i])
 			return (perror("malloc fail!\n"), error_code(data, line));
 		data->cmnds[i][count_elem(line, i)] = NULL;
-		printf("COUNT ELEM: %d\n", count_elem(line, i));
 		data->cmnds[i] = fill_cmnds(data->cmnds[i], line, i);
+		data->cmnds[i][count_elem(line, i)] = NULL;
 		if (!data->cmnds[i])
 			return (error_code(data, line));
-		printf("FILL_CMNDS: %s\n", data->cmnds[i][0]);
 		i++;
 	}
 }
@@ -97,7 +97,6 @@ void	init_paths(t_pipex *data, char *line, int count, char **env)
 			data->paths[i] = ft_strdup("pathnfound");
 		else
 		{
-			printf("HURA\n");
 			data->paths[i] = find_path(env, data->cmnds[i][cmnds_start(data->cmnds[i])]);
 			if (!data->paths[i])
 			{
@@ -116,7 +115,7 @@ void	parsing(char *line, char **env)
 	t_pipex	*data;
 	int		cmnd_count;
 
-	line = ft_strtrim(line, " \t\f\v\r");
+	line = ft_strtrim(line, " \n\t\f\v\r");
 	if (!*line)
 		return ;
 	if (!syntax_check(line, -1) || (line[0] == '|' && line[1] != '|'))
@@ -125,7 +124,6 @@ void	parsing(char *line, char **env)
 	if (!data)
 		return (perror("malloc fail!\n"), error_code(NULL, line));
 	cmnd_count = count_cmnds(line);
-	printf("COUNT: %d\n", cmnd_count);
 	data->paths = NULL;
 	data->cmnds = NULL;
 	init_cmds(data, line, cmnd_count);

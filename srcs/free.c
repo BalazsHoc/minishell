@@ -16,8 +16,7 @@ void	free_struct(t_pipex *data)
 {
 	if (data)
 	{
-		// free_list(data->paths);
-		printf("THIS HERE: %s\n", data->cmnds[0][0]);
+		free_list(data->paths);
 		free_list_list(data->cmnds);
 		free(data);
 	}
@@ -59,4 +58,5 @@ void	free_a(char *line, t_pipex *data)
 		free_struct(data);
 	if (line)
 		free(line);
+	exit_child(1, NULL, NULL);
 }
