@@ -37,15 +37,15 @@ static int	ft_count_words(const char *s1, char det)
 	return (words);
 }
 
-static char	**ft_malloc_cpy(char **new, const char *s, char det)
+static char	**ft_malloc_cpy(char **new, const char *s, char det, int wordcount)
 {
-	size_t	count;
-	size_t	i;
+	int	count;
+	int		i;
 	size_t	j;
 
 	count = 0;
 	i = -1;
-	while (s[++i])
+	while (count < wordcount && ++i != INT_MIN)
 	{
 		if ((i == 0 && !is_det(s[i], det))
 			|| (!is_det(s[i], det) && is_det(s[i - 1], det)))
@@ -93,8 +93,8 @@ char	**ft_split(const char *s1, char c)
 	}
 	new = malloc(sizeof(char *) * (wordcount + 1));
 	if (!new)
-		exit(2);
-	if (ft_malloc_cpy(new, s1, c))
+		return (NULL);
+	if (ft_malloc_cpy(new, s1, c, wordcount))
 		new[wordcount] = NULL;
 	else
 	{

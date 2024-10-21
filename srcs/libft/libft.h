@@ -19,6 +19,7 @@
 # include <stdio.h>
 # include <stdbool.h>
 # include <stdint.h>
+# include <limits.h>
 
 int			ft_isalpha(int c);
 int			ft_isdigit(int c);

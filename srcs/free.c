@@ -14,39 +14,12 @@
 
 void	free_struct(t_pipex *data)
 {
-	int	i;
-	int	j;
-
-	i = -1;
-	if (!data)
-		return ;
-	while (data->cmnds && data->cmnds[++i])
-	{
-		j = -1;
-		while (data->cmnds[i][++j])
-	free(data->cmnds[i][j]);
-		free(data->cmnds[i]);
-	}
-	if (data->cmnds)
-		free(data->cmnds);
-	i = -1;
-	if (data->paths)
-	{
-		while (data->paths && data->paths[++i])
-		free(data->paths[i]);
-	}
-	if (data->paths)
-		free(data->paths);
 	if (data)
-		free(data);
-}
-
-void	free_str(char **s)
-{
-	if (s && *s)
 	{
-		free(*s);
-		*s = NULL;
+		// free_list(data->paths);
+		printf("THIS HERE: %s\n", data->cmnds[0][0]);
+		free_list_list(data->cmnds);
+		free(data);
 	}
 }
 
@@ -55,12 +28,15 @@ void	free_list(char **arr)
 	int	i;
 
 	i = 0;
-	while (*(arr + i))
+	while (arr[i])
 		i++;
 	i--;
-	while (i)
-		free_str((arr + i--));
-	free(*arr);
+	while (i >= 0)
+	{
+		if (arr[i])
+			free(arr[i]);
+		i--;
+	}
 	free(arr);
 }
 
@@ -72,18 +48,15 @@ void	free_list_list(char ***arr)
 	while (*(arr + i))
 		i++;
 	i--;
-	while (i)
-		free_list(*(arr + i--));
-	free_list(*arr);
+	while (i >= 0)
+		free_list(arr[i--]);
 	free(arr);
 }
 
-void	free_a(char *str, char **list, char ***list_list)
+void	free_a(char *line, t_pipex *data)
 {
-	if (str)
-		free_str(&str);
-	if (list)
-		free_list(list);
-	if (list_list)
-		free_list_list(list_list);
+	if (data)
+		free_struct(data);
+	if (line)
+		free(line);
 }
