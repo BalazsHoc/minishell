@@ -49,12 +49,14 @@ int	count_elem(char *line, int i)
 	while (line[j] && i >= 0)
 	{
 		if (k == 0 && j > 0 && !is_space(line[j])
-			&& is_space(line[j - 1]) && line[j] != '|')
+			&& (is_space(line[j - 1]) && line[j] != '|'))
 			count++;
 		else if (k == 0 && j == 0 && !is_space(line[j]))
 			count++;
 		else if (is_or(line + j) && ++count != INT_MIN)
 			j++;
+		else if (line[j - 1] == '|' && !is_space(line[j]))
+			count++;
 		else if (line[j] == '|' && ++k != INT_MIN)
 			i--;
 		j++;

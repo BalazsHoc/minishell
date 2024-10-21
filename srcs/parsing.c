@@ -73,7 +73,6 @@ void	init_cmds(t_pipex *data, char *line, int count)
 		data->cmnds[i] = malloc(sizeof(char *) * (count_elem(line, i) + 1));
 		if (!data->cmnds[i])
 			return (perror("malloc fail!\n"), error_code(data, line));
-		data->cmnds[i][count_elem(line, i)] = NULL;
 		data->cmnds[i] = fill_cmnds(data->cmnds[i], line, i);
 		data->cmnds[i][count_elem(line, i)] = NULL;
 		if (!data->cmnds[i])
