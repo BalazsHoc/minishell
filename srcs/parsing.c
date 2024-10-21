@@ -12,24 +12,24 @@
 
 #include "../minishell.h"
 
-char	**fill_cmnds(char **arr, char *line, int i)
+char	**fill_cmnds(char **arr, char *line, int i, int k)
 {
 	int	j;
-	int	k;
 	int	index;
 
 	j = -1;
-	k = -i;
 	index = -1;
 	while (line[++j] && i >= 0)
 	{
 		if (k == 0 && !is_space(line[j])
 			&& (line[j] != '|' || is_or(line + j)))
 		{
-			arr[++index] = malloc(sizeof(char) * (count_chars(line + j) + 1));
+			arr[++index] = malloc(sizeof(char) * (count_chars(line + j) + 1)); //Problem if it fails
 			if (!arr[index])
 				return (perror("malloc fail\n"), NULL);
 			ft_memcpy(arr[index], line + j, (size_t)count_chars(line + j));
+			// if (!arr[index])
+			// 	return (perror("malloc fail\n"), NULL);
 			arr[index][count_chars(line + j)] = '\0'; 
 			j += count_chars(line + j);
 		}
@@ -66,17 +66,20 @@ void	init_cmds(t_pipex *data, char *line, int count)
 	i = 0;
 	data->cmnds = malloc(sizeof(char **) * (count + 1));
 	if (!data->cmnds)
-		return (perror("malloc fail!\n"), error_code(data, line));
+		return (perror("malloc fail!\n"), error_code(data, line, 0));
 	data->cmnds[count] = NULL;
 	while (i < count)
 	{
 		data->cmnds[i] = malloc(sizeof(char *) * (count_elem(line, i) + 1));
 		if (!data->cmnds[i])
-			return (perror("malloc fail!\n"), error_code(data, line));
-		data->cmnds[i] = fill_cmnds(data->cmnds[i], line, i);
+			return (perror("malloc fail!\n"), error_code(data, line, 0));
+
+		data->cmnds[i] = fill_cmnds(data->cmnds[i], line, i, -i);
+		if (!data->cmnds[i])
+			return (perror("malloc fail!\n"), error_code(data, line, 0));
 		data->cmnds[i][count_elem(line, i)] = NULL;
 		if (!data->cmnds[i])
-			return (error_code(data, line));
+			return (error_code(data, line, 0));
 		i++;
 	}
 }
@@ -88,7 +91,7 @@ void	init_paths(t_pipex *data, char *line, int count, char **env)
 	i = -1;
 	data->paths = malloc(sizeof(char *) * (count + 1));
 	if (!data->paths)
-		return (perror("malloc fail!\n"), error_code(data, line));
+		return (perror("malloc fail!\n"), error_code(data, line, 0));
 	data->paths[count] = NULL;
 	while (++i < count)
 	{
@@ -105,23 +108,29 @@ void	init_paths(t_pipex *data, char *line, int count, char **env)
 			}
 		}
 		if (!data->paths[i])
-			return (perror("malloc fail!\n"), error_code(data, line));
+			return (perror("malloc fail!\n"), error_code(data, line, 0));
 	}
 }
 
 void	parsing(char *line, char **env)
 {
 	t_pipex	*data;
+	char	*trimmed;
 	int		cmnd_count;
 
-	line = ft_strtrim(line, " \n\t\f\v\r");
-	if (!*line)
-		return ;
+	trimmed = ft_strtrim(line, " \n\t\f\v\r");
+	if (!trimmed)
+	{
+		free(line);
+		exit(EXIT_FAILURE);
+	}
+	free(line);
+	line = trimmed;
 	if (!syntax_check(line, -1) || (line[0] == '|' && line[1] != '|'))
-		return (perror("bash: syntax error near unexpected token `|'"), error_code(NULL, line));
+		return (perror("bash: syntax error near unexpected token `|'"), error_code(NULL, line, 0));
 	data = malloc(sizeof(t_pipex) * 1);
 	if (!data)
-		return (perror("malloc fail!\n"), error_code(NULL, line));
+		return (perror("malloc fail!\n"), error_code(NULL, line, 1));
 	cmnd_count = count_cmnds(line);
 	data->paths = NULL;
 	data->cmnds = NULL;

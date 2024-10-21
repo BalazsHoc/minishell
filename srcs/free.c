@@ -12,12 +12,15 @@
 
 #include "../minishell.h"
 
+//only the if statements has been changed in free* functions
 void	free_struct(t_pipex *data)
 {
 	if (data)
 	{
-		free_list(data->paths);
-		free_list_list(data->cmnds);
+		if (data->paths)
+			free_list(data->paths);
+		if (data->cmnds)
+			free_list_list(data->cmnds);
 		free(data);
 	}
 }
@@ -44,7 +47,7 @@ void	free_list_list(char ***arr)
 	int	i;
 
 	i = 0;
-	while (*(arr + i))
+	while (arr[i])
 		i++;
 	i--;
 	while (i >= 0)

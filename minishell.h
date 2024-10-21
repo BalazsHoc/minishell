@@ -75,7 +75,7 @@ char *find_path(char **env, char *cmnd);
 
 //	exit_child.c
 
-void	error_code(t_pipex *data, char *line);
+void	error_code(t_pipex *data, char *line, int ex);
 void	exit_child(int errnum, char *line, t_pipex *data);
 
 #endif
