@@ -12,10 +12,6 @@ int is_or(char *cur)
 
 int find_that_shit(char *arr, char *cur, char **list)
 {
-	int i;
-
-	i = 0;
-
 	if (arr == cur)
 	{
 		if (list[2])

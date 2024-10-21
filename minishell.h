@@ -64,7 +64,7 @@ int		cmnds_start(char **arr);
 //	free.c
 
 void	free_struct(t_pipex *data);
-void	free_a(char *str, char **list, char ***list_list);
+void	free_a(char *line, t_pipex *data);
 void	free_list_list(char ***arr);
 void	free_list(char **arr);
 void	free_str(char **s);

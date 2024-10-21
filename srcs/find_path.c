@@ -4,17 +4,18 @@ char *find_path_2(char **arr, char *cmnd)
 {
 	int i;
 	char *full_path;
+	char *new;
 
 	i = -1;
-	cmnd = ft_strjoin("/", cmnd);
+	new = ft_strjoin("/", cmnd);
 	while (arr[++i])
 	{
-		full_path = ft_strjoin(arr[i], cmnd);
+		full_path = ft_strjoin(arr[i], new);
 		if (!access(full_path, X_OK))
-			return (free_list(arr), full_path);
+			return (free_list(arr), free(new), full_path);
 		free(full_path);
 	}
-	return (free_list(arr), NULL);
+	return (free_list(arr), free(new), NULL);
 }
 
 
