@@ -24,12 +24,13 @@ char	**fill_cmnds(char **arr, char *line, int i, int k)
 		if (k == 0 && !is_space(line[j])
 			&& (line[j] != '|' || is_or(line + j)))
 		{
-			arr[++index] = malloc(sizeof(char) * (count_chars(line + j) + 1)); //Problem if it fails
+			arr[++index] = malloc(sizeof(char) * (count_chars(line + j) + 1)); //Problem if it fails  // you mean count_chars() or malloc() ??
 			if (!arr[index])
 				return (perror("malloc fail\n"), NULL);
 			ft_memcpy(arr[index], line + j, (size_t)count_chars(line + j));
 			// if (!arr[index])
 			// 	return (perror("malloc fail\n"), NULL);
+			// what about this? 
 			arr[index][count_chars(line + j)] = '\0'; 
 			j += count_chars(line + j);
 		}

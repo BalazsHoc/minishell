@@ -40,7 +40,7 @@ int	main(int argc, char **argv, char **env)
 		}
 		if (line[0] != '\n')
 			parsing(line, env);
-		// free(line); //seems its no needed
+		// free(line); //seems its no needed // but what if line[0] == '\n'??
 	}
 	return (0);
 }
