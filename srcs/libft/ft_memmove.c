@@ -37,24 +37,3 @@ void	*ft_memmove(void *dest, const void *src, size_t n)
 	}
 	return (dest);
 }
-/*
-#include <stdio.h>
-
-int main()
-{
-    char str1[20] = "Hello, World!";
-    char str2[20] = "Hello, World!";
-
-    // Using ft_memmove
-    printf("Before ft_memmove: %s\n", str1);
-    ft_memmove(str1 + 7, str1 + 1, 5); 
-	// Move "World" to the position after "Hello"
-    printf("After ft_memmove: %s\n", str1);
-
-    // Using standard memmove for comparison
-    printf("\nBefore memmove: %s\n", str2);
-    memmove(str2 + 7, str2 + 1, 5); // Move "World" to the position after "Hello"
-    printf("After memmove: %s\n", str2);
-
-    return (0);
-}*/

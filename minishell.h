@@ -30,6 +30,11 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 
+# ifndef BUF_SIZE
+# define BUF_SIZE 50
+# endif
+
+
 typedef struct pipex_s
 {
 	// char	***operations;
@@ -39,14 +44,28 @@ typedef struct pipex_s
 	// char	*infile;
 	// char	*outfile;
 	// char	**redirections;
-	// char 	**cmnds;
+	char	**reds;
+	char 	***ops;
 }	t_pipex;
 
 int		main(int argc, char **argv, char **env);
 
+// exec_cmnd.c
+
+void	exec_cmnd(t_pipex *data);
+
+
+
 //	parsing.c
 
 void	parsing(char *line, char **env);
+
+// parsing_2.c
+
+void	parsing_2(t_pipex *data, int cmnd_count);
+void 	check_reds(t_pipex *data);
+void	init_reds(t_pipex *data, int cmnd_count);
+int		is_red(t_pipex *data, int index_1, int index_2);
 
 //	parsing_utils.c
 
@@ -59,7 +78,7 @@ int 	syntax_check(char *line, int i);
 //	parsing_utils_2.c
 
 int		is_or(char *cur);
-int		cmnds_start(char **arr);
+int		cmnds_start(t_pipex *data, int index);
 
 //	free.c
 

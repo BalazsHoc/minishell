@@ -56,24 +56,3 @@ char	*ft_itoa(int n)
 		*(result + 0) = '-';
 	return (result);
 }
-/*
-#include <stdio.h>
-#include <stdbool.h>
-#include <stdlib.h>
-
-int main() {
-    int number;
-    printf("Enter an integer: ");
-    scanf("%d", &number);
-
-    char *result = ft_itoa(number);
-
-    if (result) {
-        printf("Result: %s\n", result);
-        free(result); // Don't forget to free the allocated memory
-    } else {
-        printf("Memory allocation failed.\n");
-    }
-
-    return 0;
-}*/

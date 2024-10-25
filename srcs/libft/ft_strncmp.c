@@ -31,24 +31,3 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 	}
 	return (0);
 }
-/*
-#include <stdio.h>
-
-int main()
-{
-    const char *s1 = "Hlo";
-    const char *s2 = "Hbell";
-    size_t n = 1;  // Number of characters to compare
-    
-    int result = ft_strncmp(s1, s2, n);
-    
-    // Printing the result of string comparison
-    if (result == 0)
-        printf("Strings are equal.\n");
-    else if (result < 0)
-        printf("First string is less than second string.\n");
-    else
-        printf("First string is greater than second string.\n");
-
-    return (0);
-}*/

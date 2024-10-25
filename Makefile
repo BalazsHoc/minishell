@@ -12,37 +12,52 @@
 
 NAME = minishell
 
-LIBFT_PATH = srcs/libft/
-LIBFT = $(LIBFT_PATH)libft.a
-GET_NEXT_LINE_PATH = srcs/get_next_line/
-GET_NEXT_LINE = $(GET_NEXT_LINE_PATH)get_next_line.a
+#	COMPILING
+CC				= cc
+CFLAGS			= -Wall -Wextra -Werror -g
+RL_FLAGS		= -lreadline -lncurses
 
-CC = cc
-CFLAGS = -Wall -Wextra -Werror -g
-RL_FLAGS = -lreadline -lncurses
+#	LIBFT
 
-SRCS = main.c srcs/parsing.c srcs/parsing_utils.c srcs/free.c srcs/find_path.c srcs/exit_clean.c srcs/parsing_utils_2.c
+LIBFT_PATH		= srcs/libft/
+LIBFT			= $(LIBFT_PATH)libft.a
 
-OBJ = $(SRCS:.c=.o)
+
+#	GNL
+
+GNL_PATH		= srcs/get_next_line/
+GNL				= $(GNL_PATH)get_next_line.a
+
+#	SRCS && OBJS
+
+SRCS			= main.c srcs/free.c srcs/exit_clean.c exec_cmnd.c
+OBJ				= $(SRCS:.c=.o)
+
+#	PARSING
+
+DIR_PARSING		= srcs/parsing/
+SRCS_PARSING	= parsing.c parsing_2.c parsing_utils.c parsing_utils_2.c find_path.c
+PATH_PARSING	= $(addprefix $(DIR_PARSING), $(SRCS_PARSING))
+OBJ_PARSING		= $(PATH_PARSING:.c=.o)
 
 %.o : %.c
 	@$(CC) $(CFLAGS) -c -o $@ $<
 
-$(NAME): $(OBJ)
+$(NAME): $(OBJ) $(OBJ_PARSING)
 	@make -C $(LIBFT_PATH) all
-	@make -C $(GET_NEXT_LINE_PATH) all
-	@$(CC) $(CFLAGS) $(OBJ) $(LIBFT) $(GET_NEXT_LINE) -o $(NAME) $(RL_FLAGS)
+	@make -C $(GNL_PATH) all
+	@$(CC) $(CFLAGS) $(OBJ) $(OBJ_PARSING) $(LIBFT) $(GNL) -o $(NAME) $(RL_FLAGS)
 
 all: $(NAME)
 
 clean:
 	@make -C $(LIBFT_PATH) clean
-	@make -C $(GET_NEXT_LINE_PATH) clean
+	@make -C $(GNL_PATH) clean
 	@rm -f $(OBJ)
 
 fclean: clean
 	@make -C $(LIBFT_PATH) fclean
-	@make -C $(GET_NEXT_LINE_PATH) fclean
+	@make -C $(GNL_PATH) fclean
 	@rm -f $(NAME)
 
 re: fclean all

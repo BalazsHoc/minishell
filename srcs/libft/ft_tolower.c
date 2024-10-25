@@ -18,16 +18,3 @@ int	ft_tolower(int c)
 		c += 32;
 	return (c);
 }
-/*
-#include <stdio.h>
-
-int main()
-{
-    char test_char1 = 'A';
-    char test_char2 = 'z';
-
-    printf("Testing character '%c': '%c'\n", test_char1, ft_tolower(test_char1));
-    printf("Testing character '%c': '%c'\n", test_char2, ft_tolower(test_char2));
-
-    return (0);
-}*/

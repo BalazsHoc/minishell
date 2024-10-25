@@ -29,14 +29,3 @@ int	ft_memcmp(const void *s1, const void *s2, size_t n)
 	}
 	return (0);
 }
-/*
-#include <stdio.h>
-
-int	main()
-{
-	char	str1[10] = "haio";
-	char	str2[10] = "helii";
-	int	result = ft_memcmp(str1, str2, 2);
-
-	printf("Difference: %d\n", result);
-}*/

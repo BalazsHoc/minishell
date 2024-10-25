@@ -39,12 +39,3 @@ int	ft_atoi(const char *nptr)
 	}
 	return (sign * result);
 }
-/*
-#include <stdio.h>
-
-int main() {
-    const char *str = "1245345";
-    int num = ft_atoi(str);
-    printf("Converted number: %d\n", num);
-    return (0);
-}*/

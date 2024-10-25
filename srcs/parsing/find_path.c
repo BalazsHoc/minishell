@@ -1,4 +1,4 @@
-#include "../minishell.h"
+#include "../../minishell.h"
 
 char *find_path_2(char **arr, char *cmnd)
 {
@@ -29,7 +29,7 @@ char *find_path(char **env, char *cmnd)
 	path = NULL;
 	if (!cmnd || !env || !*env)
 		return (perror("path not found"), NULL);
-	while (i < 100 && env[i])
+	while (env[i] && i < 100)
 	{
 		if (!ft_strncmp("PATH=", (const char *)env[i], 5))
 		{

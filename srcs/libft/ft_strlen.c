@@ -18,24 +18,6 @@ size_t	ft_strlen(const char *str)
 
 	length = 0;
 	while (str[length] != '\0')
-	{
 		length++;
-	}
 	return (length);
 }
-/*
-#include <stdio.h>
-
-int main()
-{
-    const char *str = "Hello, faszom World!";
-
-    // Call ft_strlen to get the length of the string
-    int length = ft_strlen(str);
-
-    // Printing the length of the string
-    printf("Length of the string: %d\n", length);
-
-    return (0);
-}
-*/
