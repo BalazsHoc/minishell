@@ -13,6 +13,7 @@
 NAME = minishell
 
 #	COMPILING
+
 CC				= cc
 CFLAGS			= -Wall -Wextra -Werror -g
 RL_FLAGS		= -lreadline -lncurses
@@ -30,7 +31,7 @@ GNL				= $(GNL_PATH)get_next_line.a
 
 #	SRCS && OBJS
 
-SRCS			= main.c srcs/free.c srcs/exit_clean.c exec_cmnd.c
+SRCS			= main.c srcs/free.c srcs/exit_clean.c start_exec.c exec_cmnd.c
 OBJ				= $(SRCS:.c=.o)
 
 #	PARSING

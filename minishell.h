@@ -41,20 +41,23 @@ typedef struct pipex_s
 	char 	***cmnds;
 	char	**paths;
 
-	// char	*infile;
+	char	**input;
 	// char	*outfile;
 	// char	**redirections;
-	char	**reds;
+	// char	***reds;
 	char 	***ops;
 }	t_pipex;
 
 int		main(int argc, char **argv, char **env);
 
+// start_exec.c
+
+void	start_exec(t_pipex *data, int cmnd_count);
+char	*join_this(char *s1, char *s2);
+
 // exec_cmnd.c
 
-void	exec_cmnd(t_pipex *data);
-
-
+char	*exec_cmnd(t_pipex *data, int index);
 
 //	parsing.c
 
@@ -86,11 +89,11 @@ void	free_struct(t_pipex *data);
 void	free_a(char *line, t_pipex *data);
 void	free_list_list(char ***arr);
 void	free_list(char **arr);
-void	free_str(char **s);
+void	free_str(char *s);
 
 //	find_path.c
 
-char *find_path(char **env, char *cmnd);
+char	*find_path(char **env, char *cmnd);
 
 //	exit_child.c
 

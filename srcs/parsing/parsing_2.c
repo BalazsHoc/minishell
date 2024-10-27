@@ -49,19 +49,34 @@ int count_reds(t_pipex *data, int index)
     return (count);
 }
 
+void ft_strcpy(char *s1, char *s2)
+{
+    int i;
+
+    i = -1;
+    while (s1[++i])
+        s2[i] = s1[i];
+}
+
 void    fill_ops(t_pipex *data, int index)
 {
     int i;
     int j;
 
     i = -1;
-    j = 0;
+    j = -1;
     while (data->cmnds[index][++i])
     {
         if (is_red(data, index, i))
             i += 2;
         if (data->cmnds[index][i])
-            data->ops[index][j] = data->cmnds[index][i];
+        {
+            data->ops[index][++j] = ft_calloc(sizeof(char *), (count_chars(data->cmnds[index][i]) + 1));
+            if (!data->ops[index][j])
+                return (printf("malloc fail!\n"), error_code(data, NULL, 1));
+            data->ops[index][j][count_chars(data->cmnds[index][i])] = 0;
+            ft_strcpy(data->cmnds[index][i], data->ops[index][j]);
+        }
         else 
             break ;
     }
@@ -136,10 +151,10 @@ void parsing_2(t_pipex *data, int cmnd_count)
     if (!data->ops)
         return (perror("malloc fail!\n"), error_code(data, NULL, 1));
     data->ops[cmnd_count] = 0;
-    data->reds = malloc(sizeof(char *) * (cmnd_count + 1));
-    if (!data->reds)
-        return (perror("malloc fail!\n"), error_code(data, NULL, 1));
-    data->reds[cmnd_count] = 0;
+    // data->reds = malloc(sizeof(char *) * (cmnd_count + 1));
+    // if (!data->reds)
+    //     return (perror("malloc fail!\n"), error_code(data, NULL, 1));
+    // data->reds[cmnd_count] = 0;
 
     while (data->cmnds[++i])
     {

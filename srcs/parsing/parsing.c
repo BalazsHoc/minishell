@@ -43,7 +43,7 @@ char	**fill_cmnds(char **arr, char *line, int i, int k)
 		if (k == 0 && !is_space(line[j])
 			&& (line[j] != '|' || is_or(line + j)))
 		{
-			arr[++index] = malloc(sizeof(char) * (count_chars(line + j) + 1)); //Problem if it fails  // you mean count_chars() or malloc() ??
+			arr[++index] = malloc(sizeof(char) * (count_chars(line + j) + 1));
 			if (!arr[index])
 				return (perror("malloc fail\n"), free(arr), NULL);
 			ft_memcpy(arr[index], line + j, (size_t)count_chars(line + j));
@@ -72,10 +72,11 @@ void	init_cmds(t_pipex *data, char *line, int count)
 		data->cmnds[i] = malloc(sizeof(char *) * (count_elem(line, i) + 1));
 		if (!data->cmnds[i])
 			return (perror("malloc fail!\n"), error_code(data, line, 0));
+		data->cmnds[i][count_elem(line, i)] = NULL;
 		data->cmnds[i] = fill_cmnds(data->cmnds[i], line, i, -i);
 		if (!data->cmnds[i])
 			return (perror("malloc fail!\n"), error_code(data, line, 0));
-		data->cmnds[i][count_elem(line, i)] = NULL;
+		printf("CMNDS: %s\n", data->cmnds[i][0]);
 		if (!data->cmnds[i])
 			return (error_code(data, line, 0));
 	}
@@ -134,5 +135,5 @@ void	parsing(char *line, char **env)
 	data->paths = NULL;
 	data->cmnds = NULL;
 	return (init_cmds(data, line, cmnd_count), init_paths(data, cmnd_count, env),
-		parsing_2(data, cmnd_count), print_that_shit(data), exec_cmnd(data), free_struct(data));
+		parsing_2(data, cmnd_count), start_exec(data, cmnd_count), free_struct(data));
 }
