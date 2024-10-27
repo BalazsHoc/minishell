@@ -22,23 +22,3 @@ char	*ft_strchr(const char *s, int c)
 	}
 	return ((char *)s);
 }
-/*
-#include <stdio.h>
-
-int main()
-{
-	const char *str = "Hello, world!";
-	int search_char = 'd';
-	char *result = ft_strchr(str, search_char);
-
-	if (result != NULL)
-	{
-		printf("Character '%c' found at index %ld\n", search_char, result - str);
-	}
-	else
-	{
-		printf("Character '%c' not found\n", search_char);
-	}
-
-    return (0);
-}*/

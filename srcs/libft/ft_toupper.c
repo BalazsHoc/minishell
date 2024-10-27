@@ -18,16 +18,3 @@ int	ft_toupper(int c)
 		c -= 32;
 	return (c);
 }
-/*
-#include <stdio.h>
-
-int main()
-{
-    char test_char1 = 'A';
-    char test_char2 = 'z';
-
-    printf("Testing character '%c': '%c'\n", test_char1, ft_toupper(test_char1));
-    printf("Testing character '%c': '%c'\n", test_char2, ft_toupper(test_char2));
-
-    return (0);
-}*/

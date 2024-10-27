@@ -25,14 +25,3 @@ char	*ft_strtrim(char const *s1, char const *set)
 		end--;
 	return (ft_substr(s1, 0, end + 1));
 }
-/*
-#include <stdio.h>
-
-int main()
-{
-	char *s1 = "    hello, world     ";
-	char *set = " ";
-	char *result =  ft_strtrim(s1, set);
-
-	printf("result: %s\n", result);
-}*/

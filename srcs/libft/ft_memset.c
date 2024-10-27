@@ -26,22 +26,3 @@ void	*ft_memset(void *s, int c, size_t n)
 	}
 	return (s);
 }
-/*
-#include <stdio.h>
-int main()
-{
-    char buffer[10];
-    int value = 'X';
-
-    // Fill the buffer with 'X' using ft_memset
-    ft_memset(buffer, value, sizeof(buffer));
-
-    // Printing the buffer to verify it's filled with 'X'
-    printf("Buffer after memset:\n");
-    for (size_t i = 0; i < sizeof(buffer); ++i) {
-        printf("%c ", buffer[i]);
-    }
-    printf("\n");
-
-    return 0;
-}*/

@@ -27,23 +27,3 @@ char	*ft_strrchr(const char *s, int c)
 	}
 	return (0);
 }
-/*
-#include <stdio.h>
-
-int main()
-{
-	const char *str = "Heldo, world!";
-	int search_char = 'd';
-	char *result = ft_strrchr(str, search_char);
-
-	if (result != NULL)
-	{
-		printf("Character '%c' found at index %ld\n", search_char, result - str);
-	}
-	else
-	{
-		printf("Character '%c' not found\n", search_char);
-	}
-
-    return (0);
-}*/

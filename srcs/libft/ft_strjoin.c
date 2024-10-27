@@ -38,18 +38,3 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	joined[i + j] = '\0';
 	return (joined);
 }
-/*
-#include <stdio.h>
-
-int main()
-{
-	char s1[] = "hel";
-	char s2[] = "lo";
-
-	char result = *ft_strjoin(s1, s2);
-	if (result == 0)
-		printf("Failed: %d\n", result);
-	else
-		printf("Succecfull: %c\n", result);
-	return (0);
-}*/

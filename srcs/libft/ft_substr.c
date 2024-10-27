@@ -36,19 +36,3 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	sub[i] = '\0';
 	return (sub);
 }
-/*
-#include <stdio.h>
-
-int	main()
-{
-	char const s[] = "hallokellotello";
-	unsigned int start = 5;
-	size_t len = 5;
-
-	char result = *ft_substr(s, start, len);
-
-	if (result == 0)
-		printf("malloc didn't succeded: %s\n", &result);
-	else
-		printf("everything is fine: %s\n", &result);
-}*/

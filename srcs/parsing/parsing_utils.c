@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "../../minishell.h"
 
 int	count_cmnds(char *line)
 {
@@ -55,7 +55,7 @@ int	count_elem(char *line, int i)
 			count++;
 		else if (is_or(line + j) && ++count != INT_MIN)
 			j++;
-		else if (line[j - 1] == '|' && !is_space(line[j]))
+		else if (j > 0 && line[j - 1] == '|' && !is_space(line[j]))
 			count++;
 		else if (line[j] == '|' && ++k != INT_MIN)
 			i--;
@@ -71,7 +71,7 @@ int	count_chars(char *line)
 	count = 0;
 	while (line[count])
 	{
-		if (is_space(line[count]) || line[count] == '\n')
+		if (is_space(line[count]) || line[count] == '\n' || line[count] == '|')
 			break ;
 		count++;
 	}

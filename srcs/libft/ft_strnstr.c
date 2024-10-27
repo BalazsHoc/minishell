@@ -37,25 +37,3 @@ char	*ft_strnstr(const char *big, const char *little, size_t len)
 	}
 	return (0);
 }
-/*
-#include <stdio.h>
-
-int main() {
-    const char *big = "Hello, world ke";
-    const char *little = "world";
-
-    // Call the function with the provided strings
-    char *result = ft_strnstr(big, little, 13);
-
-    // Check if the result is not NULL
-    if (result != NULL)
-	{
-        // Print the substring found
-        printf("Substring found: %s\n", result);
-    }
-	else
-	{
-        printf("Substring not found.\n");
-    }
-    return 0;
-}*/

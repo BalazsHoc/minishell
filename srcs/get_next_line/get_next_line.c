@@ -123,27 +123,3 @@ char	*get_next_line(int fd, bool flag)
 	}
 	return (gnl_free(&buf), free(output), NULL);
 }
-// #include <fcntl.h>
-// #include <stdio.h>
-
-// int main()
-// {
-// 	int fd = open("test.txt", O_RDONLY);
-// 	char *line = get_next_line(fd, 0);
-
-// 	printf("line: x%sx", line);
-// 	while (line != NULL)
-// 	{
-// 		printf("line: x%sx", line);
-// 		free(line);
-// 		line = get_next_line(fd, 0);
-// 		printf("line: x%sx", line);
-// 		free(line);
-// 		line = get_next_line(fd, 0);
-// 		printf("line: x%sx", line);
-// 		// get_next_line(fd, 1);
-// 	}
-// 	free(line);
-// 	close(fd);
-// 	return 0;
-// }

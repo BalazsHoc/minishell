@@ -25,15 +25,3 @@ void	*ft_memchr(const void *s, int c, size_t n)
 	}
 	return (0);
 }
-/*
-#include <stdio.h>
-
-int	main()
-{
-	char dom[10] = "HlloBello";
-	int c = 101;
-	size_t 	n = 7;
-
-	char	*result = ft_memchr(dom, c, n);
-	printf("result: %s\n", result);
-}*/

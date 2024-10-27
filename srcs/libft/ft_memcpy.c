@@ -29,10 +29,3 @@ void	*ft_memcpy(void *dest, const void *src, size_t n)
 	}
 	return (dest);
 }
-/*
-int	main(void)
-{
-	char	dest[8];
-	char	src[] = "pop";
-	int	n = 3;
-}*/

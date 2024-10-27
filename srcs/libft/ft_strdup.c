@@ -35,13 +35,3 @@ char	*ft_strdup(const char *s)
 	ptr[i] = '\0';
 	return (ptr);
 }
-/*
-#include <stdio.h>
-
-int main()
-{
-	char s[] = "hellobello";
-	char *result = ft_strdup(s);
-
-	printf("Doubled: %s\n", result);
-}*/
