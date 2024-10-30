@@ -10,7 +10,7 @@ int is_red(t_pipex *data, int index_1, int index_2)
     return (0);
 }
 
-void check_reds(t_pipex *data)
+int check_reds(t_pipex *data)
 {
     int i;
     int j;
@@ -24,14 +24,14 @@ void check_reds(t_pipex *data)
             if (is_red(data, i, j) && !data->cmnds[i][j + 1])
             {
                 if (!data->cmnds[i + 1])
-                    return (printf("bash: syntax error near unexpected token `newline' \n"), exit_child(258, NULL, data));
-                return (printf("bash: syntax error near unexpected token `|'\n"), exit_child(258, NULL, data));
+                    return (printf("bash: syntax error near unexpected token `newline' \n"), exit_child(2, NULL, data), 0);
+                return (printf("bash: syntax error near unexpected token `|'\n"), exit_child(2, NULL, data), 0);
             }
             else if (is_red(data, i, j) && is_red(data, i, j + 1))
-                    return (printf("bash: syntax error near unexpected token `%s' \n", data->cmnds[i][j + 1]), exit_child(258, NULL, data));
+                    return (printf("bash: syntax error near unexpected token `%s' \n", data->cmnds[i][j + 1]), exit_child(2, NULL, data), 0);
         }
     }
-
+    return (1);
 }
 
 int count_reds(t_pipex *data, int index)
@@ -67,13 +67,15 @@ void    fill_ops(t_pipex *data, int index)
     j = -1;
     while (data->cmnds[index][++i])
     {
-        if (is_red(data, index, i))
+
+        while (data->cmnds[index][i] && is_red(data, index, i))
             i += 2;
         if (data->cmnds[index][i])
         {
+            // printf("I: %d S: %s\n", i, data->cmnds[index][i]);
             data->ops[index][++j] = ft_calloc(sizeof(char *), (count_chars(data->cmnds[index][i]) + 1));
             if (!data->ops[index][j])
-                return (printf("malloc fail!\n"), error_code(data, NULL, 1));
+                return (printf("malloc fail!\n"), error_code(data, NULL, 1, errno));
             data->ops[index][j][count_chars(data->cmnds[index][i])] = 0;
             ft_strcpy(data->cmnds[index][i], data->ops[index][j]);
         }
@@ -149,18 +151,18 @@ void parsing_2(t_pipex *data, int cmnd_count)
     i = -1;
     data->ops = malloc(sizeof(char **) * (cmnd_count + 1));
     if (!data->ops)
-        return (perror("malloc fail!\n"), error_code(data, NULL, 1));
+        return (perror("malloc fail!\n"), error_code(data, NULL, 1, errno));
     data->ops[cmnd_count] = 0;
     // data->reds = malloc(sizeof(char *) * (cmnd_count + 1));
     // if (!data->reds)
-    //     return (perror("malloc fail!\n"), error_code(data, NULL, 1));
+    //     return (perror("malloc fail!\n"), error_code(data, NULL, 1, errno);
     // data->reds[cmnd_count] = 0;
 
     while (data->cmnds[++i])
     {
         data->ops[i] = malloc(sizeof(char *) * (count_ops(data, i) + 1));
         if (!data->ops[i])
-            return (perror("malloc fail!\n"), error_code(data, NULL, 1));
+            return (perror("malloc fail!\n"), error_code(data, NULL, 1, errno));
         data->ops[i][count_ops(data, i)] = 0;
         fill_ops(data, i);
         // data->reds[i] = malloc(sizeof(char *) * (count_reds(data, i) + 1));

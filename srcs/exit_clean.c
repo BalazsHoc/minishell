@@ -1,6 +1,6 @@
 #include "../minishell.h"
 
-void	error_code(t_pipex *data, char *line, int ex)
+void	error_code(t_pipex *data, char *line, int ex, int errnum)
 {
 	if (ex)
 	{
@@ -10,7 +10,7 @@ void	error_code(t_pipex *data, char *line, int ex)
 			free(line);
 		else if (data)
 			free_struct(data);
-		exit(EXIT_FAILURE);
+		exit(errnum);
 	}
 	else
 	{
@@ -31,7 +31,7 @@ void exit_child(int errnum, char *line, t_pipex *data)
 	if (pid == -1)
 	{
 		perror("fork failed\n");
-		error_code(data, line, 1);
+		error_code(data, line, 1, errno);
 	}
 	if (!pid)
 		exit(errnum);

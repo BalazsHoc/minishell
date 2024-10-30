@@ -18,14 +18,11 @@ int	count_cmnds(char *line)
 	int	i;
 
 	count = 1;
-	i = 0;
-	while (line[i])
+	i = -1;
+	while (line[++i])
 	{
-		if (line[i] == '|' && line[i + 1] == '|')
-			i += 2;
-		if (line[i] == '|' )
+		if (real_pipe(line, i))
 			count++;
-		i++;
 	}
 	return (count);
 }
@@ -37,30 +34,34 @@ int	is_space(char c)
 	return (0);
 }
 
-int	count_elem(char *line, int i)
+int	count_elem(char *line, int i, int count)
 {
-	int	count;
 	int	j;
 	int	k;
 
-	count = 0;
-	j = 0;
+	j = -1;
 	k = -i;
-	while (line[j] && i >= 0)
+	while (line[++j] && i >= 0)
 	{
-		if (k == 0 && j > 0 && !is_space(line[j])
-			&& (is_space(line[j - 1]) && line[j] != '|'))
-			count++;
-		else if (k == 0 && j == 0 && !is_space(line[j]))
-			count++;
-		else if (is_or(line + j) && ++count != INT_MIN)
-			j++;
-		else if (j > 0 && line[j - 1] == '|' && !is_space(line[j]))
-			count++;
-		else if (line[j] == '|' && ++k != INT_MIN)
-			i--;
-		j++;
+		printf("J: %d | K: %d | I: %d\n", j, k, i);
+		if (k == 0)
+		{
+			if (real_pipe(line, j))
+				break ;
+			if ((j == 0 && !is_space(line[j]))
+				|| (is_space(line[j - 1]) && !is_space(line[j]))
+				|| (is_red_clean(line, j))
+				|| (is_red_clean(line, (j - 1)) && !is_space(line[j])))
+				{
+					if (is_red_clean(line, j) == 2)
+						j++;
+					count++;
+				}
+		}
+		else if (real_pipe(line, j) && --i)
+			k++;
 	}
+	printf("COUNT ELEM RETURN: %d\n", count);
 	return (count);
 }
 
@@ -69,38 +70,49 @@ int	count_chars(char *line)
 	int	count;
 
 	count = 0;
+	printf("%s\n", line);
 	while (line[count])
 	{
-		if (is_space(line[count]) || line[count] == '\n' || line[count] == '|')
+		if (is_space(line[count]) || line[count] == '\n'
+			|| line[count] == '|'
+			|| (count > 0 && is_red_clean(line, count) == 1)
+			|| (count > 0 && is_red_clean(line, count - 1) == 1 && !is_space(line[count])))
 			break ;
 		count++;
 	}
+	printf("COUNT CHARS RETURN: %d\n", count);
 	return (count);
 }
 
-int syntax_check(char *line, int i)
+int syntax_check(char *line, int i, int count)
 {
-	int count;
-	int space;
+	int word;
 
-	count = 0;
-	space = 0;
+	word = 0;
 	while (line[++i])
 	{
-		if (line[i] == '|' && ++count)
-		{
-			if (space)
-				return (0);
-			space = 0;
-		}
-		else if (count && line[i] == ' ')
-			space++;
-		else if (line[i] != '|')
-		{
+		// if (line[i] == '|' && i > 0 && line[i - 1] != '>' && ++count)
+		// {
+		// 	if (space)
+		// 		return (0);
+		// 	space = 0;
+		// }
+		// else if (count && line[i] == ' ')
+		// 	space++;
+		// else if (line[i] != '|')
+		// {
+		// 	count = 0;
+		// 	space = 0;
+		// }
+		// if (count == 3)
+		// 	return (0);
+		if (i == 0 && line[i] == '|' && (!line[i + 1] || line[i + 1] != '|'))
+			return (0);
+		else if (!real_pipe(line, i) && ++word)
 			count = 0;
-			space = 0;
-		}
-		if (count == 3)
+		else
+			count++;
+		if (count >= 2)
 			return (0);
 	}
 	return (1);

@@ -38,9 +38,8 @@ void	free_struct(t_pipex *data)
 		if (data->ops)
 			free_list_list(data->ops);
 		if (data->input)
-			free_list(data->input);
+			free_str(data->input);
 		free(data);
-
 	}
 }
 

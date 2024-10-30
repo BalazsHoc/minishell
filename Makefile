@@ -54,7 +54,7 @@ all: $(NAME)
 clean:
 	@make -C $(LIBFT_PATH) clean
 	@make -C $(GNL_PATH) clean
-	@rm -f $(OBJ)
+	@rm -f $(OBJ) $(OBJ_PARSING)
 
 fclean: clean
 	@make -C $(LIBFT_PATH) fclean
@@ -63,4 +63,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fceal re
+.PHONY: all clean fclean re

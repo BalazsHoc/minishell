@@ -19,6 +19,7 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 	i = 0;
 	if (n == 0)
 		return (0);
+	// printf("S1: %s$ | S2: %s$\n", s1, s2);
 	while (i < n)
 	{
 		if (s1[i] && s1[i] == s2[i])
@@ -28,6 +29,20 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 		}
 		else
 			return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+	}
+	// printf("RETURN 0\n");
+	return (0);
+}
+
+int ft_strcmp_2(char *s1, char *s2)
+{
+	int i;
+
+	i = -1;
+	while (s1[++i])
+	{
+		if (s1[i] == '\n' && s2[i] == 0)
+			return (1);
 	}
 	return (0);
 }
