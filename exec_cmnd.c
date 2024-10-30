@@ -40,13 +40,13 @@ char    *file_read(char *file)
     char *buf;
 
     fd = open(file, O_RDONLY);
-	printf("PENIS\n");
 	if (fd == -1)
 	{
 		if (errno == 2)
 			printf("zsh: no such file or directory: %s\n", file);
 		return (NULL);
 	}
+
     buf = get_next_line(fd, 0);
     content = NULL;
     while (buf)
@@ -55,19 +55,16 @@ char    *file_read(char *file)
         free(buf);
         buf = get_next_line(fd, 0);
     }
-	printf("BUF: %s\n", content);
     close(fd);
 	return (content);
 }
 
 char	*handle_parent(int *fd, int fd_2, char *input)
 {
-    printf("PARENT\n");
 	close(fd[0]);
 	close(fd_2);
 	if (!input)
 	{
-        printf("NO IN\n");
 		// if (write(fd[1], NULL, 0) == -1)
 		// {
 		// 	perror("write2:");
@@ -78,7 +75,6 @@ char	*handle_parent(int *fd, int fd_2, char *input)
 	}
 	else
 	{
-        printf("IN\n");
 		if (write(fd[1], input, ft_strlen(input)) == -1)
 		{
 			perror("ERROR: write:");
@@ -92,10 +88,10 @@ char	*handle_parent(int *fd, int fd_2, char *input)
 	return (free_str(input), input = file_read(".txt"), unlink(".txt"), input);
 }
 
-void	handle_child(int *fd, int fd_2, t_pipex *data, int index)
+void	handle_child(int *fd, int fd_2, t_pipex *data, int index, char **env)
 {
 	close(fd[1]);
-    if (data->input[index])
+    if (data->input)
     {
         if (dup2(fd[0], STDIN_FILENO) == -1)
         {
@@ -107,6 +103,7 @@ void	handle_child(int *fd, int fd_2, t_pipex *data, int index)
         }
     }
     close(fd[0]);
+	printf("PATH: %s | %s\n", data->paths[index], data->ops[index][0]);
 	if (dup2(fd_2, STDOUT_FILENO) == -1)
 	{
 		perror("dup2");
@@ -115,13 +112,13 @@ void	handle_child(int *fd, int fd_2, t_pipex *data, int index)
 		exit(EXIT_FAILURE);
 	}
 	close(fd_2);
-	execve(data->paths[index], data->ops[index], NULL);
+	execve(data->paths[index], data->ops[index], env);
 	perror("execve");
 	free_struct(data);
 	exit(EXIT_FAILURE);
 }
 
-char	*exec_cmnd(t_pipex *data, int index)
+char	*exec_cmnd(t_pipex *data, int index, char **env)
 {
     int pid;
     int fd[2];
@@ -131,7 +128,7 @@ char	*exec_cmnd(t_pipex *data, int index)
 	if (tmp_fd == -1)
 		return (free_struct(data), perror("open tmpfile:"), NULL);
 	if (pipe(fd) == -1)
-	    error_code(data, data->input[index], 1);
+	    error_code(data, data->input, 1, errno);
 	pid = fork();
 	if (pid < 0)
 	{
@@ -143,9 +140,9 @@ char	*exec_cmnd(t_pipex *data, int index)
 		exit(EXIT_FAILURE);
 	}
 	else if (pid == 0)
-		handle_child(fd, tmp_fd, data, index);
+		handle_child(fd, tmp_fd, data, index, env);
 	else
-		data->input[index] = handle_parent(fd, tmp_fd, data->input[index]);
-	return (data->input[index]);
+		data->input= handle_parent(fd, tmp_fd, data->input);
+	return (data->input);
 }
 

@@ -9,17 +9,45 @@ int is_or(char *cur)
 	return (0);
 }
 
+int is_red_1(char c)
+{
+	if (c == '>' || c == '<')
+		return (1);
+	return (0);
+}
 
-// int find_that_shit(char *arr, char *cur, char **list)
-// {
-// 	if (arr == cur)
-// 	{
-// 		if (list[2])
-// 			return (2);
-// 		return (-1);
-// 	}
-// 	return (0);
-// }
+int is_red_clean(char *str, int index)
+{
+	// printf("here: %s\n", str);
+	if ((index == 0 && is_red_1(str[0])
+			&& ((is_red_1(str[1]) && !is_red_1(str[2])) || (!is_red_1(str[1]))))
+		|| (is_red_1(str[index]) && !is_red_1(str[index - 1])
+			&& ((is_red_1(str[index + 1]) && !is_red_1(str[index + 2])) || (!is_red_1(str[index + 1])))))
+	{
+		if ((index == 0 && !is_red_1(str[1])) || (!is_red_1(str[index + 1])))
+		{
+			printf("RETURN 1\n");
+			return (1);
+		}
+		printf("RETURN 2\n");
+		return (2);
+	}
+	// printf("RETURN 0\n");
+	return (0);
+}
+
+int	real_pipe(char *line, int index)
+{
+	if (line[index] == '|')
+	{
+		if (line[index - 1] == '|'
+		|| line[index - 1] == '>'
+		|| line[index + 1] == '|')
+			return (0);
+		return (1);
+	}
+	return (0);
+}
 
 int cmnds_start(t_pipex *data, int index)
 {
@@ -41,14 +69,3 @@ int cmnds_start(t_pipex *data, int index)
 	}
 	return (0);
 }
-
-
-// CASES
-
-// 1. cmnd < in > out
-
-// 2. < in cmnd > out
-
-// 3. cmnd < in 
-
-// 4. < in

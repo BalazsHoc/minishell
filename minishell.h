@@ -41,7 +41,7 @@ typedef struct pipex_s
 	char 	***cmnds;
 	char	**paths;
 
-	char	**input;
+	char	*input;
 	// char	*outfile;
 	// char	**redirections;
 	// char	***reds;
@@ -52,12 +52,13 @@ int		main(int argc, char **argv, char **env);
 
 // start_exec.c
 
-void	start_exec(t_pipex *data, int cmnd_count);
+void	start_exec(t_pipex *data, char **env);
 char	*join_this(char *s1, char *s2);
 
 // exec_cmnd.c
 
-char	*exec_cmnd(t_pipex *data, int index);
+char	*exec_cmnd(t_pipex *data, int index, char **env);
+char *join_this(char *s1, char *s2);
 
 //	parsing.c
 
@@ -66,22 +67,25 @@ void	parsing(char *line, char **env);
 // parsing_2.c
 
 void	parsing_2(t_pipex *data, int cmnd_count);
-void 	check_reds(t_pipex *data);
+int 	check_reds(t_pipex *data);
 void	init_reds(t_pipex *data, int cmnd_count);
 int		is_red(t_pipex *data, int index_1, int index_2);
 
 //	parsing_utils.c
 
 int		count_chars(char *line);
-int		count_elem(char *line, int i);
+int		count_elem(char *line, int i, int count);
 int		is_space(char c);
 int		count_cmnds(char *line);
-int 	syntax_check(char *line, int i);
+int 	syntax_check(char *line, int i, int check);
 
 //	parsing_utils_2.c
 
 int		is_or(char *cur);
 int		cmnds_start(t_pipex *data, int index);
+int		is_red_1(char c);
+int		is_red_clean(char *str, int index);
+int		real_pipe(char *line, int index);
 
 //	free.c
 
@@ -97,7 +101,7 @@ char	*find_path(char **env, char *cmnd);
 
 //	exit_child.c
 
-void	error_code(t_pipex *data, char *line, int ex);
+void	error_code(t_pipex *data, char *line, int ex, int errnum);
 void	exit_child(int errnum, char *line, t_pipex *data);
 
 #endif
