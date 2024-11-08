@@ -24,40 +24,34 @@ void	print_that_shit(t_pipex *data)
 		j = -1;
 		while (data->cmnds[i][++j])
 			printf("ELEM: %d:%d | %s\n", i, j, data->cmnds[i][j]);
-		// j = -1;
-		// while (data->ops[i][++j])
-		// 	printf("OP:   %d:%d | %s\n", i, j, data->ops[i][j]);
-		// printf("PATH: %s\n", data->paths[i]);
+		j = -1;
+		if (data->ops[i])
+		while (data->ops[i][++j])
+			printf("OP:   %d:%d | %s\n", i, j, data->ops[i][j]);
+		printf("PATH: %s\n", data->paths[i]);
 	}
+	// i = -1;
+	// while (data->mini_env[++i])
+	// 	printf("ENV[%d]: %s\n", i, data->mini_env[i]);
 }
 
-char	**fill_cmnds(char **arr, char *line, int i, int k)
+void	init_ops(t_pipex *data, int cmnd_count)
 {
-	int	j;
-	int	index;
+    int i;
 
-	j = -1;
-	index = -1;
-	while (line[++j] && i >= 0)
-	{
-		if (k == 0 && !real_pipe(line, j) && ((j == 0 && !is_space(line[j]))
-				|| (is_space(line[j - 1]) && !is_space(line[j]))
-				|| (is_red_clean(line, j))
-				|| (is_red_clean(line, (j - 1)) && !is_space(line[j]))))
-		{
-			arr[++index] = malloc(sizeof(char) * (count_chars(line + j) + 1));
-			if (!arr[index])
-				return (perror("malloc fail\n"), free(arr), NULL);
-			ft_memcpy(arr[index], line + j, (size_t)count_chars(line + j));
-			arr[index][count_chars(line + j)] = 0;
-			j += count_chars(line + j) - 1;
-		}
-		if (line[j] == '|' && j > 0 && line[j - 1] != '>' && k++ != INT_MIN)
-			i--;
-		if (!line[j])
-			break;
-	}
-	return (arr);
+    i = -1;
+    data->ops = malloc(sizeof(char **) * (cmnd_count + 1));
+    if (!data->ops)
+        return (perror("malloc fail!\n"), error_code(data, NULL, 1, errno));
+    data->ops[cmnd_count] = 0;
+    while (data->cmnds[++i])
+    {
+        data->ops[i] = malloc(sizeof(char *) * (count_ops(data, i) + 1));
+        if (!data->ops[i])
+            return (perror("malloc fail!\n"), error_code(data, NULL, 1, errno));
+        data->ops[i][count_ops(data, i)] = 0;
+        fill_ops(data, i);
+    }
 }
 
 void	init_cmds(t_pipex *data, char *line, int count)
@@ -95,20 +89,40 @@ void	init_paths(t_pipex *data, int count, char **env)
 	data->paths[count] = NULL;
 	while (++i < count)
 	{
-		if (!check_reds(data) || cmnds_start(data, i) == -1)
-			data->paths[i] = ft_strdup("pathnfound");
-		else
+		if (data->ops[i][0] && ft_strncmp(data->ops[i][0], "cd", 3)
+			&& ft_strncmp(data->ops[i][0], "env", 4) && ft_strncmp(data->ops[i][0], "export", 7))
 		{
-			data->paths[i] = find_path(env, data->cmnds[i][cmnds_start(data, i)]);
+			data->paths[i] = find_path(env, data->ops[i][0]);
 			if (!data->paths[i])
 			{
 				data->paths[i] = ft_strdup("pathnfound");
-				printf("zsh: command not found %s\n", data->cmnds[i][cmnds_start(data, i)]);
+				printf("zsh: command not found %s\n", data->ops[i][0]);
 				exit_child(127, NULL, data);
 			}
 		}
+		else
+			data->paths[i] = ft_strdup("pathnfound");
 		if (!data->paths[i])
 			return (perror("malloc fail!\n"), error_code(data, NULL, 0, errno));
+	}
+}
+
+void init_env(t_pipex *data, char **env)
+{
+	int i;
+	
+	i = -1;
+	data->mini_env = ft_calloc(sizeof(char *), (count_env(env) + 1));
+	if (!data->mini_env)
+		return (printf("malloc fail!\n"), error_code(data, NULL, 1, 0));
+	data->mini_env[count_env(env)] = NULL;
+	while (++i < count_env(env))
+	{
+		data->mini_env[i] = malloc(sizeof(char) * (ft_strlen(env[i]) + 1));
+		if (!data->mini_env[i])
+			return (printf("malloc fail!\n"), error_code(data, NULL, 1, 0));
+		ft_memcpy(data->mini_env[i], env[i], ft_strlen(env[i]));
+		data->mini_env[i][ft_strlen(env[i])] = 0;
 	}
 }
 
@@ -136,10 +150,14 @@ void	parsing(char *line, char **env)
 	data->paths = NULL;
 	data->cmnds = NULL;
 	data->ops = NULL;
+	data->input = NULL;
+	data->mini_env = NULL;
+	while (check_open(line))
+		line = join_this(join_this(line, "\n"), get_next_line(0, 0));
 	init_cmds(data, line, cmnd_count);
-	print_that_shit(data);
+	init_env(data, env);
 	if (!check_reds(data))
 		return (free_struct(data));
-	return (init_paths(data, cmnd_count, env), parsing_2(data, cmnd_count),
-		print_that_shit(data), start_exec(data, env), free_struct(data));
+	return (init_ops(data, cmnd_count), init_paths(data, cmnd_count, env),
+		print_that_shit(data), start_exec(data), free_struct(data));
 }

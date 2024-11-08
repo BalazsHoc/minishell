@@ -31,13 +31,13 @@ GNL				= $(GNL_PATH)get_next_line.a
 
 #	SRCS && OBJS
 
-SRCS			= main.c srcs/free.c srcs/exit_clean.c start_exec.c exec_cmnd.c
+SRCS			= main.c srcs/free.c srcs/exit_clean.c start_exec.c start_exec_utils.c exec_cmnd.c 
 OBJ				= $(SRCS:.c=.o)
 
 #	PARSING
 
 DIR_PARSING		= srcs/parsing/
-SRCS_PARSING	= parsing.c parsing_2.c parsing_utils.c parsing_utils_2.c find_path.c
+SRCS_PARSING	= parsing.c init_paths.c init_cmnds.c init_ops.c parsing_utils_is_1.c parsing_utils_is_2.c util_checks.c
 PATH_PARSING	= $(addprefix $(DIR_PARSING), $(SRCS_PARSING))
 OBJ_PARSING		= $(PATH_PARSING:.c=.o)
 
