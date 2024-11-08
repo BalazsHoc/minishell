@@ -18,7 +18,6 @@ char *find_path_2(char **arr, char *cmnd)
 	return (free_list(arr), free(new), NULL);
 }
 
-
 char *find_path(char **env, char *cmnd)
 {
 	int i;

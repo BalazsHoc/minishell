@@ -59,11 +59,11 @@ char    *file_read(char *file)
 	return (content);
 }
 
-char	*handle_parent(int *fd, int fd_2, char *input)
+char	*handle_parent(int *fd, int fd_2, t_pipex *data)
 {
 	close(fd[0]);
 	close(fd_2);
-	if (!input)
+	if (!data->input)
 	{
 		// if (write(fd[1], NULL, 0) == -1)
 		// {
@@ -75,20 +75,20 @@ char	*handle_parent(int *fd, int fd_2, char *input)
 	}
 	else
 	{
-		if (write(fd[1], input, ft_strlen(input)) == -1)
+		if (write(fd[1], data->input, ft_strlen(data->input)) == -1)
 		{
 			perror("ERROR: write:");
-			free_str(input);
+			free_str(data->input);
 			close(fd[1]);
 			exit(EXIT_FAILURE);
 		}
 	}
 	close(fd[1]);
 	wait(NULL);
-	return (free_str(input), input = file_read(".txt"), unlink(".txt"), input);
+	return (free_str(data->input), data->input = file_read(".txt"), unlink(".txt"), data->input);
 }
 
-void	handle_child(int *fd, int fd_2, t_pipex *data, int index, char **env)
+void	handle_child(int *fd, int fd_2, t_pipex *data, int index)
 {
 	close(fd[1]);
     if (data->input)
@@ -112,13 +112,13 @@ void	handle_child(int *fd, int fd_2, t_pipex *data, int index, char **env)
 		exit(EXIT_FAILURE);
 	}
 	close(fd_2);
-	execve(data->paths[index], data->ops[index], env);
+	execve(data->paths[index], data->ops[index], NULL);
 	perror("execve");
 	free_struct(data);
 	exit(EXIT_FAILURE);
 }
 
-char	*exec_cmnd(t_pipex *data, int index, char **env)
+char	*exec_cmnd(t_pipex *data, int index)
 {
     int pid;
     int fd[2];
@@ -128,7 +128,7 @@ char	*exec_cmnd(t_pipex *data, int index, char **env)
 	if (tmp_fd == -1)
 		return (free_struct(data), perror("open tmpfile:"), NULL);
 	if (pipe(fd) == -1)
-	    error_code(data, data->input, 1, errno);
+	    error_code(data, NULL, 1, errno);
 	pid = fork();
 	if (pid < 0)
 	{
@@ -140,9 +140,9 @@ char	*exec_cmnd(t_pipex *data, int index, char **env)
 		exit(EXIT_FAILURE);
 	}
 	else if (pid == 0)
-		handle_child(fd, tmp_fd, data, index, env);
+		handle_child(fd, tmp_fd, data, index);
 	else
-		data->input= handle_parent(fd, tmp_fd, data->input);
+		data->input= handle_parent(fd, tmp_fd, data);
 	return (data->input);
 }
 

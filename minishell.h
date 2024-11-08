@@ -37,55 +37,82 @@
 
 typedef struct pipex_s
 {
-	// char	***operations;
+
 	char 	***cmnds;
+	char 	***ops;
+
 	char	**paths;
+	char	**mini_env;
 
 	char	*input;
-	// char	*outfile;
-	// char	**redirections;
-	// char	***reds;
-	char 	***ops;
+
 }	t_pipex;
 
 int		main(int argc, char **argv, char **env);
-
-// start_exec.c
-
-void	start_exec(t_pipex *data, char **env);
-char	*join_this(char *s1, char *s2);
-
-// exec_cmnd.c
-
-char	*exec_cmnd(t_pipex *data, int index, char **env);
-char *join_this(char *s1, char *s2);
 
 //	parsing.c
 
 void	parsing(char *line, char **env);
 
-// parsing_2.c
+//	util_checks.c
 
-void	parsing_2(t_pipex *data, int cmnd_count);
-int 	check_reds(t_pipex *data);
-void	init_reds(t_pipex *data, int cmnd_count);
-int		is_red(t_pipex *data, int index_1, int index_2);
+int		check_reds(t_pipex *data);
+int		check_open(char *line);
+int		syntax_check(char *line, int i, int count);
 
-//	parsing_utils.c
+//	init_cmnds.c
 
-int		count_chars(char *line);
-int		count_elem(char *line, int i, int count);
-int		is_space(char c);
+char	**fill_cmnds(char **arr, char *line, int i, int k);
+
 int		count_cmnds(char *line);
-int 	syntax_check(char *line, int i, int check);
+int		count_elem(char *line, int i, int count);
+int		count_chars(char *line, int i, int open);
 
-//	parsing_utils_2.c
+//	init_ops.c
+
+void    fill_ops(t_pipex *data, int index);
+
+int		count_ops(t_pipex *data, int index);
+int		count_env(char **env);
+
+//	inti_paths.c
+
+char	*find_path(char **env, char *cmnd);
+
+//	parsing_utils_is_1.c
 
 int		is_or(char *cur);
-int		cmnds_start(t_pipex *data, int index);
+int		is_quote_two(char c);
+int		is_quote_one(char c);
+int		is_quote(char c);
+int		is_space(char c);
+
+//	parsing_utils_is_2.c
+
+int		is_or(char *cur);
+int		is_red(t_pipex *data, int index_1, int index_2);
 int		is_red_1(char c);
 int		is_red_clean(char *str, int index);
-int		real_pipe(char *line, int index);
+int		is_real_pipe(char *line, int index);
+
+// start_exec.c
+
+void	start_exec(t_pipex *data);
+
+char	*get_input(t_pipex *data, int index_1, int index_2);
+
+int		is_red_inline(t_pipex *data, int index);
+
+//	start_exec_utils.c
+
+int		here_doc(t_pipex *data, int index);
+int		mini_commands(t_pipex *data, int *index);
+int		open_out(t_pipex *data, int index);
+
+// exec_cmnd.c
+
+char	*exec_cmnd(t_pipex *data, int index);
+char 	*join_this(char *s1, char *s2);
 
 //	free.c
 
