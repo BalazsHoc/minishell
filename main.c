@@ -24,9 +24,12 @@ int	main(int argc, char **argv, char **env)
 {
 	char	*line;
 
-	(void)argc;
 	(void)argv;
-	(void)env;
+	env = new_env(env);
+	if (!env)
+		return (printf("malloc fail!\n"), 0);
+	if (argc != 1)
+		return (printf("No argument is accepted\n"), 1);
 	signal(SIGINT, handle_signal);
 	signal(SIGQUIT, handle_signal);
 	while (1)
@@ -36,7 +39,7 @@ int	main(int argc, char **argv, char **env)
 		if (!line)
 		{
 			printf("\n");
-			break ;
+			return (free_list(env), 0); // env remade so musrt be freed at the end (EOF) or error
 		}
 		if (line[0] != '\n')
 			parsing(line, env);

@@ -31,7 +31,7 @@ GNL				= $(GNL_PATH)get_next_line.a
 
 #	SRCS && OBJS
 
-SRCS			= main.c srcs/free.c srcs/exit_clean.c start_exec.c start_exec_utils.c exec_cmnd.c 
+SRCS			= main.c srcs/free.c srcs/exit_clean.c start_exec.c start_exec_utils.c exec_cmnd.c env.c
 OBJ				= $(SRCS:.c=.o)
 
 #	PARSING

@@ -42,7 +42,7 @@ typedef struct pipex_s
 	char 	***ops;
 
 	char	**paths;
-	char	**mini_env;
+	// char	**mini_env;
 
 	char	*input;
 
@@ -97,7 +97,7 @@ int		is_real_pipe(char *line, int index);
 
 // start_exec.c
 
-void	start_exec(t_pipex *data);
+void 	start_exec(t_pipex *data, char **env);
 
 char	*get_input(t_pipex *data, int index_1, int index_2);
 
@@ -106,7 +106,7 @@ int		is_red_inline(t_pipex *data, int index);
 //	start_exec_utils.c
 
 int		here_doc(t_pipex *data, int index);
-int		mini_commands(t_pipex *data, int *index);
+int mini_commands(t_pipex *data, int *index, char **env);
 int		open_out(t_pipex *data, int index);
 
 // exec_cmnd.c
@@ -130,5 +130,9 @@ char	*find_path(char **env, char *cmnd);
 
 void	error_code(t_pipex *data, char *line, int ex, int errnum);
 void	exit_child(int errnum, char *line, t_pipex *data);
+
+//	env.c
+
+char    **new_env(char **env);
 
 #endif

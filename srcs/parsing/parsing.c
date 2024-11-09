@@ -107,24 +107,24 @@ void	init_paths(t_pipex *data, int count, char **env)
 	}
 }
 
-void init_env(t_pipex *data, char **env)
-{
-	int i;
+// void init_env(t_pipex *data, char **env)
+// {
+// 	int i;
 	
-	i = -1;
-	data->mini_env = ft_calloc(sizeof(char *), (count_env(env) + 1));
-	if (!data->mini_env)
-		return (printf("malloc fail!\n"), error_code(data, NULL, 1, 0));
-	data->mini_env[count_env(env)] = NULL;
-	while (++i < count_env(env))
-	{
-		data->mini_env[i] = malloc(sizeof(char) * (ft_strlen(env[i]) + 1));
-		if (!data->mini_env[i])
-			return (printf("malloc fail!\n"), error_code(data, NULL, 1, 0));
-		ft_memcpy(data->mini_env[i], env[i], ft_strlen(env[i]));
-		data->mini_env[i][ft_strlen(env[i])] = 0;
-	}
-}
+// 	i = -1;
+// 	data->mini_env = ft_calloc(sizeof(char *), (count_env(env) + 1));
+// 	if (!data->mini_env)
+// 		return (printf("malloc fail!\n"), error_code(data, NULL, 1, 0));
+// 	data->mini_env[count_env(env)] = NULL;
+// 	while (++i < count_env(env))
+// 	{
+// 		data->mini_env[i] = malloc(sizeof(char) * (ft_strlen(env[i]) + 1));
+// 		if (!data->mini_env[i])
+// 			return (printf("malloc fail!\n"), error_code(data, NULL, 1, 0));
+// 		ft_memcpy(data->mini_env[i], env[i], ft_strlen(env[i]));
+// 		data->mini_env[i][ft_strlen(env[i])] = 0;
+// 	}
+// }
 
 void	parsing(char *line, char **env)
 {
@@ -144,20 +144,20 @@ void	parsing(char *line, char **env)
 		return (perror("bash: syntax error near unexpected token `|'"), error_code(NULL, line, 0, errno));
 	data = malloc(sizeof(t_pipex) * 1);
 	if (!data)
-		return (perror("malloc fail!\n"), error_code(NULL, line, 1, errno));
+		return (perror("malloc fail!\n"), free_list(env), error_code(NULL, line, 1, errno));
 	cmnd_count = count_cmnds(line);
 	printf("COUNT CMND_LINES%d\n", cmnd_count);
 	data->paths = NULL;
 	data->cmnds = NULL;
 	data->ops = NULL;
 	data->input = NULL;
-	data->mini_env = NULL;
+	// data->mini_env = NULL;
 	while (check_open(line))
 		line = join_this(join_this(line, "\n"), get_next_line(0, 0));
 	init_cmds(data, line, cmnd_count);
-	init_env(data, env);
+	// data->mini_env = env;
 	if (!check_reds(data))
 		return (free_struct(data));
 	return (init_ops(data, cmnd_count), init_paths(data, cmnd_count, env),
-		print_that_shit(data), start_exec(data), free_struct(data));
+		print_that_shit(data), start_exec(data, env), free_struct(data));
 }

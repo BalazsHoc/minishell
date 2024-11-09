@@ -22,24 +22,25 @@ int here_doc(t_pipex *data, int index)
     return (1);
 }
 
-char    *get_home()
+char    *get_home(t_pipex *data, char **env)
 {
     char *home_dir;
 
     home_dir = getenv("HOME");
+    printf("home: %s\n", home_dir);
     if (!home_dir)
     {
         printf("Home is not set\n");
-        exit(1);
+        return (free_list(env), error_code(data, NULL, 1, 1), NULL);
     }
     return (home_dir);
 }
 
-int change_dir(char **argv)
+int change_dir(char **argv, t_pipex *data, char **env)
 {
     char    *home_dir;
 
-    home_dir = get_home();
+    home_dir = get_home(data, env);
     if (!strncmp(argv[0], "cd", 3))
     {
         if (!argv[1] || !strncmp(argv[1], "~", 2))
@@ -127,7 +128,7 @@ int change_dir(char **argv)
 //         export_cmnd_set(data, index);
 // }
 
-void env_cmnd(t_pipex *data, int index)
+void env_cmnd(t_pipex *data, char **env, int index)
 {
     int i;
     int fd;
@@ -138,21 +139,21 @@ void env_cmnd(t_pipex *data, int index)
     if (fd == -2)
         fd = 1;
     // printf("FD: %d\n", fd);
-    while (data->mini_env[++i])
+    while (env[++i])
     {
-        write(fd, data->mini_env[i], ft_strlen(data->mini_env[i]));
+        write(fd, env[i], ft_strlen(env[i]));
         write(fd, "\n", 1);
     }
     if (fd > 2)
         close(fd);
 }
 
-int mini_commands(t_pipex *data, int *index)
+int mini_commands(t_pipex *data, int *index, char **env)
 {
     if (!ft_strncmp(data->ops[*index][0], "cd", 3) && ++(*index))
-        change_dir(data->ops[*index - 1]);
+        change_dir(data->ops[*index - 1], data, env);
     else if (!ft_strncmp(data->ops[*index][0], "env", 4) && !data->cmnds[*index + 1])
-        env_cmnd(data, ++(*index) - 1);
+        env_cmnd(data, env, ++(*index) - 1);
     // if (!ft_strncmp(data->ops[*index][0], "export", 7) && ++(*index))
     //     export_cmnd(data, *index - 1);
     // printf("hura\n");

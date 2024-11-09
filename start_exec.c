@@ -146,14 +146,14 @@ int open_out(t_pipex *data, int index)
     return (fd);
 }
 
-void start_exec(t_pipex *data)
+void start_exec(t_pipex *data, char **env)
 {
     int     i;
     int     fd;
     
     i = -1;
     data->input = NULL;
-    while (data->cmnds[++i] && mini_commands(data, &i) && data->cmnds[i] && here_doc(data, i))
+    while (data->cmnds[++i] && mini_commands(data, &i, env) && data->cmnds[i] && here_doc(data, i))
     {
         fd = open_out(data, i);
         if (ft_strncmp(data->paths[i], "pathnfound", 11)
