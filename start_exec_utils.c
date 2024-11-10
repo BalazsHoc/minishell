@@ -59,6 +59,7 @@ int change_dir(char **argv, t_pipex *data, char **env)
             return (1);
         }
         printf("Penis_Good\n");
+        printf("PWD: %s\n", getenv("PWD")); // so env must be refreshed inmediately
         return (1);
     }
     return (0);
@@ -154,6 +155,8 @@ int mini_commands(t_pipex *data, int *index, char **env)
         change_dir(data->ops[*index - 1], data, env);
     else if (!ft_strncmp(data->ops[*index][0], "env", 4) && !data->cmnds[*index + 1])
         env_cmnd(data, env, ++(*index) - 1);
+    else if (!ft_strncmp(data->ops[*index][0], "exit", 5) && !data->cmnds[*index + 1])
+        return (free_list(env), error_code(data, NULL, 1, 0), 0);
     // if (!ft_strncmp(data->ops[*index][0], "export", 7) && ++(*index))
     //     export_cmnd(data, *index - 1);
     // printf("hura\n");
