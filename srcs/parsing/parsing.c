@@ -151,13 +151,12 @@ void	parsing(char *line, char **env)
 	data->cmnds = NULL;
 	data->ops = NULL;
 	data->input = NULL;
-	// data->mini_env = NULL;
 	while (check_open(line))
 		line = join_this(join_this(line, "\n"), get_next_line(0, 0));
 	init_cmds(data, line, cmnd_count);
-	// data->mini_env = env;
+	data->cur_env = env;
 	if (!check_reds(data))
 		return (free_struct(data));
-	return (init_ops(data, cmnd_count), init_paths(data, cmnd_count, env),
+	return (init_cur_path(data), init_ops(data, cmnd_count), init_paths(data, cmnd_count, env),
 		print_that_shit(data), start_exec(data, env), free_struct(data));
 }

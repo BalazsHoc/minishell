@@ -1,5 +1,29 @@
 #include "../../minishell.h"
 
+void init_cur_path(t_pipex *data)
+{
+	int i;
+	char *new;
+
+	i = -1;
+	while (data->cur_env[++i])
+	{
+		if (!ft_strncmp(data->cur_env[i], "PWD=", 4))
+			data->cur_path = data->cur_env[i] + 4;
+	}
+	i = 0;
+	while (data->cur_path[i])
+		i++;
+	new = malloc(sizeof(char) * (i + 1));
+	if (!new)
+		return (printf("malloc fail\n"), error_code(data, NULL, 1, 1), NULL);
+	new[i] = 0;
+	i = -1;
+	while (data->cur_path[++i])
+		new[i] = data->cur_path[i];
+	data->cur_path = new;
+}
+
 char *find_path_2(char **arr, char *cmnd)
 {
 	int i;

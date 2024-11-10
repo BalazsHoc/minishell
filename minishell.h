@@ -42,8 +42,9 @@ typedef struct pipex_s
 	char 	***ops;
 
 	char	**paths;
-	// char	**mini_env;
+	char	**cur_env;
 
+	char	*cur_path;
 	char	*input;
 
 }	t_pipex;
@@ -77,6 +78,7 @@ int		count_env(char **env);
 
 //	inti_paths.c
 
+void 	init_cur_path(t_pipex *data);
 char	*find_path(char **env, char *cmnd);
 
 //	parsing_utils_is_1.c
@@ -106,7 +108,7 @@ int		is_red_inline(t_pipex *data, int index);
 //	start_exec_utils.c
 
 int		here_doc(t_pipex *data, int index);
-int mini_commands(t_pipex *data, int *index, char **env);
+int		mini_commands(t_pipex *data, int *index, char **env);
 int		open_out(t_pipex *data, int index);
 
 // exec_cmnd.c
