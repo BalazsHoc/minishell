@@ -30,8 +30,12 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 
-# ifndef BUF_SIZE
-# define BUF_SIZE 50
+// # ifndef BUF_SIZE_GNL
+// # define BUF_SIZE_GNL 50
+// # endif
+
+# ifndef BUF_SIZE_ENV
+# define BUF_SIZE_ENV 5000
 # endif
 
 
@@ -42,8 +46,9 @@ typedef struct pipex_s
 	char 	***ops;
 
 	char	**paths;
-	// char	**mini_env;
+	char	**cur_env;
 
+	char	*cur_path;
 	char	*input;
 
 }	t_pipex;
@@ -52,7 +57,7 @@ int		main(int argc, char **argv, char **env);
 
 //	parsing.c
 
-void	parsing(char *line, char **env);
+void	parsing(t_pipex *data, char *line, char **env);
 
 //	util_checks.c
 
@@ -77,6 +82,7 @@ int		count_env(char **env);
 
 //	inti_paths.c
 
+void 	set_cur_path(t_pipex *data);
 char	*find_path(char **env, char *cmnd);
 
 //	parsing_utils_is_1.c
@@ -97,7 +103,7 @@ int		is_real_pipe(char *line, int index);
 
 // start_exec.c
 
-void 	start_exec(t_pipex *data, char **env);
+void 	start_exec(t_pipex *data);
 
 char	*get_input(t_pipex *data, int index_1, int index_2);
 
@@ -105,8 +111,9 @@ int		is_red_inline(t_pipex *data, int index);
 
 //	start_exec_utils.c
 
+int		is_valid_cwd(t_pipex *data);
 int		here_doc(t_pipex *data, int index);
-int mini_commands(t_pipex *data, int *index, char **env);
+int		mini_commands(t_pipex *data, int *index);
 int		open_out(t_pipex *data, int index);
 
 // exec_cmnd.c
@@ -121,6 +128,7 @@ void	free_a(char *line, t_pipex *data);
 void	free_list_list(char ***arr);
 void	free_list(char **arr);
 void	free_str(char *s);
+void	free_env(char **env);
 
 //	find_path.c
 
@@ -133,6 +141,6 @@ void	exit_child(int errnum, char *line, t_pipex *data);
 
 //	env.c
 
-char    **new_env(char **env);
+// void	init_env(char **env);
 
 #endif

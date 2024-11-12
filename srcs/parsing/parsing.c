@@ -29,6 +29,8 @@ void	print_that_shit(t_pipex *data)
 		while (data->ops[i][++j])
 			printf("OP:   %d:%d | %s\n", i, j, data->ops[i][j]);
 		printf("PATH: %s\n", data->paths[i]);
+		if (i > 10)
+			break;
 	}
 	// i = -1;
 	// while (data->mini_env[++i])
@@ -75,10 +77,9 @@ void	init_cmds(t_pipex *data, char *line, int count)
 		if (!data->cmnds[i])
 			return (error_code(data, line, 0, 0));
 	}
-	free(line);
 }
 
-void	init_paths(t_pipex *data, int count, char **env)
+void	init_paths(t_pipex *data, int count)
 {
 	int	i;
 
@@ -92,7 +93,7 @@ void	init_paths(t_pipex *data, int count, char **env)
 		if (data->ops[i][0] && ft_strncmp(data->ops[i][0], "cd", 3)
 			&& ft_strncmp(data->ops[i][0], "env", 4) && ft_strncmp(data->ops[i][0], "export", 7))
 		{
-			data->paths[i] = find_path(env, data->ops[i][0]);
+			data->paths[i] = find_path(data->cur_env, data->ops[i][0]);
 			if (!data->paths[i])
 			{
 				data->paths[i] = ft_strdup("pathnfound");
@@ -107,31 +108,13 @@ void	init_paths(t_pipex *data, int count, char **env)
 	}
 }
 
-// void init_env(t_pipex *data, char **env)
-// {
-// 	int i;
-	
-// 	i = -1;
-// 	data->mini_env = ft_calloc(sizeof(char *), (count_env(env) + 1));
-// 	if (!data->mini_env)
-// 		return (printf("malloc fail!\n"), error_code(data, NULL, 1, 0));
-// 	data->mini_env[count_env(env)] = NULL;
-// 	while (++i < count_env(env))
-// 	{
-// 		data->mini_env[i] = malloc(sizeof(char) * (ft_strlen(env[i]) + 1));
-// 		if (!data->mini_env[i])
-// 			return (printf("malloc fail!\n"), error_code(data, NULL, 1, 0));
-// 		ft_memcpy(data->mini_env[i], env[i], ft_strlen(env[i]));
-// 		data->mini_env[i][ft_strlen(env[i])] = 0;
-// 	}
-// }
-
-void	parsing(char *line, char **env)
+void	parsing(t_pipex *data, char *line, char **env)
 {
-	t_pipex	*data;
 	char	*trimmed;
 	int		cmnd_count;
+	// t_pipex *data;
 
+	(void)env;
 	trimmed = ft_strtrim(line, " \n\t\f\v\r");
 	if (!trimmed)
 	{
@@ -142,22 +125,23 @@ void	parsing(char *line, char **env)
 	line = trimmed;
 	if (!syntax_check(line, -1, 0))
 		return (perror("bash: syntax error near unexpected token `|'"), error_code(NULL, line, 0, errno));
-	data = malloc(sizeof(t_pipex) * 1);
-	if (!data)
-		return (perror("malloc fail!\n"), free_list(env), error_code(NULL, line, 1, errno));
+	// data = malloc(sizeof(t_pipex) * 1);
+	// if (!data)
+	// 	return (printf("malloc fail!"), error_code(NULL, line, 1, 1));
+	// data->cur_env = env;
 	cmnd_count = count_cmnds(line);
 	printf("COUNT CMND_LINES%d\n", cmnd_count);
 	data->paths = NULL;
 	data->cmnds = NULL;
 	data->ops = NULL;
 	data->input = NULL;
-	// data->mini_env = NULL;
+	printf("THIS: $%s$\n", line);
 	while (check_open(line))
 		line = join_this(join_this(line, "\n"), get_next_line(0, 0));
 	init_cmds(data, line, cmnd_count);
-	// data->mini_env = env;
+	printf("ENV3: %p\n", data->cur_env);
 	if (!check_reds(data))
 		return (free_struct(data));
-	return (init_ops(data, cmnd_count), init_paths(data, cmnd_count, env),
-		print_that_shit(data), start_exec(data, env), free_struct(data));
+	return (set_cur_path(data), init_ops(data, cmnd_count), init_paths(data, cmnd_count),
+		print_that_shit(data), start_exec(data), free_struct(data));
 }
