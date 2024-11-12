@@ -112,23 +112,15 @@ void	parsing(t_pipex *data, char *line, char **env)
 {
 	char	*trimmed;
 	int		cmnd_count;
-	// t_pipex *data;
 
 	(void)env;
 	trimmed = ft_strtrim(line, " \n\t\f\v\r");
 	if (!trimmed)
-	{
-		free(line);
-		exit(EXIT_FAILURE);
-	}
+		return (rl_clear_history(), free_list(env), error_code(data, line, 1, 1));
 	free(line);
 	line = trimmed;
 	if (!syntax_check(line, -1, 0))
 		return (perror("bash: syntax error near unexpected token `|'"), error_code(NULL, line, 0, errno));
-	// data = malloc(sizeof(t_pipex) * 1);
-	// if (!data)
-	// 	return (printf("malloc fail!"), error_code(NULL, line, 1, 1));
-	// data->cur_env = env;
 	cmnd_count = count_cmnds(line);
 	printf("COUNT CMND_LINES%d\n", cmnd_count);
 	data->paths = NULL;
@@ -136,8 +128,13 @@ void	parsing(t_pipex *data, char *line, char **env)
 	data->ops = NULL;
 	data->input = NULL;
 	printf("THIS: $%s$\n", line);
+	// malloc failing testing till here fine
 	while (check_open(line))
+	{
 		line = join_this(join_this(line, "\n"), get_next_line(0, 0));
+		//if (!line)
+		//	return (rl_clear_history(), free_list(env), error_code(data, NULL, 1, 1));
+	}
 	init_cmds(data, line, cmnd_count);
 	printf("ENV3: %p\n", data->cur_env);
 	if (!check_reds(data))
@@ -145,3 +142,4 @@ void	parsing(t_pipex *data, char *line, char **env)
 	return (set_cur_path(data), init_ops(data, cmnd_count), init_paths(data, cmnd_count),
 		print_that_shit(data), start_exec(data), free_struct(data));
 }
+//	return (rl_clear_history(), free_list(env), error_code(data, line, 1, 1));
