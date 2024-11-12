@@ -73,11 +73,11 @@ int	count_chars(char *line, int i, int open)
 			|| (is_red_1(line[i]) && !is_red_1(line[i + 1]))
 			|| (is_red_1(line[i + 1]) && !is_space(line[i]) && !is_red_1(line[i]))
 			|| (is_space(line[i]) && is_quote(line[i + 1]))
-			|| ((is_space(line[i + 2]) || !line[i + 2] || line[i + 2] == '\n') && is_quote(line[i + 1]))))
+			|| ((!line[i + 2] || is_space(line[i + 2]) || line[i + 2] == '\n') && is_quote(line[i + 1]))))
 			break;
 		else if ((open == 1 && is_quote_one(line[i + 1])) || (open == 2 && is_quote_two(line[i + 1])))
 				break ;
-		if (!(!open && !is_space(line[i - 1]) && (is_quote(line[i]))))
+		if (!(!open && i > 0 && !is_space(line[i - 1]) && (is_quote(line[i]))))
 			count++;
 		i++;
 	}

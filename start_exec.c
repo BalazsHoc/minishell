@@ -65,7 +65,6 @@ char *get_input(t_pipex *data, int index_1, int index_2)
     // printf("KEY%s\n", key);
     if (!ft_strncmp(data->cmnds[index_1][index_2], "<", 2))
     {
-        // printf("PENIS\n");
         fd = open(key, O_RDONLY);   
         if (fd == -1)
             return (printf("bash: %s: no such file or directory\n", key), NULL);
@@ -146,15 +145,17 @@ int open_out(t_pipex *data, int index)
     return (fd);
 }
 
-void start_exec(t_pipex *data, char **env)
+void start_exec(t_pipex *data)
 {
     int     i;
     int     fd;
     
     i = -1;
     data->input = NULL;
-    while (data->cmnds[++i] && mini_commands(data, &i, env) && data->cmnds[i] && here_doc(data, i))
+    while (data->cmnds[++i] && mini_commands(data, &i) && data->cmnds[i] && here_doc(data, i))
     {
+        if (i > 10)
+            break;
         fd = open_out(data, i);
         if (ft_strncmp(data->paths[i], "pathnfound", 11)
             && (is_valid_in(data, i)

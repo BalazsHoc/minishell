@@ -118,12 +118,20 @@ void	handle_child(int *fd, int fd_2, t_pipex *data, int index)
 	exit(EXIT_FAILURE);
 }
 
+void	find_lvpwd(t_pipex *data)
+{
+	while (!is_valid_cwd(data))
+		chdir("..");
+}
+
 char	*exec_cmnd(t_pipex *data, int index)
 {
     int pid;
     int fd[2];
     int tmp_fd;
 
+	// we cannot use tmp if: we dont have a valid pwd or we create the tmp where was the last valid pwd
+	find_lvpwd(data);
 	tmp_fd = open(".txt", O_WRONLY | O_CREAT | O_TRUNC, 0666);
 	if (tmp_fd == -1)
 		return (free_struct(data), perror("open tmpfile:"), NULL);
@@ -143,6 +151,7 @@ char	*exec_cmnd(t_pipex *data, int index)
 		handle_child(fd, tmp_fd, data, index);
 	else
 		data->input= handle_parent(fd, tmp_fd, data);
+	chdir(data->cur_path);
 	return (data->input);
 }
 

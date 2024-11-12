@@ -14,6 +14,15 @@
 
 //only the if statements has been changed in free* functions
 
+void free_env(char **env)
+{
+	int i;
+
+	i = -1;
+	while (env[++i])
+		free_str(env[i]);
+}
+
 void	free_list_ptr(char ***list)
 {
 	int i;
@@ -39,7 +48,7 @@ void	free_struct(t_pipex *data)
 			free_list_list(data->ops);
 		if (data->input)
 			free_str(data->input);
-		free(data);
+		// free(data);
 	}
 }
 
