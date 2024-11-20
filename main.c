@@ -34,7 +34,7 @@ void	init_env(char ***env)
 	i = 0;
 	new_env = malloc(sizeof(char *) * (count_env(*env) + 1));
 	if (!new_env)
-			return (printf("malloc fail!\n"), free_list(*env), error_code(NULL, NULL, 1, 1));
+			return (printf("malloc fail!\n"), error_code(NULL, NULL, 1, 1));
 	new_env[count_env(*env)] = NULL;
 	i = -1;
 	while (++i < count_env(*env))
