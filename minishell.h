@@ -26,6 +26,7 @@
 # include <limits.h>
 # include <signal.h>
 # include <errno.h>
+# include <dirent.h>
 
 # include <sys/types.h>
 # include <sys/wait.h>
@@ -33,6 +34,10 @@
 // # ifndef BUF_SIZE_GNL
 // # define BUF_SIZE_GNL 50
 // # endif
+
+# ifndef MAX_CMNDS
+# define MAX_CMNDS 50
+# endif
 
 # ifndef BUF_SIZE_ENV
 # define BUF_SIZE_ENV 5000
@@ -50,6 +55,9 @@ typedef struct pipex_s
 
 	char	*cur_path;
 	char	*input;
+	char	*tmp;
+
+	int		fd;
 
 }	t_pipex;
 
@@ -84,6 +92,7 @@ int		count_env(char **env);
 
 void 	set_cur_path(t_pipex *data);
 char	*find_path(char **env, char *cmnd);
+int		is_mini(t_pipex *data, int i);
 
 //	parsing_utils_is_1.c
 
@@ -103,7 +112,7 @@ int		is_real_pipe(char *line, int index);
 
 // start_exec.c
 
-void 	start_exec(t_pipex *data);
+void 	start_exec(t_pipex *data, int cmnd_count);
 
 char	*get_input(t_pipex *data, int index_1, int index_2);
 
@@ -113,13 +122,20 @@ int		is_red_inline(t_pipex *data, int index);
 
 int		is_valid_cwd(t_pipex *data);
 int		here_doc(t_pipex *data, int index);
-int		mini_commands(t_pipex *data, int *index);
 int		open_out(t_pipex *data, int index);
+int		bigger_one(char *s1, char *s2);
 
-// exec_cmnd.c
+void	mini_commands(t_pipex *data, int index);
 
-char	*exec_cmnd(t_pipex *data, int index);
+//	exec.c
+
+void	exec_mini(t_pipex *data, int index, int cmnd_count, int (*pipes)[2]);
+void	exec_cmnd(t_pipex *data, int index, int cmnd_count, int (*pipes)[2]);
 char 	*join_this(char *s1, char *s2);
+
+//	exec_cmnd_utils.c
+
+char	*create_tmp(t_pipex *data, int index, char *tmp_name, int count);
 
 //	free.c
 

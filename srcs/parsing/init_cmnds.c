@@ -28,9 +28,9 @@ int	count_elem(char *line, int i, int count)
 	while (line[++j] && i >= 0)
 	{
 		// printf("J: %d | K: %d | I: %d\n", j, k, i);
-		// printf("LINE: $%s$\n", line + j);
 		if (k == 0)
 		{
+			// printf("LINE: $%s$\n", line + j);
 			if (is_real_pipe(line, j) && !open)
 				break ;
 			if (is_quote_one(line[j]) && !open && is_space(line[j - 1]) && count++ && printf("COUNT++++++++\n"))
@@ -52,7 +52,7 @@ int	count_elem(char *line, int i, int count)
 					count++;
 				}
 		}
-		else if (is_real_pipe(line, j) && --i)
+		else if (is_real_pipe(line, j) && --i != INT_MIN)
 			k++;
 	}
 	// printf("COUNT ELEM RETURN: %d\n", count);
@@ -119,7 +119,7 @@ char	**fill_cmnds(char **arr, char *line, int i, int k)
 		else if (((is_quote_one(line[j]) && open == 1) || (is_quote_two(line[j]) && open == 2)) && ++j)
 			open = 0;
 		// "this is 'hi there ' last word "
-		// printf("FILL_CMNDS: %s | OPEN: %d\n", line + j, open);
+		// printf("FILL_CMNDS: %s | OPEN: %d | K: %d\n", line + j, open, k);
 		if (k == 0 && !is_real_pipe(line, j) && ((j == 0 && !is_space(line[j]))
 				|| (is_space(line[j - 1]) && !is_space(line[j]) && !open)
 				|| ((open == 1 && is_quote_one(line[j - 1])) || (open == 2 && is_quote_two(line[j - 1])))

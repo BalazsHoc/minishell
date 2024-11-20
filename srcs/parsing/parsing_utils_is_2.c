@@ -11,7 +11,7 @@
 
 int is_red(t_pipex *data, int index_1, int index_2)
 {
-	// printf("Data1:\n");
+	// printf("Data1: %d | %d \n", index_1, index_2);
 	// printf("Data: %s\n", data->cmnds[index_1][index_2]);
 	if (!data->cmnds[index_1][index_2])
 		return (0);
@@ -46,6 +46,7 @@ int is_red_clean(char *str, int index)
 
 int	is_real_pipe(char *line, int index)
 {
+	// printf("IS REAL PIPE: %s\n", line + index);
 	if (line[index] == '|')
 	{
 		if (line[index - 1] == '|'
