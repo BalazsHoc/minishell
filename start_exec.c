@@ -145,18 +145,67 @@ int open_out(t_pipex *data, int index)
     return (fd);
 }
 
-void start_exec(t_pipex *data)
+// void start_exec(t_pipex *data, int cmnd_count)
+// {
+//     int     i;
+//     int     fd;
+    
+//     i = -1;
+//     data->input = NULL;
+//     while (data->cmnds[++i] && data->cmnds[i] && here_doc(data, i))
+//     {
+//         if (i > 10)
+//             break;
+//         fd = open_out(data, i);
+//         // data->input 
+//         if (ft_strncmp(data->paths[i], "pathnfound", 11)
+//             && (is_valid_in(data, i)
+//             || (!is_valid_in(data, i) && is_in_inline(data, i) == -1)))
+//         {
+//             if ((is_valid_in(data, i) || (!is_valid_in(data, i) && is_red_inline(data, i) != -1)) && free_this(data->input))
+//                 data->input = get_input(data, i, is_red_inline(data, i));
+//             printf("INPUT: %s$\n", data->input);
+//             if (!ft_strncmp(data->paths[i], "minicmnds", 11))
+//                mini_commands(data, i);
+//             else 
+//                 exec_cmnd(data, i);
+//             printf("EXECCMND FINISHED!\n");
+//             printf("_________________________________________________________________________________________\n");
+//             if (fd != -2)
+//                 write(open_out(data, i), data->input, ft_strlen(data->input));
+//             else if (!data->cmnds[i + 1])
+//                 write(1, data->input, ft_strlen(data->input));
+//             printf("_________________________________________________________________________________________\n");
+//         }
+//         else if (ft_strncmp(data->paths[i], "pathnfound", 11) 
+//             && (is_valid_in(data, i) || (!is_valid_in(data, i) && is_red_inline(data, i) != -1)))
+//             printf("BASH: %s: no such file or directory\n", data->cmnds[i][is_red_inline(data, i) + 1]);
+//         if (fd > 2)
+//             close(fd);
+//         printf("EXIT\n");
+//     }
+// }
+void start_exec(t_pipex *data, int cmnd_count)
 {
     int     i;
-    int     fd;
-    
+    int     pipes[MAX_CMNDS -1][2];
+
+    i = -1;
+    while (++i < cmnd_count)
+    {
+        if (pipe(pipes[i]) == -1)
+        {
+            perror("pipe");
+            exit(1);
+        }
+    }
     i = -1;
     data->input = NULL;
-    while (data->cmnds[++i] && mini_commands(data, &i) && data->cmnds[i] && here_doc(data, i))
+    // signal(SIGCHLD, SIG_IGN);
+    while (data->cmnds[++i] && data->cmnds[i] && here_doc(data, i))
     {
-        if (i > 10)
-            break;
-        fd = open_out(data, i);
+        data->fd = open_out(data, i);
+        // data->input 
         if (ft_strncmp(data->paths[i], "pathnfound", 11)
             && (is_valid_in(data, i)
             || (!is_valid_in(data, i) && is_in_inline(data, i) == -1)))
@@ -164,10 +213,13 @@ void start_exec(t_pipex *data)
             if ((is_valid_in(data, i) || (!is_valid_in(data, i) && is_red_inline(data, i) != -1)) && free_this(data->input))
                 data->input = get_input(data, i, is_red_inline(data, i));
             printf("INPUT: %s$\n", data->input);
-            data->input = exec_cmnd(data, i);
+            if (!ft_strncmp(data->paths[i], "minicmnds", 11))
+               exec_mini(data, i, cmnd_count, pipes);
+            else 
+                exec_cmnd(data, i, cmnd_count, pipes);
             printf("EXECCMND FINISHED!\n");
             printf("_________________________________________________________________________________________\n");
-            if (fd != -2)
+            if (data->fd != -2)
                 write(open_out(data, i), data->input, ft_strlen(data->input));
             else if (!data->cmnds[i + 1])
                 write(1, data->input, ft_strlen(data->input));
@@ -176,9 +228,13 @@ void start_exec(t_pipex *data)
         else if (ft_strncmp(data->paths[i], "pathnfound", 11) 
             && (is_valid_in(data, i) || (!is_valid_in(data, i) && is_red_inline(data, i) != -1)))
             printf("BASH: %s: no such file or directory\n", data->cmnds[i][is_red_inline(data, i) + 1]);
-        if (fd > 2)
-            close(fd);
+        if (data->fd > 2)
+            close(data->fd);
         printf("EXIT\n");
     }
+    for (i = 0; i < cmnd_count - 1; i++) {
+        close(pipes[i][0]);
+        close(pipes[i][1]);
+    }
+    while (wait(NULL) > 0);
 }
-

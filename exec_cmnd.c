@@ -59,99 +59,209 @@ char    *file_read(char *file)
 	return (content);
 }
 
-char	*handle_parent(int *fd, int fd_2, t_pipex *data)
-{
-	close(fd[0]);
-	close(fd_2);
-	if (!data->input)
-	{
-		// if (write(fd[1], NULL, 0) == -1)
-		// {
-		// 	perror("write2:");
-		// 	free_str(input);
-		// 	close(fd[1]);
-		// 	exit(EXIT_FAILURE);
-		// }
-	}
-	else
-	{
-		if (write(fd[1], data->input, ft_strlen(data->input)) == -1)
-		{
-			perror("ERROR: write:");
-			free_str(data->input);
-			close(fd[1]);
-			exit(EXIT_FAILURE);
-		}
-	}
-	close(fd[1]);
-	wait(NULL);
-	return (free_str(data->input), data->input = file_read(".txt"), unlink(".txt"), data->input);
-}
 
-void	handle_child(int *fd, int fd_2, t_pipex *data, int index)
+// char	*handle_parent(t_pipex *data, int index, int (*pipes)[2])
+// {
+// 	if (data->input)
+// 	{
+// 		if (write(pipes[index][1], data->input, ft_strlen(data->input)) == -1)
+// 		{
+// 			perror("ERROR: write:");
+// 			free_str(data->input);
+// 			exit(EXIT_FAILURE);
+// 		}
+// 	}
+// 	return (free_str(data->input), data->input = file_read(data->tmp), unlink(data->tmp), data->input);
+// }
+
+void	handle_child(t_pipex *data, int index, int (*pipes)[2], int cmnd_count)
 {
-	close(fd[1]);
-    if (data->input)
+    if (index > 0)
     {
-        if (dup2(fd[0], STDIN_FILENO) == -1)
+        if (dup2(pipes[index - 1][0], STDIN_FILENO) == -1)
         {
             perror("ERROR: dup2 stdin");
             free_struct(data);
-            close(fd[0]);
-            close(fd_2);
+            exit(EXIT_FAILURE);
+        }
+        // close(pipes[index - 1][0]);
+    }
+	printf("PATH: %s | %s\n", data->paths[index], data->ops[index][0]);
+	if (data->fd == -2 && index < cmnd_count - 1)
+    {
+        if (dup2(pipes[index][1], STDOUT_FILENO) == -1)
+        {
+            perror("dup2");
+            free_struct(data);
+            exit(EXIT_FAILURE);
+        }
+        // close(pipes[index][1]);
+    }
+	else if (data->fd != -2)
+    {
+        if (dup2(data->fd, STDOUT_FILENO) == -1)
+        {
+            perror("dup2");
+            free_struct(data);
             exit(EXIT_FAILURE);
         }
     }
-    close(fd[0]);
-	printf("PATH: %s | %s\n", data->paths[index], data->ops[index][0]);
-	if (dup2(fd_2, STDOUT_FILENO) == -1)
-	{
-		perror("dup2");
-		free_struct(data);
-		close(fd_2);                
-		exit(EXIT_FAILURE);
-	}
-	close(fd_2);
+    for (int j = 0; j < cmnd_count - 1; j++) {
+        close(pipes[j][0]);
+        close(pipes[j][1]);
+    }
 	execve(data->paths[index], data->ops[index], NULL);
 	perror("execve");
 	free_struct(data);
 	exit(EXIT_FAILURE);
 }
 
-void	find_lvpwd(t_pipex *data)
+void	handle_pwd_tmp(t_pipex *data, int index)
 {
 	while (!is_valid_cwd(data))
 		chdir("..");
+	data->tmp = create_tmp(data, index, "tmp_", 0);
 }
 
-char	*exec_cmnd(t_pipex *data, int index)
+// void exec_cmnd(t_pipex *data, int index)
+// {
+//     int pid;
+//     int fd[2];
+//     int tmp_fd;
+
+// 	// we cannot use tmp if: we dont have a valid pwd or we create the tmp where was the last valid pwd
+// 	// also the tmp cannot be any filename.. we have to know that this filename does not exist already inside the folder
+// 	handle_pwd_tmp(data, index);
+// 	tmp_fd = open(data->tmp, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+// 	if (tmp_fd == -1)
+// 	{
+// 		free_struct(data);
+// 		perror("open tmpfile:");
+// 	}
+// 	if (pipe(fd) == -1)
+// 	    error_code(data, NULL, 1, errno);
+// 	pid = fork();
+// 	if (pid < 0)
+// 	{
+// 		perror("fork");
+// 		close(tmp_fd);
+// 		close(fd[0]);
+// 		close(fd[1]);
+// 		free_struct(data);
+// 		exit(EXIT_FAILURE);
+// 	}
+// 	else if (pid == 0)
+// 		handle_child(fd, tmp_fd, data, index);
+// 	else
+// 		data->input= handle_parent(fd, tmp_fd, data);
+// 	chdir(data->cur_path);
+// }
+
+// void pre_exec(t_pipex *data, int index)
+// {
+// 	int pid;
+
+// 	pid = fork();
+// 	if (pid < 0)
+// 	{
+// 		perror("fork");
+// 		free_struct(data);
+// 		exit(EXIT_FAILURE);
+// 	}
+// 	else if (pid == 0)
+// 	{
+// 		exec_cmnd(data, index);
+// 		exit(0);
+// 	}
+// }
+
+// void handle_child(int **pipes, t_pipex *data, int index, int cmnd_count)
+// {
+// 	if (index > 0)
+// 	{
+// 		dup2(pipes[index - 1][0], STDIN_FILENO);
+// 		close(pipes[index - 1][0]);
+// 	}
+// 	if (index < cmnd_count -1 )
+// 	{
+// 		dup2(pipes[index][1], STDOUT_FILENO);
+// 		close(pipes[index][1]);
+// 	}
+// 	execve(data->paths[index], data->ops[index], NULL);
+// 	perror("execve");
+// 	exit(1);
+// }
+
+
+// void exec_cmnd(t_pipex *data, int index, int cmnd_count, int (*pipes)[2])
+// {
+//     int pid;
+//     // int tmp_fd;
+
+// 	// // we cannot use tmp if: we dont have a valid pwd or we create the tmp where was the last valid pwd
+// 	// // also the tmp cannot be any filename.. we have to know that this filename does not exist already inside the folder
+// 	// handle_pwd_tmp(data, index);
+// 	// tmp_fd = open(data->tmp, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+// 	// if (tmp_fd == -1)
+// 	// {
+// 	// 	free_struct(data);
+// 	// 	perror("open tmpfile:");
+// 	// }
+// 	pid = fork();
+// 	if (pid < 0)
+// 	{
+// 		perror("fork");
+// 		free_struct(data);
+// 		exit(EXIT_FAILURE);
+// 	}
+// 	else if (pid == 0)
+// 	{
+// 		if (index > 0)
+// 		{
+// 			dup2(pipes[index - 1][0], STDIN_FILENO);
+// 			close(pipes[index - 1][0]);
+// 		}
+// 		if (index < cmnd_count -1 )
+// 		{
+// 			dup2(pipes[index][1], STDOUT_FILENO);
+// 			close(pipes[index][1]);
+// 		}
+//         for (int j = 0; j < cmnd_count - 1; j++) {
+//             close(pipes[j][0]);
+//             close(pipes[j][1]);
+//         }
+// 		execve(data->paths[index], data->ops[index], NULL);
+// 		perror("execve");
+// 			exit(1);
+// 	}
+// }
+
+void exec_cmnd(t_pipex *data, int index, int cmnd_count, int (*pipes)[2])
 {
     int pid;
-    int fd[2];
-    int tmp_fd;
+    // int tmp_fd;
 
 	// we cannot use tmp if: we dont have a valid pwd or we create the tmp where was the last valid pwd
-	find_lvpwd(data);
-	tmp_fd = open(".txt", O_WRONLY | O_CREAT | O_TRUNC, 0666);
-	if (tmp_fd == -1)
-		return (free_struct(data), perror("open tmpfile:"), NULL);
-	if (pipe(fd) == -1)
-	    error_code(data, NULL, 1, errno);
+	// also the tmp cannot be any filename.. we have to know that this filename does not exist already inside the folder
+	// handle_pwd_tmp(data, index);
+    // if (data->fd == -2)
+	    // tmp_fd = open(data->tmp, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+	// if (tmp_fd == -1)
+	// {
+	// 	free_struct(data);
+	// 	perror("open tmpfile:");
+	// }
 	pid = fork();
 	if (pid < 0)
 	{
 		perror("fork");
-		close(tmp_fd);
-		close(fd[0]);
-		close(fd[1]);
+		// close(tmp_fd);
 		free_struct(data);
 		exit(EXIT_FAILURE);
 	}
 	else if (pid == 0)
-		handle_child(fd, tmp_fd, data, index);
-	else
-		data->input= handle_parent(fd, tmp_fd, data);
+		handle_child(data, index, pipes, cmnd_count);
+	// else
+		// data->input = handle_parent(data, index, pipes);
 	chdir(data->cur_path);
-	return (data->input);
 }
-

@@ -6,14 +6,11 @@ int here_doc(t_pipex *data, int index)
     char *infile;
 
     i = -1;
-    printf("START HEREDOC!\n");
     while (data->cmnds[index][++i])
     {
-        printf("HEREDOC! %d\n", i);
         if ((!ft_strncmp(data->cmnds[index][i], "<<", 3) || !ft_strncmp(data->cmnds[index][i], "<", 2))
             && (!ft_strncmp(data->paths[index], "pathnfound", 11) || i != is_red_inline(data, index)))
         {
-            printf("GET_INPUT!\n");
             infile = get_input(data, index, i);
             free_str(infile);
             i++;
@@ -157,24 +154,34 @@ void cd_cmnd(char **argv, t_pipex *data, int index)
     }
 }
 
-void env_cmnd(t_pipex *data, int index)
+char *env_cmnd(t_pipex *data, int index)
 {
     int i;
-    int fd;
+    int j;
+    int count;
+    char *out;
 
 
     i = -1;
-    fd = open_out(data, index);
-    if (fd == -2)
-        fd = 1;
-    // printf("FD: %d\n", fd);
+    if (data->ops[index][1])
+        return (NULL);
+    while (data->cur_env[++i])
+        count += ft_strlen(data->cur_env[i]) + 1;
+    out = malloc(sizeof(char) * (count + 1));
+    if (!out)
+        return (printf("malloc fail!\n"), error_code(data, NULL, 1, 1), NULL);
+    out[count] = 0;
+    i = -1;
+    count = 0;
     while (data->cur_env[++i])
     {
-        write(fd, data->cur_env[i], ft_strlen(data->cur_env[i]));
-        write(fd, "\n", 1);
+        j = -1;
+        while (data->cur_env[i][++j])
+            out[count++] = data->cur_env[i][j];
+        // FIGURE!! should the last line also be newline in the end?
+        out[count++] = '\n';
     }
-    if (fd > 2)
-        close(fd);
+    return (out);
 }
 
 int is_valid_cwd(t_pipex *data)
@@ -228,7 +235,7 @@ void set_rest(t_pipex *data, char **buf)
     data->cur_env = buf;
 }
 
-void export_cmnd(t_pipex *data, int index)
+void export_cmnd_1(t_pipex *data, int index)
 {
     int i;
     int j;
@@ -254,6 +261,36 @@ void export_cmnd(t_pipex *data, int index)
         ft_strlcpy(buf[rand], data->ops[index][i + 1], ft_strlen(data->ops[index][i + 1]) + 1);
     }
     set_rest(data, buf);
+}
+
+char *export_cmnd_2(t_pipex *data, char *this)
+{
+    int i;
+    int j;
+    int count;
+    char *out;
+
+    i = -1;
+    while (data->cur_env[++i])
+        count += ft_strlen(data->cur_env[i]) + 1 + 11;
+    out = malloc(sizeof(char) * (count + 1));
+    if (!out)
+        return (printf("malloc fail!\n"), error_code(data, NULL, 1, 1), NULL);
+    out[count] = 0;
+    i = -1;
+    count = 0;
+    while (data->cur_env[++i])
+    {
+        j = -1;
+        while (++j < 11)
+            out[count++] = this[j];
+        j = -1;
+        while (data->cur_env[i][++j])
+            out[count++] = data->cur_env[i][j];
+        // FIGURE!! should the last line also be newline in the end?
+        out[count++] = '\n';
+    }
+    return (out);
 }
 
 char *key_this(t_pipex *data, char *s)
@@ -329,6 +366,8 @@ void unset_cmnd(t_pipex *data, int index, int i, int k)
     char **new;
     char *key;
 
+    if (!data->ops[index][1])
+        return (printf("bash: unset: not enough arguments\n"), exit_child(errno, NULL, data));
     new = malloc_env_unset(data, count_unset_env(data, index));
     while (data->cur_env[++i])
     {
@@ -351,21 +390,22 @@ void unset_cmnd(t_pipex *data, int index, int i, int k)
     data->cur_env = new;
 }
 
-int mini_commands(t_pipex *data, int *index)
+void mini_commands(t_pipex *data, int index)
 {
-    if (!ft_strncmp(data->ops[*index][0], "cd", 3) && ++(*index))
-        cd_cmnd(data->ops[*index - 1], data, (*index) - 1);
-    else if (!ft_strncmp(data->ops[*index][0], "env", 4) && !data->cmnds[*index + 1])
-        env_cmnd(data, ++(*index) - 1);
-    else if (!ft_strncmp(data->ops[*index][0], "exit", 5) && !data->cmnds[*index + 1])
-        return (error_code(data, NULL, 1, 0), 0);
-    else if (!ft_strncmp(data->ops[*index][0], "pwd", 4) && ++(*index))
+    if (!ft_strncmp(data->ops[index][0], "cd", 3))
+        cd_cmnd(data->ops[index - 1], data, index);
+    else if (!ft_strncmp(data->ops[index][0], "env", 4) && !data->ops[index][1])
+        printf("%s", env_cmnd(data, ++(index) - 1));
+    else if (!ft_strncmp(data->ops[index][0], "exit", 5) && !data->cmnds[index])
+        error_code(data, NULL, 1, 0);
+    else if (!ft_strncmp(data->ops[index][0], "pwd", 4))
         printf("%s\n", data->cur_path);
-    else if (!ft_strncmp(data->ops[*index][0], "ls", 3) && !is_valid_cwd(data))
-        ++(*index);
-    else if (!ft_strncmp(data->ops[*index][0], "export", 7) && ++(*index))
-        export_cmnd(data, *index - 1);
-    else if (!ft_strncmp(data->ops[*index][0], "unset", 6) && ++(*index))
-        unset_cmnd(data, *index - 1, -1, 0);
-    return (1);
+    else if (!ft_strncmp(data->ops[index][0], "ls", 3) && !is_valid_cwd(data))
+        printf("\n");
+    else if (!ft_strncmp(data->ops[index][0], "export", 7) && data->ops[index][1])
+        export_cmnd_1(data, index);
+    else if (!ft_strncmp(data->ops[index][0], "export", 7) && !data->ops[index][1])
+        printf("%s\n", export_cmnd_2(data, "declare -x "));
+    else if (!ft_strncmp(data->ops[index][0], "unset", 6))
+        unset_cmnd(data, index, -1, 0);
 }

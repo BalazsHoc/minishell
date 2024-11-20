@@ -17,7 +17,7 @@ void set_cur_path(t_pipex *data)
 			check = 1;
 		}
 	}
-	printf("LENGTH ENV: %d\n", i);
+	// printf("LENGTH ENV: %d\n", i);
 	// // // i = 0;
 	// // // while (data->cur_path[i])
 	// // // 	i++;
@@ -29,6 +29,16 @@ void set_cur_path(t_pipex *data)
 	// // while (data->cur_path[++i])
 	// // 	new[i] = data->cur_path[i];
 	// data->cur_path = new;
+}
+
+int is_mini(t_pipex *data, int i)
+{
+	if (!ft_strncmp(data->ops[i][0], "env", 4) || !ft_strncmp(data->ops[i][0], "export", 7)
+		|| !ft_strncmp(data->ops[i][0], "cd", 3) || !ft_strncmp(data->ops[i][0], "unset", 6)
+		|| !ft_strncmp(data->ops[i][0], "pwd", 4) || !ft_strncmp(data->ops[i][0], "exit", 5)
+		|| (!ft_strncmp(data->ops[i][0], "ls", 3) && !is_valid_cwd(data)))
+		return (1);
+	return (0);
 }
 
 char *find_path_2(char **arr, char *cmnd)

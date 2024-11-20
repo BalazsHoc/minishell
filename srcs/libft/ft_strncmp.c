@@ -22,12 +22,12 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 	if (!s1 || !s2)
 		return (-1);
 	// printf("S1: %s$ | S2: %s$\n", s1, s2);
-	// printf("I: %ld$ | N: %ld$\n", i, n);
 	while (i < n)
 	{
-		// printf("HI %ld\n", i);
+		// printf("I: %ld$ | N: %ld$\n", i, n);
 		if (s1[i] && s1[i] == s2[i])
 		{
+			// printf("here: %c \n", s1[i]);
 			while (s1[i] && s1[i] == s2[i] && i < n)
 				i++;
 		}

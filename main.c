@@ -12,13 +12,17 @@
 
 #include "minishell.h"
 
-static void	handle_signal(int sig)
+static void handle_signal(int sig)
 {
 	if (sig == SIGINT)
-		return ;
-		// write(1, "\nminishell$ ", 12);
+	{
+		write(1, "\n", 1);
+		rl_replace_line("", 0);
+		rl_on_new_line();
+		rl_redisplay();
+	}
 	if (sig == SIGQUIT)
-		return ;
+		return;
 }
 
 void	init_env(char ***env)
@@ -50,27 +54,21 @@ int	main(int argc, char **argv, char **env)
 	char	*line;
 	t_pipex *data;
 
-	(void)argv;
+	if (argc != 1 && argv)
+		return (printf("No argument is accepted\n"), 1);
 	init_env(&env);
 	data = malloc(sizeof(t_pipex) * 1);
 	if (!data)
-		return (printf("malloc fail!"), 0);
+		return (printf("malloc fail!"), free_list(env), 0);
 	data->cur_env = env;
-	if (argc != 1)
-		return (printf("No argument is accepted\n"), 1);
 	signal(SIGINT, handle_signal);
 	signal(SIGQUIT, handle_signal);
 	while (1)
 	{
-		// write(1, "minishell$ ", 11);
-		// line = get_next_line(0, false);
 		line = readline("minishell$ ");
 		if (!line)
-		{
-			printf("\n");
-			return (free_list(env), 0); // env remade so musrt be freed at the end (EOF) or error
-		}
-		if (line[0] != '\n')
+			break ;
+		if (*line != '\0')
 		{
 			add_history(line);
 			parsing(data, line, env);
@@ -78,6 +76,5 @@ int	main(int argc, char **argv, char **env)
 		else
 			free(line);
 	}
-	free(data);
-	return (0);
+	return (printf("\n"), free(data), free_list(env), rl_clear_history(), 0);
 }

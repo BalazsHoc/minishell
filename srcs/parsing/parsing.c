@@ -90,8 +90,9 @@ void	init_paths(t_pipex *data, int count)
 	data->paths[count] = NULL;
 	while (++i < count)
 	{
-		if (data->ops[i][0] && ft_strncmp(data->ops[i][0], "cd", 3)
-			&& ft_strncmp(data->ops[i][0], "env", 4) && ft_strncmp(data->ops[i][0], "export", 7))
+		if (is_mini(data, i))
+			data->paths[i] = ft_strdup("minicmnds");
+		else if (data->ops[i][0])
 		{
 			data->paths[i] = find_path(data->cur_env, data->ops[i][0]);
 			if (!data->paths[i])
@@ -135,13 +136,11 @@ void	parsing(t_pipex *data, char *line, char **env)
 	data->cmnds = NULL;
 	data->ops = NULL;
 	data->input = NULL;
-	printf("THIS: $%s$\n", line);
-	while (check_open(line))
-		line = join_this(join_this(line, "\n"), get_next_line(0, 0));
+	if (check_open(line))
+		return (printf("bash: format error bla bla\n"), free_a(line, data));
 	init_cmds(data, line, cmnd_count);
-	printf("ENV3: %p\n", data->cur_env);
 	if (!check_reds(data))
 		return (free_struct(data));
 	return (set_cur_path(data), init_ops(data, cmnd_count), init_paths(data, cmnd_count),
-		print_that_shit(data), start_exec(data), free_struct(data));
+		print_that_shit(data), start_exec(data, cmnd_count), free_struct(data));
 }
