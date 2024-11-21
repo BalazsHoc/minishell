@@ -11,6 +11,7 @@ int here_doc(t_pipex *data, int index)
         if ((!ft_strncmp(data->cmnds[index][i], "<<", 3) || !ft_strncmp(data->cmnds[index][i], "<", 2))
             && (!ft_strncmp(data->paths[index], "pathnfound", 11) || i != is_red_inline(data, index)))
         {
+            printf("PLS DONT\n");
             infile = get_input(data, index, i);
             free_str(infile);
             i++;

@@ -138,6 +138,9 @@ char 	*join_this(char *s1, char *s2);
 //	exec_cmnd_utils.c
 
 char	*create_tmp(t_pipex *data, int index, char *tmp_name, int count);
+void	close_pipes(int (*pipes)[2], int cmnd_count);
+void	create_pipes(int (*pipes)[2], int cmnd_count);
+
 
 //	free.c
 
