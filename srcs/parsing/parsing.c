@@ -25,12 +25,14 @@ void	print_that_shit(t_pipex *data)
 		while (data->cmnds[i][++j])
 			printf("ELEM: %d:%d | %s\n", i, j, data->cmnds[i][j]);
 		j = -1;
-		if (data->ops[i])
-		while (data->ops[i][++j])
-			printf("OP:   %d:%d | %s\n", i, j, data->ops[i][j]);
+		if (data->ops && data->ops[i])
+		{
+			while (data->ops[i][++j])
+				printf("OP:   %d:%d | %s\n", i, j, data->ops[i][j]);
+		}
 		printf("PATH: %s\n", data->paths[i]);
-		if (i > 10)
-			break;
+		// if (i > 10)
+			// break;
 	}
 	// i = -1;
 	// while (data->mini_env[++i])
@@ -42,7 +44,7 @@ void	init_ops(t_pipex *data, int cmnd_count)
     int i;
 
     i = -1;
-    data->ops = malloc(sizeof(char **) * (cmnd_count + 1));
+    data->ops = ft_calloc(sizeof(char **), (cmnd_count + 1));
     if (!data->ops)
         return (perror("malloc fail!\n"), error_code(data, NULL, 1, errno));
     data->ops[cmnd_count] = 0;
@@ -113,7 +115,6 @@ void	parsing(t_pipex *data, char *line, char **env)
 {
 	char	*trimmed;
 	int		cmnd_count;
-	// t_pipex *data;
 
 	(void)env;
 	trimmed = ft_strtrim(line, " \n\t\f\v\r");
@@ -126,10 +127,6 @@ void	parsing(t_pipex *data, char *line, char **env)
 	line = trimmed;
 	if (!syntax_check(line, -1, 0))
 		return (perror("bash: syntax error near unexpected token `|'"), error_code(NULL, line, 0, errno));
-	// data = malloc(sizeof(t_pipex) * 1);
-	// if (!data)
-	// 	return (printf("malloc fail!"), error_code(NULL, line, 1, 1));
-	// data->cur_env = env;
 	cmnd_count = count_cmnds(line);
 	printf("COUNT CMND_LINES%d\n", cmnd_count);
 	data->paths = NULL;

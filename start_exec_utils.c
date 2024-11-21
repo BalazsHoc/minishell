@@ -101,12 +101,14 @@ void    update_env(t_pipex *data, int index)
                 data->cur_env[i] = ft_strjoin("PWD=", data->cur_path);
                 free(data->cur_path);
                 data->cur_path = data->cur_env[i] + 4;
+                printf("CUR: %s\n", data->cur_path);
             }
             else
             {
                 free_str(data->cur_env[i]);
                 data->cur_env[i] = ft_strjoin("PWD=", buf);
             }
+            printf("THIS IS NEW PWD: %s\n", data->cur_env[i]);
             free(buf);
         }
     }
@@ -133,25 +135,24 @@ void cd_cmnd(char **argv, t_pipex *data, int index)
     if (data->ops[index][2])
         return (printf("-bash: cd: too many arguments\n"), error_code(data, NULL, 0, 1));
     home_dir = get_home(data, data->cur_env);
-    if (!strncmp(argv[0], "cd", 3))
+    printf("THIS IS ARGV[1]%s$\n", argv[1]);
+    if (!argv[1] || !strncmp(argv[1], "~", 2))
+        chdir(home_dir);
+    else if (argv[1] && printf("THIS IS TRUE\n") && chdir(argv[1]) == -1)
     {
-        if (!argv[1] || !strncmp(argv[1], "~", 2))
-            chdir(home_dir);
-        else if (argv[1] && chdir(argv[1]) == -1)
-        {
-            if (errno == ENOENT)
-                printf("-bash: cd: %s: No such a file or directory\n", argv[2]);
-            if (errno == ENOTDIR)
-                printf("-bash: cd: %s: Not a directory\n", argv[2]);
-            if (errno == EACCES)
-                printf("-bash: cd: %s: Permission denied\n", argv[2]);
-            if (errno == ENOMEM)
-                printf("-bash: cd: %s: Cannot allocate memory\n", argv[2]);
-        }
-        else if (argv[1])
-            update_env(data, index);
-        printf("PWD: %s\n", getenv("PWD"));
+        printf("ERRNO: %d\n", errno);
+        if (errno == ENOENT)
+            printf("-bash: cd: %s: No such a file or directory\n", argv[2]);
+        if (errno == ENOTDIR)
+            printf("-bash: cd: %s: Not a directory\n", argv[2]);
+        if (errno == EACCES)
+            printf("-bash: cd: %s: Permission denied\n", argv[2]);
+        if (errno == ENOMEM)
+            printf("-bash: cd: %s: Cannot allocate memory\n", argv[2]);
     }
+    else if (argv[1])
+        update_env(data, index);
+    printf("PWD: %s\n", getenv("PWD"));
 }
 
 char *env_cmnd(t_pipex *data, int index)
@@ -393,19 +394,23 @@ void unset_cmnd(t_pipex *data, int index, int i, int k)
 void mini_commands(t_pipex *data, int index)
 {
     if (!ft_strncmp(data->ops[index][0], "cd", 3))
-        cd_cmnd(data->ops[index - 1], data, index);
-    else if (!ft_strncmp(data->ops[index][0], "env", 4) && !data->ops[index][1])
-        printf("%s", env_cmnd(data, ++(index) - 1));
+        cd_cmnd(data->ops[index], data, index);
     else if (!ft_strncmp(data->ops[index][0], "exit", 5) && !data->cmnds[index])
         error_code(data, NULL, 1, 0);
+    else if (!ft_strncmp(data->ops[index][0], "export", 7) && data->ops[index][1])
+        export_cmnd_1(data, index);
+    else if (!ft_strncmp(data->ops[index][0], "unset", 6))
+        unset_cmnd(data, index, -1, 0);
+}
+
+void mini_child(t_pipex *data, int index)
+{
+    if (!ft_strncmp(data->ops[index][0], "env", 4) && !data->ops[index][1])
+        printf("%s", env_cmnd(data, ++(index) - 1));
     else if (!ft_strncmp(data->ops[index][0], "pwd", 4))
         printf("%s\n", data->cur_path);
     else if (!ft_strncmp(data->ops[index][0], "ls", 3) && !is_valid_cwd(data))
         printf("\n");
-    else if (!ft_strncmp(data->ops[index][0], "export", 7) && data->ops[index][1])
-        export_cmnd_1(data, index);
     else if (!ft_strncmp(data->ops[index][0], "export", 7) && !data->ops[index][1])
         printf("%s\n", export_cmnd_2(data, "declare -x "));
-    else if (!ft_strncmp(data->ops[index][0], "unset", 6))
-        unset_cmnd(data, index, -1, 0);
 }

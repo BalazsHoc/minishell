@@ -47,7 +47,7 @@ int count_ops(t_pipex *data, int index)
     // printf("COUNT OPS\n");
     while (data->cmnds[index][i])
         i++;
-    // printf("COUNT OPS END\n");
+    // printf("COUNT OPS %d\n", i - (count_reds(data, index) * 2));
     return (i - (count_reds(data, index) * 2));
 }
 

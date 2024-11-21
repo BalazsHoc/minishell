@@ -23,7 +23,6 @@ int check_reds(t_pipex *data)
         j = -1;
         while (data->cmnds[i][++j])
         {
-			// printf("shesh1 %s\n", data->cmnds[i][j]);
             if (is_red(data, i, j) && !data->cmnds[i][j + 1])
             {
                 if (!data->cmnds[i + 1])

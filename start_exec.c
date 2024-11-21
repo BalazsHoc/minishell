@@ -26,7 +26,7 @@ int is_red_inline(t_pipex *data, int index)
 }
 
 int is_in_inline(t_pipex *data, int index)
-{
+{// is  a single redirection in the line? 
     int i;
     int check;
 
@@ -37,7 +37,6 @@ int is_in_inline(t_pipex *data, int index)
         if (!ft_strncmp(data->cmnds[index][i], "<", 2))
             check = i;
     }
-    printf("RETURN INLINE: %d\n", check);
     return (check);
 }
 
@@ -185,13 +184,13 @@ int open_out(t_pipex *data, int index)
 //         printf("EXIT\n");
 //     }
 // }
-void start_exec(t_pipex *data, int cmnd_count)
+
+void create_pipes(int (*pipes)[2], int cmnd_count)
 {
-    int     i;
-    int     pipes[MAX_CMNDS -1][2];
+    int i;
 
     i = -1;
-    while (++i < cmnd_count)
+    while (++i <= cmnd_count)
     {
         if (pipe(pipes[i]) == -1)
         {
@@ -199,42 +198,52 @@ void start_exec(t_pipex *data, int cmnd_count)
             exit(1);
         }
     }
+}
+
+void close_pipes(int (*pipes)[2], int cmnd_count)
+{
+    int i;
+
     i = -1;
-    data->input = NULL;
+    while (++i <= cmnd_count)
+    {
+        close(pipes[i][0]);
+        close(pipes[i][1]);
+    }
+}
+
+void start_exec(t_pipex *data, int cmnd_count)
+{
+    int     i;
+    int     pipes[MAX_CMNDS -1][2];
+
+    i = -1;
+    create_pipes(pipes, cmnd_count);
     // signal(SIGCHLD, SIG_IGN);
     while (data->cmnds[++i] && data->cmnds[i] && here_doc(data, i))
     {
-        data->fd = open_out(data, i);
-        // data->input 
+        data->fd_out = open_out(data, i);
         if (ft_strncmp(data->paths[i], "pathnfound", 11)
             && (is_valid_in(data, i)
             || (!is_valid_in(data, i) && is_in_inline(data, i) == -1)))
         {
             if ((is_valid_in(data, i) || (!is_valid_in(data, i) && is_red_inline(data, i) != -1)) && free_this(data->input))
                 data->input = get_input(data, i, is_red_inline(data, i));
-            printf("INPUT: %s$\n", data->input);
+            // printf("INPUT: %s$\n", data->input);
             if (!ft_strncmp(data->paths[i], "minicmnds", 11))
                exec_mini(data, i, cmnd_count, pipes);
             else 
                 exec_cmnd(data, i, cmnd_count, pipes);
-            printf("EXECCMND FINISHED!\n");
-            printf("_________________________________________________________________________________________\n");
-            if (data->fd != -2)
-                write(open_out(data, i), data->input, ft_strlen(data->input));
-            else if (!data->cmnds[i + 1])
-                write(1, data->input, ft_strlen(data->input));
+            // printf("EXECCMND FINISHED!\n");
             printf("_________________________________________________________________________________________\n");
         }
         else if (ft_strncmp(data->paths[i], "pathnfound", 11) 
             && (is_valid_in(data, i) || (!is_valid_in(data, i) && is_red_inline(data, i) != -1)))
             printf("BASH: %s: no such file or directory\n", data->cmnds[i][is_red_inline(data, i) + 1]);
-        if (data->fd > 2)
-            close(data->fd);
+        if (data->fd_out > 2)
+            close(data->fd_out);
         printf("EXIT\n");
     }
-    for (i = 0; i < cmnd_count - 1; i++) {
-        close(pipes[i][0]);
-        close(pipes[i][1]);
-    }
+    close_pipes(pipes, cmnd_count);
     while (wait(NULL) > 0);
 }

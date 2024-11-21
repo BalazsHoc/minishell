@@ -46,9 +46,9 @@ int	count_elem(char *line, int i, int count)
 				|| (line[j - 1] == '|' && !is_space(line[j]))))
 				{
 					// printf("COUNT+++++++++++++++++++++++++++++++++++\n");
-					if (is_red_clean(line, j) == 2)
-						j++;
 					j += count_chars(line, j, open) - 1;
+					// if (is_red_clean(line, j) == 2)
+						// j++;
 					count++;
 				}
 		}
@@ -71,7 +71,7 @@ int	count_chars(char *line, int i, int open)
 		if (!open && (!line[i + 1] || is_space(line[i + 1]) || line[i + 1] == '\n'
 			|| is_real_pipe(line, i + 1)
 			|| (is_red_1(line[i]) && !is_red_1(line[i + 1]))
-			|| (is_red_1(line[i + 1]) && !is_space(line[i]) && !is_red_1(line[i]))
+			|| (is_red_1(line[i + 1]) && !is_space(line[i]) && !is_red_1(line[i]) && printf("ZUKA\n"))
 			|| (is_space(line[i]) && is_quote(line[i + 1]))
 			|| ((!line[i + 2] || is_space(line[i + 2]) || line[i + 2] == '\n') && is_quote(line[i + 1]))))
 			break;
@@ -124,7 +124,7 @@ char	**fill_cmnds(char **arr, char *line, int i, int k)
 				|| (is_space(line[j - 1]) && !is_space(line[j]) && !open)
 				|| ((open == 1 && is_quote_one(line[j - 1])) || (open == 2 && is_quote_two(line[j - 1])))
 				|| (is_red_clean(line, j) && !open)
-				|| (is_red_1(line[j - 1]) && !is_space(line[j]) && line[j] != '|' && !open)
+				|| (is_red_1(line[j - 1]) && !is_red_1(line[j]) && !is_space(line[j]) && line[j] != '|' && !open)
 				|| (line[j - 1] == '|' && !is_space(line[j]) && !open)))
 				// && (!open || ((open == 1 && is_quote_one(line[j - 1])) || (open == 2 && is_quote_two(line[j - 1])))))
 		{
