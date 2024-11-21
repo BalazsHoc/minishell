@@ -57,7 +57,8 @@ typedef struct pipex_s
 	char	*input;
 	char	*tmp;
 
-	int		fd;
+	int		fd_out;
+	int		fd_in;
 
 }	t_pipex;
 
@@ -126,6 +127,7 @@ int		open_out(t_pipex *data, int index);
 int		bigger_one(char *s1, char *s2);
 
 void	mini_commands(t_pipex *data, int index);
+void	mini_child(t_pipex *data, int index);
 
 //	exec.c
 
