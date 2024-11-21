@@ -1,4 +1,4 @@
-// #include "minishell.h"
+#include "minishell.h"
 
 
 // // char    *create_tmp(t_pipex *data, int index, char *tmp_name, int count)
@@ -38,3 +38,29 @@
 // //     return (cur_name);
 // // }
 
+void create_pipes(int (*pipes)[2], int cmnd_count)
+{
+    int i;
+
+    i = -1;
+    while (++i <= cmnd_count)
+    {
+        if (pipe(pipes[i]) == -1)
+        {
+            perror("pipe");
+            exit(1);
+        }
+    }
+}
+
+void close_pipes(int (*pipes)[2], int cmnd_count)
+{
+    int i;
+
+    i = -1;
+    while (++i <= cmnd_count)
+    {
+        close(pipes[i][0]);
+        close(pipes[i][1]);
+    }
+}

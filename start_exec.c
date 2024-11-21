@@ -61,29 +61,19 @@ char *get_input(t_pipex *data, int index_1, int index_2)
     char *input;
 
     key = data->cmnds[index_1][index_2 + 1];
-    // printf("KEY%s\n", key);
     if (!ft_strncmp(data->cmnds[index_1][index_2], "<", 2))
-    {
-        fd = open(key, O_RDONLY);   
-        if (fd == -1)
-            return (printf("bash: %s: no such file or directory\n", key), NULL);
-    }
+        return (NULL);
     else
         fd = 0;
     buf = get_next_line(fd, 0);
     input = NULL;
-    // printf("BUF: %s\n", buf);
-    while (buf && (fd > 2 || (fd == 0 && !ft_strcmp_2(buf, key))))
+    while (buf && !ft_strcmp_2(buf, key))
     {
         input = join_this(input, buf);
         free(buf);
         buf = get_next_line(fd, 0);
-        // printf("THIS: %s$\n", buf);
     }
     free_str(buf);
-    // printf("INPUT: %s$\n", input);
-    if (fd > 2)
-        close(fd);
     return (input);
 }
 
@@ -105,7 +95,6 @@ int is_valid_in(t_pipex *data, int index)
     fd = open(infile, O_RDONLY);
     if (fd == -1)
         return (0);
-    printf("VALID IN!!!\n");
     return (close(fd), 1);
 }
 
@@ -185,32 +174,7 @@ int open_out(t_pipex *data, int index)
 //     }
 // }
 
-void create_pipes(int (*pipes)[2], int cmnd_count)
-{
-    int i;
 
-    i = -1;
-    while (++i <= cmnd_count)
-    {
-        if (pipe(pipes[i]) == -1)
-        {
-            perror("pipe");
-            exit(1);
-        }
-    }
-}
-
-void close_pipes(int (*pipes)[2], int cmnd_count)
-{
-    int i;
-
-    i = -1;
-    while (++i <= cmnd_count)
-    {
-        close(pipes[i][0]);
-        close(pipes[i][1]);
-    }
-}
 
 void start_exec(t_pipex *data, int cmnd_count)
 {
