@@ -12,6 +12,14 @@
 
 #include "../../minishell.h"
 
+int special_case(t_pipex *data, int i, int j)
+{
+	if (!ft_strncmp(data->cmnds[i][j], "<", 2)
+		&& !ft_strncmp(data->cmnds[i][j + 1], ">>", 3))
+		return (1);
+	return (0);
+}
+
 int check_reds(t_pipex *data)
 {
     int i;
@@ -23,16 +31,18 @@ int check_reds(t_pipex *data)
         j = -1;
         while (data->cmnds[i][++j])
         {
-            if (is_red(data, i, j) && !data->cmnds[i][j + 1])
+			printf("THIS: %s\n", data->cmnds[i][j]);
+            if (is_red(data, i, j) && (!data->cmnds[i][j + 1]
+				|| (is_red_in(data->cmnds[i][j][0]) && !data->cmnds[i][j][1] && !special_case(data, i, j))))
             {
-                if (!data->cmnds[i + 1])
+                if (!data->cmnds[i + 1] || (is_red_in(data->cmnds[i][j][0]) && !data->cmnds[i][j][1]))
                     return (printf("bash: syntax error near unexpected token `newline' \n"), exit_child(2, NULL, data), 0);
                 return (printf("bash: syntax error near unexpected token `|'\n"), exit_child(2, NULL, data), 0);
             }
-            else if (is_red(data, i, j) && is_red(data, i, j + 1))
+            else if (is_red(data, i, j) && is_red(data, i, j + 1) && !special_case(data, i , j))
                     return (printf("BASH: syntax error near unexpected token `%s' \n", data->cmnds[i][j + 1]), exit_child(2, NULL, data), 0);
-			else if (data->cmnds[i][j + 1] && printf("break\n"))
-				break;
+			else if (is_red(data, i, j) && is_red(data, i, j + 1) && special_case(data, i, j))
+                    return (printf("BASH: syntax error near unexpected token `%c' \n", data->cmnds[i][j + 1][0]), exit_child(2, NULL, data), 0);
         }
     }
 	// printf("check_reds: return 1\n");

@@ -24,13 +24,13 @@ void	print_that_shit(t_pipex *data)
 		j = -1;
 		while (data->cmnds[i][++j])
 			printf("ELEM: %d:%d | %s\n", i, j, data->cmnds[i][j]);
-		j = -1;
-		if (data->ops && data->ops[i])
-		{
-			while (data->ops[i][++j])
-				printf("OP:   %d:%d | %s\n", i, j, data->ops[i][j]);
-		}
-		printf("PATH: %s\n", data->paths[i]);
+		// j = -1;
+		// if (data->ops && data->ops[i])
+		// {
+		// 	while (data->ops[i][++j])
+		// 		printf("OP:   %d:%d | %s\n", i, j, data->ops[i][j]);
+		// }
+		// printf("PATH: %s\n", data->paths[i]);
 		// if (i > 10)
 			// break;
 	}
@@ -50,15 +50,20 @@ void	init_ops(t_pipex *data, int cmnd_count)
     data->ops[cmnd_count] = 0;
     while (data->cmnds[++i])
     {
-        data->ops[i] = malloc(sizeof(char *) * (count_ops(data, i) + 1));
-        if (!data->ops[i])
-            return (perror("malloc fail!\n"), error_code(data, NULL, 1, errno));
-        data->ops[i][count_ops(data, i)] = 0;
-        fill_ops(data, i);
+		// printf("INIT_OPS: I : %d\n", i);
+		if (count_ops(data, i) != -1)
+		{
+			data->ops[i] = malloc(sizeof(char *) * (count_ops(data, i) + 1));
+			// printf("lol\n");
+			if (!data->ops[i])
+				return (perror("malloc fail!\n"), error_code(data, NULL, 1, errno));
+			data->ops[i][count_ops(data, i)] = 0;
+			fill_ops(data, i);
+		}
     }
 }
 
-void	init_cmds(t_pipex *data, char *line, int count)
+void	init_cmds(t_pipex *data, char *line, int count, char **env)
 {
 	int	i;
 
@@ -73,7 +78,7 @@ void	init_cmds(t_pipex *data, char *line, int count)
 		if (!data->cmnds[i])
 			return (perror("malloc fail!\n"), error_code(data, line, 0, 0));
 		data->cmnds[i][count_elem(line, i, 0)] = NULL;
-		data->cmnds[i] = fill_cmnds(data->cmnds[i], line, i, -i);
+		data->cmnds[i] = fill_cmnds(data->cmnds[i], line, i, env);
 		if (!data->cmnds[i])
 			return (perror("malloc fail!\n"), error_code(data, line, 0, 0));
 		if (!data->cmnds[i])
@@ -92,11 +97,14 @@ void	init_paths(t_pipex *data, int count)
 	data->paths[count] = NULL;
 	while (++i < count)
 	{
+		// printf("WRONG111111\n");
 		if (is_mini(data, i))
 			data->paths[i] = ft_strdup("minicmnds");
-		else if (data->ops[i][0])
+		else if (data->ops[i] && data->ops[i][0])
 		{
+			// printf("WRONG22222\n");
 			data->paths[i] = find_path(data->cur_env, data->ops[i][0]);
+			// printf("WRONG333333\n");
 			if (!data->paths[i])
 			{
 				data->paths[i] = ft_strdup("pathnfound");
@@ -111,17 +119,27 @@ void	init_paths(t_pipex *data, int count)
 	}
 }
 
+char	*trimm_it(char *line)
+{
+	char *buf;
+
+	buf = ft_strtrim(line, " \n\t\f\v\r");
+	if (!buf)
+	{
+		free(line);
+		exit(EXIT_FAILURE);
+	}
+	free(line);
+	line = buf;
+	return (line);
+}
+
 void	parsing(t_pipex *data, char *line, char **env)
 {
-	char	*trimmed;
 	int		cmnd_count;
 
 	(void)env;
-	trimmed = ft_strtrim(line, " \n\t\f\v\r");
-	if (!trimmed)
-		return (rl_clear_history(), free_list(env), error_code(data, line, 1, 1));
-	free(line);
-	line = trimmed;
+	line = trimm_it(line);
 	if (!syntax_check(line, -1, 0))
 		return (perror("bash: syntax error near unexpected token `|'"), error_code(NULL, line, 0, errno));
 	cmnd_count = count_cmnds(line);
@@ -130,9 +148,11 @@ void	parsing(t_pipex *data, char *line, char **env)
 	data->cmnds = NULL;
 	data->ops = NULL;
 	data->input = NULL;
-	if (check_open(line))
-		return (printf("bash: format error bla bla\n"), free_a(line, data));
-	init_cmds(data, line, cmnd_count);
+	while (check_open(line))
+		line = trimm_it(join_this(join_this(line, "\n"), readline("> ")));
+		// return (printf("bash: format error bla bla\n"), free_a(line, data));
+	init_cmds(data, line, cmnd_count, env);
+	print_that_shit(data);
 	if (!check_reds(data))
 		return (free_struct(data));
 	return (set_cur_path(data), init_ops(data, cmnd_count), init_paths(data, cmnd_count),
