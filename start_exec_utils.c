@@ -11,7 +11,7 @@ int here_doc(t_pipex *data, int index)
         if ((!ft_strncmp(data->cmnds[index][i], "<<", 3) || !ft_strncmp(data->cmnds[index][i], "<", 2))
             && (!ft_strncmp(data->paths[index], "pathnfound", 11) || i != is_red_inline(data, index)))
         {
-            printf("PLS DONT\n");
+            // printf("PLS DONT\n");
             infile = get_input(data, index, i);
             free_str(infile);
             i++;
@@ -74,7 +74,7 @@ void    update_env(t_pipex *data, int index)
         {
             buf = data->cur_env[i];
             data->cur_env[i] = ft_strjoin("OLDPWD=", data->cur_path);
-            printf("OLD: %s\n", getenv("OLDPWD"));
+            // printf("OLD: %s\n", getenv("OLDPWD"));
             free(buf);
         }
     }
@@ -396,7 +396,7 @@ void mini_commands(t_pipex *data, int index)
 {
     if (!ft_strncmp(data->ops[index][0], "cd", 3))
         cd_cmnd(data->ops[index], data, index);
-    else if (!ft_strncmp(data->ops[index][0], "exit", 5) && !data->cmnds[index])
+    else if (!ft_strncmp(data->ops[index][0], "exit", 5))
         error_code(data, NULL, 1, 0);
     else if (!ft_strncmp(data->ops[index][0], "export", 7) && data->ops[index][1])
         export_cmnd_1(data, index);

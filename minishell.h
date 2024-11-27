@@ -76,7 +76,7 @@ int		syntax_check(char *line, int i, int count);
 
 //	init_cmnds.c
 
-char	**fill_cmnds(char **arr, char *line, int i, int k);
+char	**fill_cmnds(char **arr, char *line, int i, char **env);
 
 int		count_cmnds(char *line);
 int		count_elem(char *line, int i, int count);
@@ -92,8 +92,17 @@ int		count_env(char **env);
 //	inti_paths.c
 
 void 	set_cur_path(t_pipex *data);
+
 char	*find_path(char **env, char *cmnd);
+
 int		is_mini(t_pipex *data, int i);
+
+//	count.c
+
+int		count_cmnds(char *line);
+int		count_elem(char *line, int i, int count);
+int		count_chars(char *line, int i, int open);
+
 
 //	parsing_utils_is_1.c
 
@@ -110,6 +119,9 @@ int		is_red(t_pipex *data, int index_1, int index_2);
 int		is_red_1(char c);
 int		is_red_clean(char *str, int index);
 int		is_real_pipe(char *line, int index);
+int		is_red_in(char c);
+int		is_red_out(char c);
+
 
 // start_exec.c
 
@@ -144,6 +156,7 @@ void	create_pipes(int (*pipes)[2], int cmnd_count);
 
 //	free.c
 
+int		free_this(char *s);
 void	free_struct(t_pipex *data);
 void	free_a(char *line, t_pipex *data);
 void	free_list_list(char ***arr);

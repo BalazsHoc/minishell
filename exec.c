@@ -119,6 +119,7 @@ void exec_mini(t_pipex *data, int index, int cmnd_count, int (*pipes)[2])
         }
         return (mini_child(data, index), error_code(data, NULL, 1, 0));
     }
-    mini_commands(data, index);
+    else
+        mini_commands(data, index);
 }
 

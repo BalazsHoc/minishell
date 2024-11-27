@@ -119,7 +119,7 @@ int open_out(t_pipex *data, int index)
                 outfile = data->cmnds[index][i + 1];
                 fd = open(outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
             }
-        if (!ft_strncmp(data->cmnds[index][i], "<<", 3))
+        if (!ft_strncmp(data->cmnds[index][i], ">>", 3))
             check = 1;
     }
     if (!outfile)
@@ -196,7 +196,7 @@ void start_exec(t_pipex *data, int cmnd_count)
             // printf("INPUT: %s$\n", data->input);
             if (!ft_strncmp(data->paths[i], "minicmnds", 11))
                exec_mini(data, i, cmnd_count, pipes);
-            else 
+            else
                 exec_cmnd(data, i, cmnd_count, pipes);
             // printf("EXECCMND FINISHED!\n");
             printf("_________________________________________________________________________________________\n");

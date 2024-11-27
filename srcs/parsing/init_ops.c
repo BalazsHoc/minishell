@@ -35,7 +35,7 @@ int count_reds(t_pipex *data, int index)
         if (!data->cmnds[index][i + 1])
             break;
     }
-    // printf("COUNT REDS END\n");
+    // printf("COUNT REDS END %d\n", count);
     return (count);
 }
 
@@ -44,10 +44,10 @@ int count_ops(t_pipex *data, int index)
     int i;
 
     i = 0;
-    // printf("COUNT OPS\n");
+    printf("COUNT OPS START\n");
     while (data->cmnds[index][i])
         i++;
-    // printf("COUNT OPS %d\n", i - (count_reds(data, index) * 2));
+    printf("COUNT OPS %d\n", i - (count_reds(data, index) * 2));
     return (i - (count_reds(data, index) * 2));
 }
 
@@ -59,15 +59,21 @@ void    fill_ops(t_pipex *data, int index)
     i = -1;
     j = -1;
 
-    // printf("FILL OPS\n");
+    printf("FILL OPS\n");
     while (data->cmnds[index][++i])
     {
         while (data->cmnds[index][i] && is_red(data, index, i))
+        {
             i += 2;
+            printf("HERE\n");
+            if (!data->cmnds[index][i])
+                break;
+        }
+        printf("LOL\n");
         if (data->cmnds[index][i])
         {
             // printf("I: %d S: %s\n", i, data->cmnds[index][i]);
-            // printf("COUNT op: %ld \n", ft_strlen(data->cmnds[index][i]));
+            printf("COUNT op: %ld \n", ft_strlen(data->cmnds[index][i]));
             data->ops[index][++j] = ft_calloc(sizeof(char *), (ft_strlen(data->cmnds[index][i]) + 1));
             if (!data->ops[index][j])
                 return (printf("malloc fail!\n"), error_code(data, NULL, 1, errno));

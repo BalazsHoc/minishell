@@ -33,10 +33,10 @@ void set_cur_path(t_pipex *data)
 
 int is_mini(t_pipex *data, int i)
 {
-	if (!ft_strncmp(data->ops[i][0], "env", 4) || !ft_strncmp(data->ops[i][0], "export", 7)
+	if (data->ops[i] && data->ops[i][0] && (!ft_strncmp(data->ops[i][0], "env", 4) || !ft_strncmp(data->ops[i][0], "export", 7)
 		|| !ft_strncmp(data->ops[i][0], "cd", 3) || !ft_strncmp(data->ops[i][0], "unset", 6)
 		|| !ft_strncmp(data->ops[i][0], "pwd", 4) || !ft_strncmp(data->ops[i][0], "exit", 5)
-		|| (!ft_strncmp(data->ops[i][0], "ls", 3) && !is_valid_cwd(data)))
+		|| (!ft_strncmp(data->ops[i][0], "ls", 3) && !is_valid_cwd(data))))
 		return (1);
 	return (0);
 }
