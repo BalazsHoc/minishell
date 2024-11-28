@@ -72,18 +72,3 @@ int is_red_clean(char *str, int index)
 	return (0);
 }
 
-int	is_real_pipe(char *line, int index)
-{
-	// printf("IS REAL PIPE: %s\n", line + index);
-	if (line[index] == '|')
-	{
-		if (!line[index - 1])
-			return (0);
-		if (line[index - 1] == '|'
-		|| line[index - 1] == '>'
-		|| line[index + 1] == '|')
-			return (0);
-		return (1);
-	}
-	return (0);
-}

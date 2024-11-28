@@ -12,6 +12,22 @@
 
 #include "../../minishell.h"
 
+int	is_real_pipe(char *line, int index)
+{
+	if (!line[index - 1])
+		return (0);
+	// printf("IS REAL PIPE: %s\n", line + index);
+	if (line[index] == '|')
+	{
+		if (line[index - 1] == '|'
+		|| line[index - 1] == '>'
+		|| line[index + 1] == '|')
+			return (0);
+		return (1);
+	}
+	return (0);
+}
+
 int special_case(t_pipex *data, int i, int j)
 {
 	if (!ft_strncmp(data->cmnds[i][j], "<", 2)
@@ -31,11 +47,11 @@ int check_reds(t_pipex *data)
         j = -1;
         while (data->cmnds[i][++j])
         {
-			printf("THIS: %s\n", data->cmnds[i][j]);
+			// printf("THIS: %s\n", data->cmnds[i][j]);
             if (is_red(data, i, j) && (!data->cmnds[i][j + 1]
 				|| (is_red_in(data->cmnds[i][j][0]) && !data->cmnds[i][j][1] && !special_case(data, i, j))))
             {
-                if (!data->cmnds[i + 1] || (is_red_in(data->cmnds[i][j][0]) && !data->cmnds[i][j][1]))
+                if (!data->cmnds[i + 1] || (is_red_in(data->cmnds[i][j][0]) && !data->cmnds[i][j][1] && !data->cmnds[i + 1]))
                     return (printf("bash: syntax error near unexpected token `newline' \n"), exit_child(2, NULL, data), 0);
                 return (printf("bash: syntax error near unexpected token `|'\n"), exit_child(2, NULL, data), 0);
             }
@@ -75,7 +91,7 @@ int syntax_check(char *line, int i, int count)
 	word = 0;
 	while (line[++i])
 	{
-		if (i == 0 && line[i] == '|' && (!line[i + 1] || line[i + 1] != '|'))
+		if (i == 0 && line[0] == '|' && (!line[i + 1] || line[i + 1] != '|'))
 			return (0);
 		else if (!is_real_pipe(line, i) && ++word)
 			count = 0;

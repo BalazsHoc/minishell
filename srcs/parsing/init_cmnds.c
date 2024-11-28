@@ -233,7 +233,8 @@ char	**fill_cmnds(char **arr, char *line, int i, char **env)
 				|| (is_red_clean(line, j) && !open)
 				|| ((is_red_in(line[j - 1]) && is_red_out(line[j])) || (is_red_out(line[j - 1]) && is_red_in(line[j])))
 				|| (is_red_1(line[j - 1]) && !is_red_1(line[j]) && !is_space(line[j]) && line[j] != '|' && !open)
-				|| (is_real_pipe(line, j - 1) && !is_space(line[j]) && !open)))
+				|| ((is_real_pipe(line, j - 1)
+					|| (line[j - 1] == '|' && line[j - 2] == '>')) && !is_space(line[j]))))
 				// && (!open || ((open == 1 && is_quote_one(line[j - 1])) || (open == 2 && is_quote_two(line[j - 1])))))
 		{
 			// printf("TRUE!\n");
@@ -245,7 +246,7 @@ char	**fill_cmnds(char **arr, char *line, int i, char **env)
 			// j += count_chars(line, j, open) - 1;
 		}
 		// printf("I1: %d\n", i);
-		if (is_real_pipe(line, j) && j > 0 && line[j - 1] != '>' && k++ != INT_MIN)
+		if (is_real_pipe(line, j) && j > 0 && is_red_1(line[j - 1]) && k++ != INT_MIN)
 			i--;
 		if (!line[j])
 			break;

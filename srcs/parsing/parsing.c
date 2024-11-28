@@ -23,13 +23,13 @@ void	print_that_shit(t_pipex *data)
 	{
 		j = -1;
 		while (data->cmnds[i][++j])
-			printf("ELEM: %d:%d | %s\n", i, j, data->cmnds[i][j]);
-		// j = -1;
-		// if (data->ops && data->ops[i])
-		// {
-		// 	while (data->ops[i][++j])
-		// 		printf("OP:   %d:%d | %s\n", i, j, data->ops[i][j]);
-		// }
+			printf("ELEM: %d:%d | $%s$\n", i, j, data->cmnds[i][j]);
+		j = -1;
+		if (data->ops && data->ops[i])
+		{
+			while (data->ops[i][++j])
+				printf("OP:   %d:%d | %s\n", i, j, data->ops[i][j]);
+		}
 		// printf("PATH: %s\n", data->paths[i]);
 		// if (i > 10)
 			// break;
@@ -152,7 +152,7 @@ void	parsing(t_pipex *data, char *line, char **env)
 		line = trimm_it(join_this(join_this(line, "\n"), readline("> ")));
 		// return (printf("bash: format error bla bla\n"), free_a(line, data));
 	init_cmds(data, line, cmnd_count, env);
-	print_that_shit(data);
+	// print_that_shit(data);
 	if (!check_reds(data))
 		return (free_struct(data));
 	return (set_cur_path(data), init_ops(data, cmnd_count), init_paths(data, cmnd_count),
