@@ -30,7 +30,7 @@ void	print_that_shit(t_pipex *data)
 			while (data->ops[i][++j])
 				printf("OP:   %d:%d | %s\n", i, j, data->ops[i][j]);
 		}
-		// printf("PATH: %s\n", data->paths[i]);
+		printf("PATH: %s\n", data->paths[i]);
 		// if (i > 10)
 			// break;
 	}
@@ -54,7 +54,6 @@ void	init_ops(t_pipex *data, int cmnd_count)
 		if (count_ops(data, i) != -1)
 		{
 			data->ops[i] = malloc(sizeof(char *) * (count_ops(data, i) + 1));
-			// printf("lol\n");
 			if (!data->ops[i])
 				return (perror("malloc fail!\n"), error_code(data, NULL, 1, errno));
 			data->ops[i][count_ops(data, i)] = 0;
@@ -108,7 +107,7 @@ void	init_paths(t_pipex *data, int count)
 			if (!data->paths[i])
 			{
 				data->paths[i] = ft_strdup("pathnfound");
-				printf("zsh: command not found %s\n", data->ops[i][0]);
+				printf("bash: command not found %s\n", data->ops[i][0]);
 				exit_child(127, NULL, data);
 			}
 		}
@@ -143,7 +142,7 @@ void	parsing(t_pipex *data, char *line, char **env)
 	if (!syntax_check(line, -1, 0))
 		return (perror("bash: syntax error near unexpected token `|'"), error_code(NULL, line, 0, errno));
 	cmnd_count = count_cmnds(line);
-	printf("COUNT CMND_LINES%d\n", cmnd_count);
+	// printf("COUNT CMND_LINES%d\n", cmnd_count);
 	data->paths = NULL;
 	data->cmnds = NULL;
 	data->ops = NULL;

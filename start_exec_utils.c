@@ -11,7 +11,6 @@ int here_doc(t_pipex *data, int index)
         if ((!ft_strncmp(data->cmnds[index][i], "<<", 3) || !ft_strncmp(data->cmnds[index][i], "<", 2))
             && (!ft_strncmp(data->paths[index], "pathnfound", 11) || i != is_red_inline(data, index)))
         {
-            // printf("PLS DONT\n");
             infile = get_input(data, index, i);
             free_str(infile);
             i++;
@@ -83,7 +82,7 @@ void    update_env(t_pipex *data, int index)
         return (printf("malloc fail!\n"), error_code(data, NULL, 1, 1));
     getcwd(buf, BUF_SIZE_ENV * 100);
     i = -1;
-    printf("BUF: %s\n", buf);
+    // printf("BUF: %s\n", buf);
     if (!buf)
         return (printf("FAILED GETCWD()\n"), error_code(data, NULL, 0, 0));
     while (data->cur_env[++i] && i < 100)
@@ -102,14 +101,14 @@ void    update_env(t_pipex *data, int index)
                 data->cur_env[i] = ft_strjoin("PWD=", data->cur_path);
                 free(data->cur_path);
                 data->cur_path = data->cur_env[i] + 4;
-                printf("CUR: %s\n", data->cur_path);
+                // printf("CUR: %s\n", data->cur_path);
             }
             else
             {
                 free_str(data->cur_env[i]);
                 data->cur_env[i] = ft_strjoin("PWD=", buf);
             }
-            printf("THIS IS NEW PWD: %s\n", data->cur_env[i]);
+            // printf("THIS IS NEW PWD: %s\n", data->cur_env[i]);
             free(buf);
         }
     }
@@ -120,7 +119,7 @@ char    *get_home(t_pipex *data, char **env)
     char *home_dir;
 
     home_dir = getenv("HOME");
-    printf("home: %s\n", home_dir);
+    // printf("home: %s\n", home_dir);
     if (!home_dir)
     {
         printf("Home is not set\n");
@@ -129,31 +128,37 @@ char    *get_home(t_pipex *data, char **env)
     return (home_dir);
 }
 
+void print_cd_err(char *str, int errnum)
+{
+    if (errnum == ENOENT)
+        printf("-bash: cd: %s: No such a file or directory\n", str);
+    if (errnum == ENOTDIR)
+        printf("-bash: cd: %s: Not a directory\n", str);
+    if (errnum == EACCES)
+        printf("-bash: cd: %s: Permission denied\n", str);
+    if (errnum == ENOMEM)
+        printf("-bash: cd: %s: Cannot allocate memory\n", str);
+}
+
 void cd_cmnd(char **argv, t_pipex *data, int index)
 {
     char    *home_dir;
 
-    if (data->ops[index][2])
+    if (data->ops[index][0] && data->ops[index][1] && data->ops[index][2])
         return (printf("-bash: cd: too many arguments\n"), error_code(data, NULL, 0, 1));
     home_dir = get_home(data, data->cur_env);
-    printf("THIS IS ARGV[1]%s$\n", argv[1]);
     if (!argv[1] || !strncmp(argv[1], "~", 2))
-        chdir(home_dir);
-    else if (argv[1] && printf("THIS IS TRUE\n") && chdir(argv[1]) == -1)
     {
-        printf("ERRNO: %d\n", errno);
-        if (errno == ENOENT)
-            printf("-bash: cd: %s: No such a file or directory\n", argv[2]);
-        if (errno == ENOTDIR)
-            printf("-bash: cd: %s: Not a directory\n", argv[2]);
-        if (errno == EACCES)
-            printf("-bash: cd: %s: Permission denied\n", argv[2]);
-        if (errno == ENOMEM)
-            printf("-bash: cd: %s: Cannot allocate memory\n", argv[2]);
+        if (chdir(home_dir) == -1)
+            print_cd_err(argv[2], errno);
+        else
+            update_env(data, index);
     }
+    else if (argv[1] && chdir(argv[1]) == -1)
+        print_cd_err(argv[2], errno);
     else if (argv[1])
         update_env(data, index);
-    printf("PWD: %s\n", getenv("PWD"));
+    // printf("PWD: %s\n", getenv("PWD"));
 }
 
 char *env_cmnd(t_pipex *data, int index)

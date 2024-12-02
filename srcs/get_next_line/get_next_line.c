@@ -90,6 +90,7 @@ char	*reading(int fd, char *static_buf)
 		buffer = gnl_calloc(BUFFER_SIZE + 1, sizeof(char));
 		if (!buffer)
 			return (gnl_free(&static_buf), NULL);
+		write(1, "> ", 2);
 		return_of_read = read(fd, buffer, BUFFER_SIZE);
 		if (return_of_read == -1)
 			return (gnl_free(&buffer), gnl_free(&static_buf), NULL);

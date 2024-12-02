@@ -225,7 +225,7 @@ char	**fill_cmnds(char **arr, char *line, int i, char **env)
 			open = 2;
 		else if (((is_quote_one(line[j]) && open == 1) || (is_quote_two(line[j]) && open == 2)) && ++j)
 			open = 0;
-		// "this is 'hi there ' last word "
+		// // "this is 'hi there ' last word "
 		// printf("FILL_CMNDS: %s | OPEN: %d | K: %d\n", line + j, open, k);
 		if (k == 0 && !is_real_pipe(line, j) && ((j == 0 && !is_space(line[j]))
 				|| (is_space(line[j - 1]) && !is_space(line[j]) && !open)
@@ -246,7 +246,7 @@ char	**fill_cmnds(char **arr, char *line, int i, char **env)
 			// j += count_chars(line, j, open) - 1;
 		}
 		// printf("I1: %d\n", i);
-		if (is_real_pipe(line, j) && j > 0 && is_red_1(line[j - 1]) && k++ != INT_MIN)
+		if (is_real_pipe(line, j) && j > 0 && !is_red_1(line[j - 1]) && k++ != INT_MIN)
 			i--;
 		if (!line[j])
 			break;
