@@ -56,16 +56,9 @@ void	free_list(char **arr)
 {
 	int	i;
 
-	i = 0;
-	while (arr[i])
-		i++;
-	i--;
-	while (i >= 0)
-	{
-		if (arr[i])
+	i = -1;
+	while (arr[++i])
 			free(arr[i]);
-		i--;
-	}
 	free(arr);
 }
 
@@ -75,11 +68,7 @@ void	free_list_list(char ***arr)
 
 	i = 0;
 	while (arr[i])
-		i++;
-	i--;
-	while (i >= 0)
-		free_list(arr[i--]);
-	free(arr);
+		free_list(arr[i++]);
 }
 
 void	free_str(char *str)

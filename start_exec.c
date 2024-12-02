@@ -184,7 +184,7 @@ void start_exec(t_pipex *data, int cmnd_count)
     i = -1;
     create_pipes(pipes, cmnd_count);
     // signal(SIGCHLD, SIG_IGN);
-    while (data->cmnds[++i] && data->cmnds[i] && here_doc(data, i))
+    while (data->cmnds[++i] && here_doc(data, i))
     {
         data->fd_out = open_out(data, i);
         if (ft_strncmp(data->paths[i], "pathnfound", 11)
@@ -193,7 +193,7 @@ void start_exec(t_pipex *data, int cmnd_count)
         {
             if ((is_valid_in(data, i) || (!is_valid_in(data, i) && is_red_inline(data, i) != -1)) && free_this(data->input))
                 data->input = get_input(data, i, is_red_inline(data, i));
-            // printf("INPUT: %s$\n", data->input);
+            printf("INPUT: %s$\n", data->input);
             if (!ft_strncmp(data->paths[i], "minicmnds", 11))
                exec_mini(data, i, cmnd_count, pipes);
             else

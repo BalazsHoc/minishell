@@ -43,14 +43,16 @@ char *join_this(char *s1, char *s2)
 void    handle_child(t_pipex *data, int index, int(*pipes)[2], int cmnd_count, int fd)
 {
     if (is_red_inline(data, index) != -1
-        && !ft_strncmp(data->cmnds[index][is_red_inline(data, index)], "<", 2))
+        && !ft_strncmp(data->cmnds[index][is_red_inline(data, index)], "<", 2)) // if its simple infile
     {
         fd = open(data->cmnds[index][is_red_inline(data, index) + 1], O_RDONLY);
         if (fd == -1)
             return (printf("error open\n"), error_code(data, NULL, 1, 0));
     }
-    if (index > 0 && !fd && dup2(pipes[index][0], STDIN_FILENO) == -1)
+    if (!fd && dup2(pipes[index][0], STDIN_FILENO) == -1)
         return (printf("error dup2\n"), error_code(data, NULL, 1, 0));
+    // else if (index == 0 && !fd && data->input && dup2(pipes[index - 1][0], STDIN_FILENO) == -1)
+    //     return (printf("error dup2\n"), error_code(data, NULL, 1, 0));
     else if (fd && dup2(fd, STDIN_FILENO) == -1)
         return (printf("error dup2\n"), error_code(data, NULL, 1, 0));
     if (data->fd_out == -2 && index < cmnd_count - 1 && dup2(pipes[index + 1][1], STDOUT_FILENO) == -1)
