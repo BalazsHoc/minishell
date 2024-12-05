@@ -75,7 +75,7 @@ char	*gnl_join_buffer(char *line, char *buffer)
 	return (joined);
 }
 
-char	*reading(int fd, char *static_buf)
+char	*reading(int fd, char *static_buf, t_pipex *data)
 {
 	char	*buffer;
 	ssize_t	return_of_read;
@@ -83,40 +83,38 @@ char	*reading(int fd, char *static_buf)
 	if (!static_buf)
 		static_buf = gnl_calloc(1, 1);
 	if (!static_buf)
-		return (NULL);
+		return (error_code(data), NULL);
 	return_of_read = 1;
 	while (!gnl_newline(static_buf) && return_of_read > 0)
 	{
 		buffer = gnl_calloc(BUFFER_SIZE + 1, sizeof(char));
 		if (!buffer)
-			return (gnl_free(&static_buf), NULL);
+			return (gnl_free(&static_buf), error_code(data), NULL);
 		write(1, "> ", 2);
 		return_of_read = read(fd, buffer, BUFFER_SIZE);
 		if (return_of_read == -1)
-			return (gnl_free(&buffer), gnl_free(&static_buf), NULL);
+			return (gnl_free(&buffer), gnl_free(&static_buf), NULL); // Ctrl C
 		buffer[return_of_read] = '\0';
 		static_buf = gnl_join_free(static_buf, buffer);
 		if (!static_buf)
-			return (gnl_free(&buffer), NULL);
+			return (gnl_free(&buffer), error_code(data), NULL);
 		if (return_of_read < BUFFER_SIZE)
 			break ;
 	}
 	return (static_buf);
 }
 
-char	*get_next_line(int fd, bool flag)
+char	*get_next_line(int fd, t_pipex *data)
 {
 	static char	*buf;
 	char		*output;
 
-	if (fd < 0 || BUFFER_SIZE < 1 || flag == 1)
-		return (gnl_free(&buf), NULL);
-	buf = reading(fd, buf);
-	if (!buf)
-		return (NULL);
-	output = gnl_strcpy(buf);
+	if (fd < 0 || BUFFER_SIZE < 1)
+		return (gnl_free(&buf), error_code(data), NULL);
+	buf = reading(fd, buf, data);
+	output = gnl_strcpy(buf, data);
 	if (!output)
-		return (gnl_free(&buf), NULL);
+		return (gnl_free(&buf), NULL); // Ctrl D
 	if (gnl_newline(buf) == 1)
 	{
 		buf = gnl_fromnl(buf);

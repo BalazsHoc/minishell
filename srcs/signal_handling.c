@@ -1,21 +1,19 @@
 #include "../minishell.h"
 
-int		glob_var = 0;
+int		glob_var;
 
 void heredoc_sigint_handler(int sig)
 {
     if (sig == SIGINT)
-    {
-        glob_var = 1; // Mark that SIGINT was received
-        write(STDOUT_FILENO, "\n", 1);
-    }
+        glob_var = 1;
 }
 
 char *get_input(t_pipex *data, int index_1, int index_2)
 {
-    char *buf;
-    char *key;
-    char *input;
+    int     fd;
+    char    *buf;
+    char    *key;
+    char    *input;
     struct sigaction sa, old_sa;
 
     glob_var = 0;
@@ -26,9 +24,9 @@ char *get_input(t_pipex *data, int index_1, int index_2)
     key = data->cmnds[index_1][index_2 + 1];
     if (!ft_strncmp(data->cmnds[index_1][index_2], "<", 2))
         return (NULL);
-    buf = readline("> ");
-    if (!buf)
-        error_code(data);
+    else
+        fd = 0;
+    buf = get_next_line(fd, data);
     input = NULL;
     while (buf && !ft_strcmp_2(buf, key))
     {
@@ -38,12 +36,9 @@ char *get_input(t_pipex *data, int index_1, int index_2)
             return (free_str(input), free_str(buf), NULL);
         }
         input = join_this(input, buf);
-        if (!input)
-            return (free_str(buf), error_code(data), NULL);
-        free_str(buf);
-        buf = readline("> ");
+        free(buf);
+        buf = get_next_line(fd, data);
     }
     sigaction(SIGINT, &old_sa, NULL);
-    free_str(buf);
-    return (input);
+    return (printf("\n"), free_str(buf), input);
 }

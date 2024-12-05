@@ -27,13 +27,14 @@
 # include <signal.h>
 # include <errno.h>
 # include <dirent.h>
+# include <stdlib.h>
 
 # include <sys/types.h>
 # include <sys/wait.h>
 
-// # ifndef BUF_SIZE_GNL
-// # define BUF_SIZE_GNL 50
-// # endif
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 12
+# endif
 
 # ifndef MAX_CMNDS
 # define MAX_CMNDS 50
@@ -176,5 +177,17 @@ void	exit_child(t_pipex *data);
 //	env.c
 
 // void	init_env(char **env);
+
+//	get_next_line.c
+char	*get_next_line(int fd, t_pipex *data);
+char	*gnl_join_buffer(char *line, char *buffer);
+void	*gnl_calloc(size_t nmemb, size_t size);
+
+//	get_next_line_utils.c
+char	*gnl_fromnl(char *buf);
+char	*gnl_strcpy(char *buf, t_pipex *data);
+int		gnl_newline(char *str);
+int		gnl_strlen(char *str);
+void	gnl_free(char **ptr);
 
 #endif

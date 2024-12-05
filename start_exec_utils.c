@@ -12,6 +12,8 @@ int here_doc(t_pipex *data, int index)
             && (!ft_strncmp(data->paths[index], "pathnfound", 11) || i != is_red_inline(data, index)))
         {
             infile = get_input(data, index, i);
+            if (!infile)
+                break ;
             free_str(infile);
             i++;
         }
