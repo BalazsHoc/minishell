@@ -51,44 +51,43 @@ int	count_key(char *line, int j, int open)
 	return (k);
 }
 
-char *extract_key(char *line, int j, int open, int check)
+char *extract_key(t_pipex *data, int j, int open, int check)
 {
 	int k;
 	char *key;
 
-	key = malloc(sizeof(char) * (count_key(line, j, open) + 1));
+	key = malloc(sizeof(char) * (count_key(data->line, j, open) + 1));
 	if (!key)
-		return (error_code(NULL, line, 1, 0), NULL);
-	key[count_key(line, j, open)] = 0;
+		return (error_code(data), NULL);
+	key[count_key(data->line, j, open)] = 0;
 	k = 0;
-	while (line[j])
+	while (data->line[j])
 	{
 		// printf("OPEN: %d at %s\n", open, line + j);
-		if (check && open == 2 && (is_space(line[j]) || line[j] == '\n' || is_quote(line[j])))
+		if (check && open == 2 && (is_space(data->line[j]) || data->line[j] == '\n' || is_quote(data->line[j])))
 			break;
-		if (check && !open && (!line[j] || is_space(line[j]) || line[j] == '\n'
-			|| is_real_pipe(line, j)
-			|| is_red_clean(line, j)
-			|| is_quote(line[j])))
+		if (check && !open && (!data->line[j] || is_space(data->line[j]) || data->line[j] == '\n'
+			|| is_real_pipe(data->line, j)
+			|| is_red_clean(data->line, j)
+			|| is_quote(data->line[j])))
 			break;
 		if (check)
-			key[k++] = line[j];
-		if (line[j] == '$')
+			key[k++] = data->line[j];
+		if (data->line[j] == '$')
 			check = 1;
 		j++;
 	}
 	return (key);
 }
 
-char *fill_key(char *line, char *str)
+char *fill_key(t_pipex *data, char *str)
 {
 	int i;
 	char *new;
 
-	// printf("HURA\n");
 	new = malloc(sizeof(char) * (ft_strlen(str) + 1));
 	if (!new)
-		return (error_code(NULL, line, 1, 0), NULL);
+		return (error_code(data), NULL);
 	new[ft_strlen(str)] = 0;
 	i = -1;
 	while (str[++i])
@@ -127,7 +126,7 @@ int	count_expansion(char *line, int i, char *elem, int open)
 	return (count);
 }
 
-char	*expand_it(char *line, int i, int open, char **env)
+char	*expand_it(t_pipex *data, int i, int open, char **env)
 {
 	int j;
 	char *key;
@@ -138,51 +137,52 @@ char	*expand_it(char *line, int i, int open, char **env)
 	elem = NULL;
 	// if (line[i] != '$' && line[i - 1])
 	// 	i--;
-	key = extract_key(line, i, open, 0);
-	printf("KEY: %s$\n", key);
+	key = extract_key(data, i, open, 0);
+	if (!ft_strncmp(key, "?", 2))
+		return (free_str(key), ft_itoa(data->exit_code));
 	while (env[++j])
 	{
-		if (!ft_strncmp(key, env[j], ft_strlen(key) - 1) && env[j][ft_strlen(key)] == '=')
-			elem = fill_key(line, env[j] + (count_key(line, i, open) + 1));
+		if (!ft_strncmp(key, env[j], ft_strlen(key) - 1) && env[j][ft_strlen(key)] == '=' && free_this(key))
+			elem = fill_key(data, env[j] + (count_key(data->line, i, open) + 1));
 	}
 	// printf("ELEM $%s$\n", elem);
-	new = malloc(sizeof(char) * (count_expansion(line, i, elem, open) + 1));
+	new = malloc(sizeof(char) * (count_expansion(data->line, i, elem, open) + 1));
 	if (!new)
-		return (printf("malloc fail\n"), error_code(NULL, line, 1, 1), NULL);
-	new[count_expansion(line, i, elem, open)] = 0;
+		return (printf("malloc fail\n"), free_str(elem), error_code(data), NULL);
+	new[count_expansion(data->line, i, elem, open)] = 0;
 	j = 0;
-	while (line[i])
+	while (data->line[i])
 	{
-		if (line[i] == '$')
+		if (data->line[i] == '$')
 		{
 			ft_strncpy_2(new + j, elem, ft_strlen(elem), open);
-			i += count_chars(line, i, 0);
+			i += count_chars(data->line, i, 0);
 			j += ft_strlen(elem);
 		}
-		if (open && is_quote_two(line[i]))
+		if (open && is_quote_two(data->line[i]))
 			break;
-		if (!open && (!line[i + 1] || is_space(line[i + 1]) || line[i + 1] == '\n'
-			|| is_real_pipe(line, i + 1)
-			|| is_red_clean(line, i)
-			|| is_quote(line[i + 1])))
+		if (!open && (!data->line[i + 1] || is_space(data->line[i + 1]) || data->line[i + 1] == '\n'
+			|| is_real_pipe(data->line, i + 1)
+			|| is_red_clean(data->line, i)
+			|| is_quote(data->line[i + 1])))
 			// || ((!line[i + 2] || is_space(line[i + 2]) || line[i + 2] == '\n') && is_quote(line[i + 1]))))
 			break;
-		printf("POS NEW: %s$\n", line + i);
-		new[j] = line[i++];
+		// printf("POS NEW: %s$\n", data->line + i);
+		new[j] = data->line[i++];
 		j++;
 	}
-	return (free(key), free(elem), new);
+	return (free(elem), new);
 }
 
-char *fill_normal(char *line, int j, int open)
+char *fill_normal(t_pipex *data, int j, int open)
 {
 	char *new;
 
-	new = malloc(sizeof(char) * (count_chars(line, j, open) + 1));
+	new = malloc(sizeof(char) * (count_chars(data->line, j, open) + 1));
 	if (!new)
-		return (perror("malloc fail\n"), error_code(NULL, line, 1, 0), NULL);
-	new[count_chars(line, j, open)] = 0;
-	ft_strncpy_2(new, line + j, count_chars(line, j, open), open);
+		return (perror("malloc fail\n"), error_code(data), NULL);
+	new[count_chars(data->line, j, open)] = 0;
+	ft_strncpy_2(new, data->line + j, count_chars(data->line, j, open), open);
 	return (new);
 }
 
@@ -206,7 +206,7 @@ int dollar_in(char *line, int j, int open)
 	return (0);
 }
 
-char	**fill_cmnds(char **arr, char *line, int i, char **env)
+char	**fill_cmnds(char **arr, t_pipex *data, int i, char **env)
 {
 	int	j;
 	int k;
@@ -217,38 +217,42 @@ char	**fill_cmnds(char **arr, char *line, int i, char **env)
 	index = -1;
 	open = 0;
 	k = -i;
-	while (line[++j] && i >= 0)
+	while (data->line[++j] && i >= 0)
 	{
-		if (is_quote_one(line[j]) && is_space(line[j - 1]) && !open && ++j)
+		if (is_quote_one(data->line[j]) && is_space(data->line[j - 1]) && !open && ++j)
 			open = 1;
-		else if (is_quote_two(line[j]) && is_space(line[j - 1]) && !open && ++j)
+		else if (is_quote_two(data->line[j]) && is_space(data->line[j - 1]) && !open && ++j)
 			open = 2;
-		else if (((is_quote_one(line[j]) && open == 1) || (is_quote_two(line[j]) && open == 2)) && ++j)
+		else if (((is_quote_one(data->line[j]) && open == 1) || (is_quote_two(data->line[j]) && open == 2)) && ++j)
 			open = 0;
 		// // "this is 'hi there ' last word "
 		// printf("FILL_CMNDS: %s | OPEN: %d | K: %d\n", line + j, open, k);
-		if (k == 0 && !is_real_pipe(line, j) && ((j == 0 && !is_space(line[j]))
-				|| (is_space(line[j - 1]) && !is_space(line[j]) && !open)
-				|| ((open == 1 && is_quote_one(line[j - 1])) || (open == 2 && is_quote_two(line[j - 1])))
-				|| (is_red_clean(line, j) && !open)
-				|| ((is_red_in(line[j - 1]) && is_red_out(line[j])) || (is_red_out(line[j - 1]) && is_red_in(line[j])))
-				|| (is_red_1(line[j - 1]) && !is_red_1(line[j]) && !is_space(line[j]) && line[j] != '|' && !open)
-				|| ((is_real_pipe(line, j - 1)
-					|| (line[j - 1] == '|' && line[j - 2] == '>')) && !is_space(line[j]))))
+		if (k == 0 && !is_real_pipe(data->line, j) && ((j == 0 && !is_space(data->line[j]))
+				|| (is_space(data->line[j - 1]) && !is_space(data->line[j]) && !open)
+				|| ((open == 1 && is_quote_one(data->line[j - 1])) || (open == 2 && is_quote_two(data->line[j - 1])))
+				|| (is_red_clean(data->line, j) && !open)
+				|| ((is_red_in(data->line[j - 1]) && is_red_out(data->line[j])) || (is_red_out(data->line[j - 1]) && is_red_in(data->line[j])))
+				|| (is_red_1(data->line[j - 1]) && !is_red_1(data->line[j]) && !is_space(data->line[j]) && data->line[j] != '|' && !open)
+				|| ((is_real_pipe(data->line, j - 1)
+					|| (data->line[j - 1] == '|' && data->line[j - 2] == '>')) && !is_space(data->line[j]))))
 				// && (!open || ((open == 1 && is_quote_one(line[j - 1])) || (open == 2 && is_quote_two(line[j - 1])))))
 		{
 			// printf("TRUE!\n");
-			if (dollar_in(line, j, open) && open != 1
+			if (dollar_in(data->line, j, open) && open != 1
 				&& (index == -1 || (index >= 0 && ft_strncmp(arr[index], "<<", 3))))
-				arr[++index] = expand_it(line, j, open, env);
-			else 
-				arr[++index] = fill_normal(line, j, open);
+				arr[++index] = expand_it(data, j, open, env);
+			// else if (line[dollar_in(line, j, open) + 1] != '?')
+			// 	arr[++index] = echo_exit_code();
+			else
+				arr[++index] = fill_normal(data, j, open);
+			if (!arr[index])
+				error_code(data);
 			// j += count_chars(line, j, open) - 1;
 		}
 		// printf("I1: %d\n", i);
-		if (is_real_pipe(line, j) && j > 0 && !is_red_1(line[j - 1]) && k++ != INT_MIN)
+		if (is_real_pipe(data->line, j) && j > 0 && !is_red_1(data->line[j - 1]) && k++ != INT_MIN)
 			i--;
-		if (!line[j])
+		if (!data->line[j])
 			break;
 		// printf("I2: %d\n", i);
 	}

@@ -1,40 +1,34 @@
 #include "../minishell.h"
 
-void	error_code(t_pipex *data, char *line, int ex, int errnum)
+void	error_code(t_pipex *data)
 {
-	if (ex)
+	if (data)
 	{
-		if (data && line)
-			free_a(line, data);
-		else if (line)
-			free(line);
-		else if (data)
-			free_struct(data);
-		exit(errnum);
+		free_struct(data);
+		if (data->cur_env)
+			free_list(data->cur_env);
+		free(data);
 	}
-	else
-	{
-		if (data && line)
-			free_a(line, data);
-		else if (line)
-			free(line);
-		else if (data)
-			free_struct(data);
-	}
+	exit(errno);
 }
 
-void exit_child(int errnum, char *line, t_pipex *data)
+void exit_child(t_pipex *data)
 {
 	int pid;
+	int status;
 
 	pid = fork();
 	if (pid == -1)
-	{
-		perror("fork failed\n");
-		error_code(data, line, 1, errno);
-	}
+		return (perror("fork failed\n"), error_code(data));
 	if (!pid)
-		exit(errnum);
+		exit(errno);
 	else
-		wait(NULL);
+	{
+		if (waitpid(pid, &status, 0) == -1)
+			return (perror("waitpid failed!"), error_code(data));
+		if (WIFEXITED(status))
+			data->exit_code = WEXITSTATUS(status);
+		else
+			return (perror("Child did not terminate properly!"), error_code(data));
+	}
 }
