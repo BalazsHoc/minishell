@@ -153,3 +153,4 @@ void	parsing(t_pipex *data)
 	return (set_cur_path(data), init_ops(data, cmnd_count), init_paths(data, cmnd_count, -1),
 		start_exec(data, cmnd_count), free_struct(data));
 }
+//	return (rl_clear_history(), free_list(env), error_code(data, line, 1, 1));
