@@ -53,12 +53,12 @@ typedef struct pipex_s
 	char	**paths;
 	char	**cur_env;
 
+	char	*line;
 	char	*cur_path;
 	char	*input;
-	char	*tmp;
 
 	int		fd_out;
-	int		fd_in;
+	int		exit_code;
 
 }	t_pipex;
 
@@ -66,7 +66,7 @@ int		main(int argc, char **argv, char **env);
 
 //	parsing.c
 
-void	parsing(t_pipex *data, char *line, char **env);
+void	parsing(t_pipex *data);
 
 //	util_checks.c
 
@@ -76,7 +76,7 @@ int		syntax_check(char *line, int i, int count);
 
 //	init_cmnds.c
 
-char	**fill_cmnds(char **arr, char *line, int i, char **env);
+char	**fill_cmnds(char **arr, t_pipex *data, int i, char **env);
 
 int		count_cmnds(char *line);
 int		count_elem(char *line, int i, int count);
@@ -85,15 +85,17 @@ int		count_chars(char *line, int i, int open);
 //	init_ops.c
 
 void    fill_ops(t_pipex *data, int index);
+void    fill_echo_exit(t_pipex *data, int index);
 
 int		count_ops(t_pipex *data, int index);
 int		count_env(char **env);
+int		echo_exit_code(char **arr);
 
 //	inti_paths.c
 
 void 	set_cur_path(t_pipex *data);
 
-char	*find_path(char **env, char *cmnd);
+char	*find_path(t_pipex*data, char *cmnd);
 
 int		is_mini(t_pipex *data, int i);
 
@@ -127,9 +129,12 @@ int		is_red_out(char c);
 
 void 	start_exec(t_pipex *data, int cmnd_count);
 
-char	*get_input(t_pipex *data, int index_1, int index_2);
 
 int		is_red_inline(t_pipex *data, int index);
+
+//	signal_handling.c
+
+char	*get_input(t_pipex *data, int index_1, int index_2);
 
 //	start_exec_utils.c
 
@@ -158,20 +163,15 @@ void	create_pipes(int (*pipes)[2], int cmnd_count);
 
 int		free_this(char *s);
 void	free_struct(t_pipex *data);
-void	free_a(char *line, t_pipex *data);
 void	free_list_list(char ***arr);
 void	free_list(char **arr);
 void	free_str(char *s);
 void	free_env(char **env);
 
-//	find_path.c
-
-char	*find_path(char **env, char *cmnd);
-
 //	exit_child.c
 
-void	error_code(t_pipex *data, char *line, int ex, int errnum);
-void	exit_child(int errnum, char *line, t_pipex *data);
+void	error_code(t_pipex *data);
+void	exit_child(t_pipex *data);
 
 //	env.c
 

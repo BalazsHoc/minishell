@@ -14,7 +14,7 @@
 
 int	is_real_pipe(char *line, int index)
 {
-	if (!line[index - 1])
+	if (index > 0 && !line[index - 1])
 		return (0);
 	// printf("IS REAL PIPE: %s\n", line + index);
 	if (line[index] == '|')
@@ -52,13 +52,13 @@ int check_reds(t_pipex *data)
 				|| (is_red_in(data->cmnds[i][j][0]) && !data->cmnds[i][j][1] && !special_case(data, i, j))))
             {
                 if (!data->cmnds[i + 1] || (is_red_in(data->cmnds[i][j][0]) && !data->cmnds[i][j][1] && !data->cmnds[i + 1]))
-                    return (printf("bash: syntax error near unexpected token `newline' \n"), exit_child(2, NULL, data), 0);
-                return (printf("bash: syntax error near unexpected token `|'\n"), exit_child(2, NULL, data), 0);
+                    return (printf("bash: syntax error near unexpected token `newline' \n"), exit_child(data), 0);
+                return (printf("bash: syntax error near unexpected token `|'\n"), exit_child(data), 0);
             }
             else if (is_red(data, i, j) && is_red(data, i, j + 1) && !special_case(data, i , j))
-                    return (printf("BASH: syntax error near unexpected token `%s' \n", data->cmnds[i][j + 1]), exit_child(2, NULL, data), 0);
+                    return (printf("bash: syntax error near unexpected token `%s' \n", data->cmnds[i][j + 1]), exit_child(data), 0);
 			else if (is_red(data, i, j) && is_red(data, i, j + 1) && special_case(data, i, j))
-                    return (printf("BASH: syntax error near unexpected token `%c' \n", data->cmnds[i][j + 1][0]), exit_child(2, NULL, data), 0);
+                    return (printf("bash: syntax error near unexpected token `%c' \n", data->cmnds[i][j + 1][0]), exit_child(data), 0);
         }
     }
 	// printf("check_reds: return 1\n");

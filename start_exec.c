@@ -53,30 +53,6 @@ char *replace_nl(char *str)
     return (str);
 }
 
-char *get_input(t_pipex *data, int index_1, int index_2)
-{
-    int fd;
-    char *buf;
-    char *key;
-    char *input;
-
-    key = data->cmnds[index_1][index_2 + 1];
-    if (!ft_strncmp(data->cmnds[index_1][index_2], "<", 2))
-        return (NULL);
-    else
-        fd = 0;
-    buf = get_next_line(fd, 0);
-    input = NULL;
-    while (buf && !ft_strcmp_2(buf, key))
-    {
-        input = join_this(input, buf);
-        free(buf);
-        buf = get_next_line(fd, 0);
-    }
-    free_str(buf);
-    return (input);
-}
-
 int is_valid_in(t_pipex *data, int index)
 {
     int i;
@@ -191,22 +167,24 @@ void start_exec(t_pipex *data, int cmnd_count)
             && (is_valid_in(data, i)
             || (!is_valid_in(data, i) && is_in_inline(data, i) == -1)))
         {
-            if ((is_valid_in(data, i) || (!is_valid_in(data, i) && is_red_inline(data, i) != -1)) && free_this(data->input))
-                data->input = get_input(data, i, is_red_inline(data, i));
-            printf("INPUT: %s$\n", data->input);
+            // if ((is_valid_in(data, i) || (!is_valid_in(data, i) && is_red_inline(data, i) != -1)) && free_this(data->input))
+            //     data->input = get_input(data, i, is_red_inline(data, i));
+            // printf("INPUT: %s$\n", data->input);
             if (!ft_strncmp(data->paths[i], "minicmnds", 11))
                exec_mini(data, i, cmnd_count, pipes);
             else
                 exec_cmnd(data, i, cmnd_count, pipes);
+            data->exit_code = 0;
+            
             // printf("EXECCMND FINISHED!\n");
-            printf("_________________________________________________________________________________________\n");
+            // printf("_________________________________________________________________________________________\n");
         }
         else if (ft_strncmp(data->paths[i], "pathnfound", 11) 
             && (is_valid_in(data, i) || (!is_valid_in(data, i) && is_red_inline(data, i) != -1)))
             printf("BASH: %s: no such file or directory\n", data->cmnds[i][is_red_inline(data, i) + 1]);
         if (data->fd_out > 2)
             close(data->fd_out);
-        printf("EXIT\n");
+        // printf("EXIT\n");
     }
     close_pipes(pipes, cmnd_count);
     while (wait(NULL) > 0);

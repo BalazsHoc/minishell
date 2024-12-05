@@ -14,15 +14,6 @@
 
 //only the if statements has been changed in free* functions
 
-void free_env(char **env)
-{
-	int i;
-
-	i = -1;
-	while (env[++i])
-		free_str(env[i]);
-}
-
 void	free_list_ptr(char ***list)
 {
 	int i;
@@ -40,15 +31,21 @@ void	free_struct(t_pipex *data)
 {
 	if (data)
 	{
-		if (data->paths)
-			free_list(data->paths);
 		if (data->cmnds)
 			free_list_list(data->cmnds);
+		data->cmnds = NULL;
 		if (data->ops)
 			free_list_list(data->ops);
+		data->ops= NULL;
+		if (data->paths)
+			free_list(data->paths);
+		data->paths = NULL;
 		if (data->input)
-			free_str(data->input);
-		// free(data);
+			free(data->input);
+		data->input = NULL;
+		if (data->line)
+			free(data->line);
+		data->line = NULL;
 	}
 }
 
@@ -57,8 +54,13 @@ void	free_list(char **arr)
 	int	i;
 
 	i = -1;
-	while (arr[++i])
+	if (!arr)
+		return ;
+	if (arr[0])
+	{
+		while (arr[++i])
 			free(arr[i]);
+	}
 	free(arr);
 }
 
@@ -67,21 +69,18 @@ void	free_list_list(char ***arr)
 	int	i;
 
 	i = 0;
-	while (arr[i])
-		free_list(arr[i++]);
+	if (!arr)
+		return ;
+	if (arr[0])
+	{
+		while (arr[i])
+			free_list(arr[i++]);
+	}
+	free(arr);
 }
 
 void	free_str(char *str)
 {
 	if (str)
 		free(str);
-}
-
-void	free_a(char *line, t_pipex *data)
-{
-	if (data)
-		free_struct(data);
-	if (line)
-		free(line);
-	exit_child(1, NULL, NULL);
 }

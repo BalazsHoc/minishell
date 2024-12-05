@@ -8,7 +8,7 @@ int here_doc(t_pipex *data, int index)
     i = -1;
     while (data->cmnds[index][++i])
     {
-        if ((!ft_strncmp(data->cmnds[index][i], "<<", 3) || !ft_strncmp(data->cmnds[index][i], "<", 2))
+        if (!ft_strncmp(data->cmnds[index][i], "<<", 3)
             && (!ft_strncmp(data->paths[index], "pathnfound", 11) || i != is_red_inline(data, index)))
         {
             infile = get_input(data, index, i);
@@ -79,18 +79,18 @@ void    update_env(t_pipex *data, int index)
     }
     buf = ft_calloc(sizeof(char), (BUF_SIZE_ENV * 100) + 1);
     if (!buf)
-        return (printf("malloc fail!\n"), error_code(data, NULL, 1, 1));
+        return (printf("malloc fail!\n"), error_code(data));
     getcwd(buf, BUF_SIZE_ENV * 100);
     i = -1;
     // printf("BUF: %s\n", buf);
     if (!buf)
-        return (printf("FAILED GETCWD()\n"), error_code(data, NULL, 0, 0));
+        return (printf("FAILED GETCWD()\n"), error_code(data));
     while (data->cur_env[++i] && i < 100)
     {
         if (!ft_strncmp(data->cur_env[i], "PWD=", 4))
         {
-            if (!ft_strncmp(data->ops[index][1], ".", 1)
-                && (!*buf || !ft_strncmp(buf, data->cur_path, bigger_one(buf, data->cur_path))))
+            if (!ft_strncmp(data->ops[index][1], ".", 1) && !*buf)
+                // || !ft_strncmp(buf, data->cur_path, bigger_one(buf, data->cur_path))))
             {
                 free(buf);
                 if (data->cur_path[bigger_one(data->cur_path, data->cur_path) - 1] != '/')
@@ -123,7 +123,7 @@ char    *get_home(t_pipex *data, char **env)
     if (!home_dir)
     {
         printf("Home is not set\n");
-        return (free_list(env), error_code(data, NULL, 1, 1), NULL);
+        return (free_list(env), error_code(data), NULL);
     }
     return (home_dir);
 }
@@ -145,8 +145,10 @@ void cd_cmnd(char **argv, t_pipex *data, int index)
     char    *home_dir;
 
     if (data->ops[index][0] && data->ops[index][1] && data->ops[index][2])
-        return (printf("-bash: cd: too many arguments\n"), error_code(data, NULL, 0, 1));
+        return (printf("-bash: cd: too many arguments\n"), error_code(data));
     home_dir = get_home(data, data->cur_env);
+    if (!ft_strncmp(argv[1], ".", 2))
+        return (update_env(data, index));
     if (!argv[1] || !strncmp(argv[1], "~", 2))
     {
         if (chdir(home_dir) == -1)
@@ -176,7 +178,7 @@ char *env_cmnd(t_pipex *data, int index)
         count += ft_strlen(data->cur_env[i]) + 1;
     out = malloc(sizeof(char) * (count + 1));
     if (!out)
-        return (printf("malloc fail!\n"), error_code(data, NULL, 1, 1), NULL);
+        return (printf("malloc fail!\n"), error_code(data), NULL);
     out[count] = 0;
     i = -1;
     count = 0;
@@ -197,10 +199,10 @@ int is_valid_cwd(t_pipex *data)
 
     buf = ft_calloc(sizeof(char), (BUF_SIZE_ENV * 100) + 1);
     if (!buf)
-        return (printf("malloc fail!\n"), error_code(data, NULL, 1, 1), -1);
+        return (printf("malloc fail!\n"), error_code(data), -1);
     getcwd(buf, BUF_SIZE_ENV * 100);
     if (!buf)
-        return (printf("FAILED GETCWD()\n"), error_code(data, NULL, 0, 0), -1);
+        return (printf("FAILED GETCWD()\n"), error_code(data), -1);
     if (!*buf)
         return (free(buf), 0);
     return (free(buf), 1);
@@ -220,7 +222,7 @@ char **malloc_env_export(t_pipex *data, int index)
         j++;
     buf = ft_calloc(sizeof(char *), (i + j + 1));
     if (!buf)
-        printf("malloc fail!\n"), error_code(data, NULL, 1, 1);
+        printf("malloc fail!\n"), error_code(data);
     buf[i + j] = NULL;
     return (buf);
 }
@@ -261,9 +263,10 @@ void export_cmnd_1(t_pipex *data, int index)
             rand = (INT_MAX / data->ops[index][i + 1][ft_strlen(data->ops[index][i + 1]) - 1]) % (j + 1);
         else 
             rand = ((data->ops[index][i + 1][0] / data->ops[index][i + 1][ft_strlen(data->ops[index][i + 1]) - 1]) - 1) % (j - 1);
+        printf("RAND: %d\n", rand);
         buf[rand] = malloc(sizeof(char) * (ft_strlen(data->ops[index][i + 1]) + 1));
         if (!buf[rand])
-            printf("malloc fail!\n"), error_code(data, NULL, 1, 1);
+            printf("malloc fail!\n"), error_code(data);
         buf[rand][ft_strlen(data->ops[index][i + 1])] = 0;
         ft_strlcpy(buf[rand], data->ops[index][i + 1], ft_strlen(data->ops[index][i + 1]) + 1);
     }
@@ -279,23 +282,30 @@ char *export_cmnd_2(t_pipex *data, char *this)
 
     i = -1;
     while (data->cur_env[++i])
-        count += ft_strlen(data->cur_env[i]) + 1 + 11;
+    {
+        if (ft_strncmp(data->cur_env[i], "_=", 2))
+            count += ft_strlen(data->cur_env[i]) + 1 + 11;
+    }
     out = malloc(sizeof(char) * (count + 1));
     if (!out)
-        return (printf("malloc fail!\n"), error_code(data, NULL, 1, 1), NULL);
+        return (printf("malloc fail!\n"), error_code(data), NULL);
     out[count] = 0;
     i = -1;
     count = 0;
     while (data->cur_env[++i])
     {
-        j = -1;
-        while (++j < 11)
-            out[count++] = this[j];
-        j = -1;
-        while (data->cur_env[i][++j])
-            out[count++] = data->cur_env[i][j];
-        // FIGURE!! should the last line also be newline in the end?
-        out[count++] = '\n';
+        if (ft_strncmp(data->cur_env[i], "_=", 2))
+        {
+            j = -1;
+            while (++j < 11)
+                out[count++] = this[j];
+            j = -1;
+            while (data->cur_env[i][++j])
+                out[count++] = data->cur_env[i][j];
+            if (!((data->cur_env[i + 1] && (!ft_strncmp(data->cur_env[i + 1], "_=", 2) && !data->cur_env[i + 2]))
+                || !data->cur_env[i + 1]))
+                out[count++] = '\n';
+        }
     }
     return (out);
 }
@@ -310,7 +320,7 @@ char *key_this(t_pipex *data, char *s)
         i++;
     key = malloc(sizeof(char) * (i + 1));
     if (!key)
-        return (printf("malloc fail!\n"), error_code(data, NULL, 1, 1), NULL);
+        return (printf("malloc fail!\n"), error_code(data), NULL);
     key[i] = 0;
     i = 0;
     while (s[i] && s[i] != '=')
@@ -351,7 +361,7 @@ char **malloc_env_unset(t_pipex *data, int count)
 
     buf = malloc(sizeof(char *) * (count + 1));
     if (!buf)
-        return (printf("malloc fail!\n"), error_code(data, NULL, 1, 1), NULL);
+        return (printf("malloc fail!\n"), error_code(data), NULL);
     buf[count] = NULL;
     return (buf);
 }
@@ -374,7 +384,7 @@ void unset_cmnd(t_pipex *data, int index, int i, int k)
     char *key;
 
     if (!data->ops[index][1])
-        return (printf("bash: unset: not enough arguments\n"), exit_child(errno, NULL, data));
+        return (printf("bash: unset: not enough arguments\n"), exit_child(data));
     new = malloc_env_unset(data, count_unset_env(data, index));
     while (data->cur_env[++i])
     {
@@ -402,7 +412,7 @@ void mini_commands(t_pipex *data, int index)
     if (!ft_strncmp(data->ops[index][0], "cd", 3))
         cd_cmnd(data->ops[index], data, index);
     else if (!ft_strncmp(data->ops[index][0], "exit", 5))
-        error_code(data, NULL, 1, 0);
+        error_code(data);
     else if (!ft_strncmp(data->ops[index][0], "export", 7) && data->ops[index][1])
         export_cmnd_1(data, index);
     else if (!ft_strncmp(data->ops[index][0], "unset", 6))
@@ -412,7 +422,7 @@ void mini_commands(t_pipex *data, int index)
 void mini_child(t_pipex *data, int index)
 {
     if (!ft_strncmp(data->ops[index][0], "env", 4) && !data->ops[index][1])
-        printf("%s", env_cmnd(data, ++(index) - 1));
+        printf("%s", env_cmnd(data, index));
     else if (!ft_strncmp(data->ops[index][0], "pwd", 4))
         printf("%s\n", data->cur_path);
     else if (!ft_strncmp(data->ops[index][0], "ls", 3) && !is_valid_cwd(data))

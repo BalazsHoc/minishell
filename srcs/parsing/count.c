@@ -42,9 +42,9 @@ int	count_elem(char *line, int i, int count)
 			// printf("LINE: $%s$ OPEN: %d\n", line + j, open);
 			if (is_real_pipe(line, j) && !open)
 				break ;
-			if (is_quote_one(line[j]) && !open && is_space(line[j - 1]) && count++ && printf("COUNT++++++++\n"))
+			if (is_quote_one(line[j]) && !open && is_space(line[j - 1]) && count++)
 				open = 1;
-			else if (is_quote_two(line[j]) && !open && is_space(line[j - 1]) && count++ && printf("COUNT+++++++\n"))
+			else if (is_quote_two(line[j]) && !open && is_space(line[j - 1]) && count++)
 				open = 2;
 			else if (((is_quote_one(line[j]) && open == 1) || (is_quote_two(line[j]) && open == 2)))
 				open = 0;
@@ -94,7 +94,7 @@ int	count_chars(char *line, int i, int open)
 			// || ((!line[i + 2] || is_space(line[i + 2]) || line[i + 2] == '\n') && is_quote(line[i + 1]))))
 			break;
 		else if ((!line[i + 2] || (line[i + 2] && (is_space(line[i + 2]) || line[i + 2] == '\n' || line[i + 2] == '|' || is_red_clean(line, i + 2))))
-			&& ((is_quote(line[i + 1]) && open == 1) || (is_quote_two(line[i + 1]) && open == 2) || (is_quote(line[i + 1]) && !open)))
+			&& ((is_quote_one(line[i + 1]) && open == 1) || (is_quote_two(line[i + 1]) && open == 2) || (is_quote(line[i + 1]) && !open)))
 				break ;
 		// else if (((line[i + 2] && (is_space(line[i + 2]) || line[i + 2] == '\n' || line[i + 2] == '|' || is_red_clean(line, i + 2)))
 		// 	&& ((open == 1 && is_quote_one(line[i + 1])) || (open == 2 && is_quote_two(line[i + 1])))))
