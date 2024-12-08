@@ -60,9 +60,15 @@ typedef struct pipex_s
 	int		fd_out;
 	int		exit_code;
 
+	struct sigaction old_sa;
+
 }	t_pipex;
 
-int		main(int argc, char **argv, char **env);
+
+//	signal_handling.c
+
+void	signal_main(int sig);
+void    signal_back(t_pipex *data);
 
 //	parsing.c
 
@@ -135,6 +141,7 @@ int		is_red_inline(t_pipex *data, int index);
 //	signal_handling.c
 
 char	*get_input(t_pipex *data, int index_1, int index_2);
+void    signal_change();
 
 //	start_exec_utils.c
 

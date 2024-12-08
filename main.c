@@ -12,17 +12,15 @@
 
 #include "minishell.h"
 
-static void handle_signal(int sig)
+void	init_data(t_pipex *data, char **env)
 {
-	if (sig == SIGINT)
-	{
-		write(1, "\n", 1);
-		rl_replace_line("", 0);
-		rl_on_new_line();
-		rl_redisplay();
-	}
-	if (sig == SIGQUIT)
-		return;
+	data->cur_env = env;
+	data->cmnds = NULL;
+	data->ops = NULL;
+	data->paths = NULL;
+	data->input = NULL;
+	data->exit_code = 0;
+	data->fd_out = 0;
 }
 
 void	init_env(char ***env)
@@ -60,17 +58,15 @@ int	main(int argc, char **argv, char **env)
 	data = malloc(sizeof(t_pipex) * 1);
 	if (!data)
 		return (perror("malloc failed!"), free_list(env), errno);
-	data->cur_env = env;
-	data->exit_code = 0;
-	data->fd_out = 0;
-	signal(SIGINT, handle_signal);
-	signal(SIGQUIT, handle_signal);
+	init_data(data, env);
+	signal(SIGINT, signal_main);
+	signal(SIGQUIT, signal_main);
 	while (1)
 	{
 		data->line = readline("minishell$ ");
 		if (!data->line)
 			error_code(data);
-		if (data->line[0] != '\0')
+		if (data->line && data->line[0] != '\0')
 		{
 			add_history(data->line);
 			parsing(data);

@@ -36,7 +36,7 @@ void	free_struct(t_pipex *data)
 		data->cmnds = NULL;
 		if (data->ops)
 			free_list_list(data->ops);
-		data->ops= NULL;
+		data->ops = NULL;
 		if (data->paths)
 			free_list(data->paths);
 		data->paths = NULL;
