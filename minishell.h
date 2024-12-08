@@ -60,7 +60,7 @@ typedef struct pipex_s
 	int		fd_out;
 	int		exit_code;
 
-	struct sigaction old_sa;
+	struct sigaction main_sa;
 
 }	t_pipex;
 
@@ -70,6 +70,7 @@ typedef struct pipex_s
 void	signal_main(int sig);
 void    signal_back(t_pipex *data);
 
+void    handle_child(t_pipex *data, int index, int(*pipes)[2], int cmnd_count, int fd);
 //	parsing.c
 
 void	parsing(t_pipex *data);
@@ -158,6 +159,7 @@ void	mini_child(t_pipex *data, int index);
 void	exec_mini(t_pipex *data, int index, int cmnd_count, int (*pipes)[2]);
 void	exec_cmnd(t_pipex *data, int index, int cmnd_count, int (*pipes)[2]);
 char 	*join_this(char *s1, char *s2);
+void    signal_change(t_pipex *data, int flag);
 
 //	exec_cmnd_utils.c
 

@@ -150,7 +150,6 @@ void	parsing(t_pipex *data)
 	// print_that_shit(data);
 	if (!check_reds(data))
 		return (free_struct(data));
-	return (signal_change(data), set_cur_path(data), init_ops(data, cmnd_count), init_paths(data, cmnd_count, -1),
+	return (signal_change(data, 1), set_cur_path(data), init_ops(data, cmnd_count), init_paths(data, cmnd_count, -1),
 		start_exec(data, cmnd_count), free_struct(data), signal_back(data));
 }
-//	return (rl_clear_history(), free_list(env), error_code(data, line, 1, 1));

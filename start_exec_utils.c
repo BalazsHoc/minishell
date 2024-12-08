@@ -1,5 +1,28 @@
 #include "minishell.h"
 
+char *get_input(t_pipex *data, int index_1, int index_2)
+{
+    int     fd;
+    char    *buf;
+    char    *key;
+    char    *input;
+ 
+    key = data->cmnds[index_1][index_2 + 1];
+    if (!ft_strncmp(data->cmnds[index_1][index_2], "<", 2))
+        return (NULL);
+    else
+        fd = 0;
+    buf = get_next_line(fd, data);
+    input = NULL;
+    while (buf && !ft_strcmp_2(buf, key))
+    {
+        input = join_this(input, buf);
+        free(buf);
+        buf = get_next_line(fd, data);
+    }
+    return (printf("\n"), free_str(buf), input);
+}
+
 int here_doc(t_pipex *data, int index)
 {
     int i;

@@ -73,6 +73,8 @@ void exec_cmnd(t_pipex *data, int index, int cmnd_count, int (*pipes)[2])
 {
     int pid;
 
+    // printf("exec_cmnd\n");
+    signal_change(data, 2);
     pid = fork();
 	if (pid < 0)
         return (error_code(data));
@@ -85,6 +87,7 @@ void exec_mini(t_pipex *data, int index, int cmnd_count, int (*pipes)[2])
     int pid;
     int i;
 
+    // printf("exec_mini\n");
 	pid = fork();
 	if (pid < 0)
         return (error_code(data));
