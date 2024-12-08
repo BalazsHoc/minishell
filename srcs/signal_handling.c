@@ -1,10 +1,7 @@
 #include "../minishell.h"
 
-int		glob_var;
-
 void signal_main(int sig)
 {
-    glob_var += 1;
 	if (sig == SIGINT)
 	{
 		write(1, "\n", 1);
@@ -26,32 +23,27 @@ void    signal_back(t_pipex *data)
     sigaction(SIGINT, &sa,  &data->main_sa);
 }
 
-void signal_exec_ours(int sig)
+void signal_mini_commands(int sig) // cd
 {
     if (sig == SIGINT)
-        glob_var += 1;
+        return ;
 }
 
-void signal_exec_pre_cmds(int sig)
+void signal_exec_cmnd(int sig) // cat
 {
     if (sig == SIGINT)
-    {
-        glob_var += 1;
         printf("\n");
-    }
 }
 
-void    signal_change(t_pipex *data, int flag)
+void    signal_change(int flag)
 {
     struct sigaction sa, main_sa;
 
-    glob_var = 0;
     if (flag == 1) // for our commands
-        sa.sa_handler = signal_exec_ours;
+        sa.sa_handler = signal_mini_commands;
     if (flag == 2) // for prebuilt commands
-        sa.sa_handler = signal_exec_pre_cmds;
+        sa.sa_handler = signal_exec_cmnd;
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = 0;
     sigaction(SIGINT, &sa, &main_sa);
-    data->main_sa = main_sa;
 }

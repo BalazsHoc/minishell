@@ -69,8 +69,8 @@ typedef struct pipex_s
 
 void	signal_main(int sig);
 void    signal_back(t_pipex *data);
+void    signal_change(int flag);
 
-void    handle_child(t_pipex *data, int index, int(*pipes)[2], int cmnd_count, int fd);
 //	parsing.c
 
 void	parsing(t_pipex *data);
@@ -101,9 +101,7 @@ int		echo_exit_code(char **arr);
 //	inti_paths.c
 
 void 	set_cur_path(t_pipex *data);
-
 char	*find_path(t_pipex*data, char *cmnd);
-
 int		is_mini(t_pipex *data, int i);
 
 //	count.c
@@ -159,7 +157,7 @@ void	mini_child(t_pipex *data, int index);
 void	exec_mini(t_pipex *data, int index, int cmnd_count, int (*pipes)[2]);
 void	exec_cmnd(t_pipex *data, int index, int cmnd_count, int (*pipes)[2]);
 char 	*join_this(char *s1, char *s2);
-void    signal_change(t_pipex *data, int flag);
+void    handle_child(t_pipex *data, int index, int(*pipes)[2], int cmnd_count, int fd);
 
 //	exec_cmnd_utils.c
 

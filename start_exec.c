@@ -150,8 +150,6 @@ int open_out(t_pipex *data, int index)
 //     }
 // }
 
-
-
 void start_exec(t_pipex *data, int cmnd_count)
 {
     int     i;
