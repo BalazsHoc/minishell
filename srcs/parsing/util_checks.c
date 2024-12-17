@@ -47,21 +47,16 @@ int check_reds(t_pipex *data)
         j = -1;
         while (data->cmnds[i][++j])
         {
-			// printf("THIS: %s\n", data->cmnds[i][j]);
-            if (is_red(data, i, j) && (!data->cmnds[i][j + 1]
-				|| (is_red_in(data->cmnds[i][j][0]) && !data->cmnds[i][j][1] && !special_case(data, i, j))))
-            {
-                if (!data->cmnds[i + 1] || (is_red_in(data->cmnds[i][j][0]) && !data->cmnds[i][j][1] && !data->cmnds[i + 1]))
-                    return (printf("bash: syntax error near unexpected token `newline' \n"), exit_child(data), 0);
-                return (printf("bash: syntax error near unexpected token `|'\n"), exit_child(data), 0);
-            }
-            else if (is_red(data, i, j) && is_red(data, i, j + 1) && !special_case(data, i , j))
-                    return (printf("bash: syntax error near unexpected token `%s' \n", data->cmnds[i][j + 1]), exit_child(data), 0);
-			else if (is_red(data, i, j) && is_red(data, i, j + 1) && special_case(data, i, j))
-                    return (printf("bash: syntax error near unexpected token `%c' \n", data->cmnds[i][j + 1][0]), exit_child(data), 0);
+			if (is_red(data, i, j) && !data->cmnds[i][j + 1]) // if nothing comes after the red;
+			{
+				if (!data->cmnds[i + 1]) // and nothing comes after the pipe [ so no pipe ]
+					return (write(2, "-bash: syntax error near unexpected token `newline'\n", 53), exit_child(data, i, 2), 0);
+				return (write(2, "-bash: syntax error near unexpected token `|'\n", 47), exit_child(data, i, 2), 0);
+			}
+			else if (is_red(data, i, j) && is_red(data, i, j + 1))
+				return (printf("-bash: syntax error near unexpected token `%s'\n", data->cmnds[i][j + 1]), exit_child(data, i, 2), 0);
         }
     }
-	// printf("check_reds: return 1\n");
     return (1);
 }
 

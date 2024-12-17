@@ -26,13 +26,12 @@
 # include <signal.h>
 # include <errno.h>
 # include <dirent.h>
-# include <stdlib.h>
 
 # include <sys/types.h>
 # include <sys/wait.h>
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 12
+# define BUFFER_SIZE 50
 # endif
 
 # ifndef MAX_CMNDS
@@ -52,24 +51,23 @@ typedef struct pipex_s
 
 	char	**paths;
 	char	**cur_env;
+	char	**export;
 
+	char	*input;
 	char	*line;
 	char	*cur_path;
-	char	*input;
 
+	int		*exit_codes;
+
+	int		last_exit_status;
 	int		fd_out;
-	int		exit_code;
+	int		cmnd_count;
 
-	struct sigaction main_sa;
+	struct	sigaction main_sa;
 
 }	t_pipex;
 
-
-//	signal_handling.c
-
-void	signal_main(int sig);
-void    signal_back(t_pipex *data);
-void    signal_change(int flag);
+int		main(int argc, char **argv, char **env);
 
 //	parsing.c
 
@@ -81,16 +79,22 @@ int		check_reds(t_pipex *data);
 int		check_open(char *line);
 int		syntax_check(char *line, int i, int count);
 
+//	check_folder.c
+
+void    check_folder(t_pipex *data);
+
 //	init_cmnds.c
+
+int		dollar_in(char *line, int j, int open);
+int		count_expansion(t_pipex *data, int i, int open, char **env);
 
 char	**fill_cmnds(char **arr, t_pipex *data, int i, char **env);
 
-int		count_cmnds(char *line);
-int		count_elem(char *line, int i, int count);
-int		count_chars(char *line, int i, int open);
 
 //	init_ops.c
 
+
+void	ft_strcpy(char *s1, char *s2);
 void    fill_ops(t_pipex *data, int index);
 void    fill_echo_exit(t_pipex *data, int index);
 
@@ -101,13 +105,15 @@ int		echo_exit_code(char **arr);
 //	inti_paths.c
 
 void 	set_cur_path(t_pipex *data);
+
 char	*find_path(t_pipex*data, char *cmnd);
+
 int		is_mini(t_pipex *data, int i);
 
 //	count.c
 
 int		count_cmnds(char *line);
-int		count_elem(char *line, int i, int count);
+int		count_elem(t_pipex *data, int i, int count);
 int		count_chars(char *line, int i, int open);
 
 
@@ -132,15 +138,14 @@ int		is_red_out(char c);
 
 // start_exec.c
 
-void 	start_exec(t_pipex *data, int cmnd_count);
-
+void 	start_exec(t_pipex *data);
 
 int		is_red_inline(t_pipex *data, int index);
+int		is_in_inline(t_pipex *data, int index);
 
 //	signal_handling.c
 
 char	*get_input(t_pipex *data, int index_1, int index_2);
-void    signal_change();
 
 //	start_exec_utils.c
 
@@ -149,15 +154,16 @@ int		here_doc(t_pipex *data, int index);
 int		open_out(t_pipex *data, int index);
 int		bigger_one(char *s1, char *s2);
 
-void	mini_commands(t_pipex *data, int index);
+void	mini_parent(t_pipex *data, int index, int cmnd_count, int (*pipes)[2]);
 void	mini_child(t_pipex *data, int index);
+
+char	*malloc_cpy_export(t_pipex *data, char *str, int track, int i);
 
 //	exec.c
 
-void	exec_mini(t_pipex *data, int index, int cmnd_count, int (*pipes)[2]);
-void	exec_cmnd(t_pipex *data, int index, int cmnd_count, int (*pipes)[2]);
+void	exec_mini(t_pipex *data, int index, int (*pipes)[2]);
+void	exec_cmnd(t_pipex *data, int index, int (*pipes)[2], pid_t *pid);
 char 	*join_this(char *s1, char *s2);
-void    handle_child(t_pipex *data, int index, int(*pipes)[2], int cmnd_count, int fd);
 
 //	exec_cmnd_utils.c
 
@@ -178,22 +184,28 @@ void	free_env(char **env);
 //	exit_child.c
 
 void	error_code(t_pipex *data);
-void	exit_child(t_pipex *data);
+void	exit_child(t_pipex *data, int index, int errnum);
 
 //	env.c
 
 // void	init_env(char **env);
 
+
 //	get_next_line.c
+
 char	*get_next_line(int fd, t_pipex *data);
 char	*gnl_join_buffer(char *line, char *buffer);
+
 void	*gnl_calloc(size_t nmemb, size_t size);
 
 //	get_next_line_utils.c
+
 char	*gnl_fromnl(char *buf);
 char	*gnl_strcpy(char *buf, t_pipex *data);
+
 int		gnl_newline(char *str);
 int		gnl_strlen(char *str);
+
 void	gnl_free(char **ptr);
 
 #endif

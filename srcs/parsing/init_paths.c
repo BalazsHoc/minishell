@@ -27,7 +27,7 @@ int is_mini(t_pipex *data, int i)
 	return (0);
 }
 
-char *find_path_2(char **arr, char *cmnd, t_pipex *data)
+char *find_path_2(char **arr, char *cmnd)
 {
 	int i;
 	char *full_path;
@@ -39,10 +39,10 @@ char *find_path_2(char **arr, char *cmnd, t_pipex *data)
 	{
 		full_path = ft_strjoin(arr[i], new);
 		if (!access(full_path, X_OK))
-			return (free_list(arr), free_str(new), full_path);
+			return (free_list((void *)arr), free_str(new), full_path);
 		free_str(full_path);
 	}
-	return (free_list(arr), free(new), errno = 127, exit_child(data), NULL);
+	return (free_list((void *)arr), free(new), NULL);
 }
 
 char *find_path(t_pipex *data, char *cmnd)
@@ -54,7 +54,7 @@ char *find_path(t_pipex *data, char *cmnd)
 	i = 0;
 	path = NULL;
 	if (!cmnd || !data->cur_env || !data->cur_env[0])
-		return (perror("path not found"), errno = 127, exit_child(data), NULL);
+		return (NULL);
 	while (data->cur_env[i] && i < 100)
 	{
 		if (!ft_strncmp("PATH=", (const char *)data->cur_env[i], 5))
@@ -65,9 +65,9 @@ char *find_path(t_pipex *data, char *cmnd)
 		i++;
 	}
 	if (!path || !*path)
-		return (perror("path not found"), errno = 127, exit_child(data), NULL);
+		return (NULL);
 	arr = ft_split(path, ':');
 	if (!arr || !*arr)
-		return (perror("path not found"), errno = 127, exit_child(data), NULL);
-	return (find_path_2(arr, cmnd, data));
+		return (NULL);
+	return (find_path_2(arr, cmnd));
 }

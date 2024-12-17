@@ -31,21 +31,20 @@ void	free_struct(t_pipex *data)
 {
 	if (data)
 	{
-		if (data->cmnds)
-			free_list_list(data->cmnds);
+		free_list_list(data->cmnds);
 		data->cmnds = NULL;
-		if (data->ops)
-			free_list_list(data->ops);
+		free_list_list(data->ops);
 		data->ops = NULL;
-		if (data->paths)
-			free_list(data->paths);
+		free_list(data->paths);
 		data->paths = NULL;
-		if (data->input)
-			free(data->input);
-		data->input = NULL;
-		if (data->line)
-			free(data->line);
+		free_str(data->line);
 		data->line = NULL;
+		if (data->exit_codes)
+		{
+			data->last_exit_status = data->exit_codes[data->cmnd_count - 1];
+			free(data->exit_codes);
+			data->exit_codes = NULL;
+		}
 	}
 }
 
@@ -62,6 +61,7 @@ void	free_list(char **arr)
 			free(arr[i]);
 	}
 	free(arr);
+	arr = NULL;
 }
 
 void	free_list_list(char ***arr)
@@ -77,10 +77,12 @@ void	free_list_list(char ***arr)
 			free_list(arr[i++]);
 	}
 	free(arr);
+	arr = NULL;
 }
 
 void	free_str(char *str)
 {
 	if (str)
 		free(str);
+	str = NULL;
 }
