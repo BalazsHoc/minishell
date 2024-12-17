@@ -12,17 +12,15 @@
 
 #include "minishell.h"
 
-static void handle_signal(int sig)
+void	init_data(t_pipex *data, char **env)
 {
-	if (sig == SIGINT)
-	{
-		write(1, "\n", 1);
-		rl_replace_line("", 0);
-		rl_on_new_line();
-		rl_redisplay();
-	}
-	if (sig == SIGQUIT)
-		return;
+	data->cur_env = env;
+	data->cmnds = NULL;
+	data->ops = NULL;
+	data->paths = NULL;
+	data->input = NULL;
+	data->exit_code = 0;
+	data->fd_out = 0;
 }
 
 void	init_env(char ***env)

@@ -197,35 +197,6 @@ void cd_cmnd(char **argv, t_pipex *data, int index)
     // printf("PWD: %s\n", getenv("PWD"));
 }
 
-// char *env_cmnd(t_pipex *data, int index)
-// {
-//     int i;
-//     int j;
-//     int count;
-//     char *out;
-
-
-//     i = -1;
-//     if (data->ops[index][1])
-//         return (NULL);
-//     while (data->cur_env[++i])
-//         count += ft_strlen(data->cur_env[i]) + 1;
-//     out = malloc(sizeof(char) * (count + 1));
-//     if (!out)
-//         return (printf("malloc fail!\n"), error_code(data), NULL);
-//     out[count] = 0;
-//     i = -1;
-//     count = 0;
-//     while (data->cur_env[++i])
-//     {
-//         j = -1;
-//         while (data->cur_env[i][++j])
-//             out[count++] = data->cur_env[i][j];
-//         out[count++] = '\n';
-//     }
-//     return (out);
-// }
-
 int is_valid_cwd(t_pipex *data)
 {
     char *buf;
@@ -240,25 +211,6 @@ int is_valid_cwd(t_pipex *data)
         return (free(buf), 0);
     return (free(buf), 1);
 }
-
-// char **malloc_display_export(t_pipex *data, int index)
-// {
-//     int i;
-//     int j;
-//     char **buf;
-
-//     i = 0;
-//     j = 0;
-//     while (data->ops[index][i + 1])
-//         i++;
-//     while ((data->export)[j])
-//         j++;
-//     buf = ft_calloc(sizeof(char *), (i + j + 1));
-//     if (!buf)
-//         printf("malloc fail!\n"), error_code(data);
-//     buf[i + j] = NULL;
-//     return (buf);
-// }
 
 void set_rest(t_pipex *data, char **buf)
 {
@@ -431,43 +383,6 @@ void    export_update(t_pipex *data, int index)
         export_env(data, index, count);
     update_export(data, index, count + count_export);
 }
-
-// char *export_cmnd_2(t_pipex *data, char *this)
-// {
-//     int i;
-//     int j;
-//     int count;
-//     char *out;
-
-//     i = -1;
-//     while (data->cur_env[++i])
-//     {
-//         if (ft_strncmp(data->cur_env[i], "_=", 2))
-//             count += ft_strlen(data->cur_env[i]) + 1 + 11;
-//     }
-//     out = malloc(sizeof(char) * (count + 1));
-//     if (!out)
-//         return (printf("malloc fail!\n"), error_code(data), NULL);
-//     out[count] = 0;
-//     i = -1;
-//     count = 0;
-//     while (data->cur_env[++i])
-//     {
-//         if (ft_strncmp(data->cur_env[i], "_=", 2))
-//         {
-//             j = -1;
-//             while (++j < 11)
-//                 out[count++] = this[j];
-//             j = -1;
-//             while (data->cur_env[i][++j])
-//                 out[count++] = data->cur_env[i][j];
-//             if (!((data->cur_env[i + 1] && (!ft_strncmp(data->cur_env[i + 1], "_=", 2) && !data->cur_env[i + 2]))
-//                 || !data->cur_env[i + 1]))
-//                 out[count++] = '\n';
-//         }
-//     }
-//     return (out);
-// }
 
 char *key_this(t_pipex *data, char *s)
 {

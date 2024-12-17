@@ -108,9 +108,7 @@ void exec_mini(t_pipex *data, int index, int (*pipes)[2])
                 close(pipes[i][1]);
             }
             return (mini_child(data, index), error_code(data));
-        }
     }
     else
         mini_parent(data, index, data->cmnd_count, pipes);
 }
-
