@@ -51,20 +51,6 @@ int count_ops(t_pipex *data, int index)
     return (i - (count_reds(data, index) * 2));
 }
 
-int echo_exit_code(char **arr)
-{
-    int i;
-
-    i = -1;
-    while (arr[++i])
-    {
-        if (!ft_strncmp(arr[i], "echo", 5) && arr[i + 1]
-            && !ft_strncmp(arr[i + 1], "$?", 3))
-            return (1);
-    }
-    return (0);
-}
-
 void    fill_echo_exit(t_pipex *data, int index)
 {
     data->ops[index][0] = ft_strdup("/bin/bash");
@@ -92,15 +78,12 @@ void    fill_ops(t_pipex *data, int index)
         while (data->cmnds[index][i] && is_red(data, index, i))
         {
             i += 2;
-            // printf("HERE\n");
             if (!data->cmnds[index][i])
                 break;
         }
-        // printf("LOL\n");
         if (data->cmnds[index][i])
         {
             // printf("I: %d S: %s\n", i, data->cmnds[index][i]);
-            // printf("COUNT op: %ld \n", ft_strlen(data->cmnds[index][i]));
             data->ops[index][++j] = ft_calloc(sizeof(char *), (ft_strlen(data->cmnds[index][i]) + 1));
             if (!data->ops[index][j])
                 return (printf("malloc fail!\n"), error_code(data));

@@ -50,6 +50,26 @@ void	init_env(char ***env)
 	*env = new_env;
 }
 
+void	init_export(t_pipex *data)
+{
+	// make sure _= can not be deleted
+	int i;
+
+	i = 0;
+	while (data->cur_env[i])
+		i++;
+	data->export = malloc(sizeof(char *) * (i - 1 + 1));
+	if (!data->export)
+		error_code(data);
+	data->export[i - 1] = 0;
+	i = -1;
+	while (data->cur_env[++i])
+	{
+		if (ft_strncmp(data->cur_env[i], "_=", 2))
+			data->export[i] = malloc_cpy_export(data, data->cur_env[i], 0, -1);
+	}
+}
+
 int	main(int argc, char **argv, char **env)
 {
 	t_pipex *data;
@@ -61,8 +81,9 @@ int	main(int argc, char **argv, char **env)
 	if (!data)
 		return (perror("malloc failed!"), free_list(env), errno);
 	data->cur_env = env;
-	data->exit_code = 0;
+	init_export(data);
 	data->fd_out = 0;
+	data->last_exit_status = 0;
 	signal(SIGINT, handle_signal);
 	signal(SIGQUIT, handle_signal);
 	while (1)

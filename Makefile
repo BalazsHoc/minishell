@@ -37,7 +37,7 @@ OBJ				= $(SRCS:.c=.o)
 #	PARSING
 
 DIR_PARSING		= srcs/parsing/
-SRCS_PARSING	= parsing.c init_paths.c init_cmnds.c init_ops.c parsing_utils_is_1.c parsing_utils_is_2.c util_checks.c count.c
+SRCS_PARSING	= parsing.c init_paths.c init_cmnds.c init_ops.c parsing_utils_is_1.c parsing_utils_is_2.c util_checks.c count.c check_folder.c
 PATH_PARSING	= $(addprefix $(DIR_PARSING), $(SRCS_PARSING))
 OBJ_PARSING		= $(PATH_PARSING:.c=.o)
 

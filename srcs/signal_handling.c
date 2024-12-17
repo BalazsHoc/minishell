@@ -1,49 +1,49 @@
 #include "../minishell.h"
 
-int		glob_var = 0;
-
-void heredoc_sigint_handler(int sig)
+void signal_main(int sig)
 {
-    if (sig == SIGINT)
-    {
-        glob_var = 1; // Mark that SIGINT was received
-        write(STDOUT_FILENO, "\n", 1);
-    }
+	if (sig == SIGINT)
+	{
+		write(1, "\n", 1);
+		rl_replace_line("", 0);
+		rl_on_new_line();
+		rl_redisplay();
+	}
+	if (sig == SIGQUIT)
+		return;
 }
 
-char *get_input(t_pipex *data, int index_1, int index_2)
+void    signal_back(t_pipex *data)
 {
-    char *buf;
-    char *key;
-    char *input;
-    struct sigaction sa, old_sa;
+    struct sigaction sa;
 
-    glob_var = 0;
-    sa.sa_handler = heredoc_sigint_handler;
+    sa.sa_handler = signal_main;
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = 0;
-    sigaction(SIGINT, &sa, &old_sa);
-    key = data->cmnds[index_1][index_2 + 1];
-    if (!ft_strncmp(data->cmnds[index_1][index_2], "<", 2))
-        return (NULL);
-    buf = readline("> ");
-    if (!buf)
-        error_code(data);
-    input = NULL;
-    while (buf && !ft_strcmp_2(buf, key))
-    {
-        if (glob_var)
-        {
-            sigaction(SIGINT, &old_sa, NULL);
-            return (free_str(input), free_str(buf), NULL);
-        }
-        input = join_this(input, buf);
-        if (!input)
-            return (free_str(buf), error_code(data), NULL);
-        free_str(buf);
-        buf = readline("> ");
-    }
-    sigaction(SIGINT, &old_sa, NULL);
-    free_str(buf);
-    return (input);
+    sigaction(SIGINT, &sa,  &data->main_sa);
+}
+
+void signal_mini_commands(int sig) // cd
+{
+    if (sig == SIGINT)
+        return ;
+}
+
+void signal_exec_cmnd(int sig) // cat
+{
+    if (sig == SIGINT)
+        printf("\n");
+}
+
+void    signal_change(int flag)
+{
+    struct sigaction sa, main_sa;
+
+    if (flag == 1) // for our commands
+        sa.sa_handler = signal_mini_commands;
+    if (flag == 2) // for prebuilt commands
+        sa.sa_handler = signal_exec_cmnd;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+    sigaction(SIGINT, &sa, &main_sa);
 }

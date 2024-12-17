@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "../../minishell.h"
 
 void	gnl_free(char **ptr)
 {
@@ -49,7 +49,7 @@ int	gnl_newline(char *str)
 	return (0);
 }
 
-char	*gnl_strcpy(char *str)
+char	*gnl_strcpy(char *buf, t_pipex *data)
 {
 	char	*copied;
 	int		len;
@@ -57,27 +57,27 @@ char	*gnl_strcpy(char *str)
 
 	len = 0;
 	i = 0;
-	if (!str)
-		return (NULL);
-	while (str[len] && str[len] != '\n')
+	if (!buf)
+		return (NULL); // ctrl C -> !buf
+	while (buf[len] && buf[len] != '\n')
 		len++;
-	if (str[len] && str[len] == '\n')
+	if (buf[len] && buf[len] == '\n')
 		len++;
-	if (len == 0)
+	if (len == 0) // ctrl D
 		return (NULL);
 	copied = (char *)gnl_calloc((len + 1), sizeof(char));
 	if (!copied)
-		return (NULL);
-	while (i < len && str[i] != '\0')
+		return (gnl_free(&buf), error_code(data), NULL);
+	while (i < len && buf[i] != '\0')
 	{
-		copied[i] = str[i];
+		copied[i] = buf[i];
 		i++;
 	}
 	copied[len] = '\0';
 	return (copied);
 }
 
-char	*gnl_fromnl(char *str)
+char	*gnl_fromnl(char *buf)
 {
 	int		i;
 	int		start;
@@ -86,18 +86,18 @@ char	*gnl_fromnl(char *str)
 
 	i = 0;
 	start = 0;
-	while (str[start] && str[start] != '\n')
+	while (buf[start] && buf[start] != '\n')
 		start++;
-	if (str[start] && str[start] == '\n')
+	if (buf[start] && buf[start] == '\n')
 		start++;
-	end = gnl_strlen(str);
+	end = gnl_strlen(buf);
 	if (start == end || end == 0)
-		return (gnl_free(&str), NULL);
+		return (gnl_free(&buf), NULL);
 	rest = (char *)gnl_calloc((end - start + 1), sizeof(char));
 	if (!rest)
-		return (gnl_free(&str), NULL);
+		return (gnl_free(&buf), NULL);
 	while (start <= end)
-		rest[i++] = str[start++];
+		rest[i++] = buf[start++];
 	rest[i] = '\0';
-	return (gnl_free(&str), rest);
+	return (gnl_free(&buf), rest);
 }
