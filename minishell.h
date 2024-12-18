@@ -24,6 +24,7 @@
 # include <stdint.h>
 # include <limits.h>
 # include <signal.h>
+# include <termios.h>
 # include <errno.h>
 # include <dirent.h>
 
@@ -139,13 +140,16 @@ int		is_red_out(char c);
 // start_exec.c
 
 void 	start_exec(t_pipex *data);
-
+char	*get_input(t_pipex *data, int index_1, int index_2);
 int		is_red_inline(t_pipex *data, int index);
 int		is_in_inline(t_pipex *data, int index);
 
 //	signal_handling.c
 
-char	*get_input(t_pipex *data, int index_1, int index_2);
+void	terminal_settings();
+void	signal_main(int sig);
+void	signal_change();
+void	signal_back(t_pipex *data);
 
 //	start_exec_utils.c
 

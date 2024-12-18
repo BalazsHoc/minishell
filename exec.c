@@ -73,6 +73,7 @@ void    handle_child(t_pipex *data, int index, int(*pipes)[2], int cmnd_count, i
 
 void exec_cmnd(t_pipex *data, int index, int (*pipes)[2], pid_t *pid)
 {
+	signal_change(2);
     pid[index] = fork();
 	if (pid[index] < 0)
         return (error_code(data));
@@ -108,6 +109,7 @@ void exec_mini(t_pipex *data, int index, int (*pipes)[2])
                 close(pipes[i][1]);
             }
             return (mini_child(data, index), error_code(data));
+		}
     }
     else
         mini_parent(data, index, data->cmnd_count, pipes);
