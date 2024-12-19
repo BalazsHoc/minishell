@@ -31,8 +31,14 @@ void signal_main(int sig)
 		rl_redisplay();
 	}
 	if (sig == SIGQUIT)
-		return;
+	{
+		rl_replace_line("", 0);
+		rl_on_new_line();
+		rl_redisplay();
+		return ;
+	}
 }
+
 
 void	signal_head()
 {

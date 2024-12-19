@@ -72,6 +72,7 @@ int	main(int argc, char **argv, char **env)
 {
 	t_pipex *data;
 
+	terminal_settings();
 	if (argc != 1 && argv)
 		return (printf("No argument is accepted\n"), 1);
 	init_env(&env);

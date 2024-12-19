@@ -138,7 +138,7 @@ int		is_red_out(char c);
 // start_exec.c
 
 void 	start_exec(t_pipex *data);
-
+char	*get_input(t_pipex *data, int index_1, int index_2);
 int		is_red_inline(t_pipex *data, int index);
 int		is_in_inline(t_pipex *data, int index);
 
@@ -146,6 +146,7 @@ int		is_in_inline(t_pipex *data, int index);
 void	signal_main(int sig);
 void    signal_head();
 void    signal_change(int flag);
+//void	terminal_settings();
 
 
 //	start_exec_utils.c
