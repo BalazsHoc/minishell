@@ -90,7 +90,7 @@ int	main(int argc, char **argv, char **env)
 		data->line = readline("minishell$ ");
 		if (!data->line)
 		{
-			printf("exit\n");
+			printf("\nexit\n");
 			error_code(data);
 		}
 		if (data->line[0] != '\0')

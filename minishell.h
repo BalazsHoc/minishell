@@ -64,8 +64,6 @@ typedef struct pipex_s
 	int		fd_out;
 	int		cmnd_count;
 
-	struct	sigaction main_sa;
-
 }	t_pipex;
 
 int		main(int argc, char **argv, char **env);
@@ -145,15 +143,16 @@ int		is_red_inline(t_pipex *data, int index);
 int		is_in_inline(t_pipex *data, int index);
 
 //	signal_handling.c
-
-void	terminal_settings();
 void	signal_main(int sig);
-void	signal_change();
-void	signal_back(t_pipex *data);
+void    signal_head();
+void    signal_change(int flag);
+//void	terminal_settings();
+
 
 //	start_exec_utils.c
 
 int		is_valid_cwd(t_pipex *data);
+char	*get_input(t_pipex *data, int index_1, int index_2);
 int		here_doc(t_pipex *data, int index);
 int		open_out(t_pipex *data, int index);
 int		bigger_one(char *s1, char *s2);
