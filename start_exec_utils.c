@@ -1,6 +1,5 @@
 #include "minishell.h"
 
-
 char *get_input(t_pipex *data, int index_1, int index_2)
 {
     int     fd;

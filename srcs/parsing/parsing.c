@@ -148,6 +148,6 @@ void	parsing(t_pipex *data)
 	// print_that_shit(data);
 	if (!check_reds(data))
 		return (free_struct(data));
-	return (set_cur_path(data), init_ops(data), check_folder(data), init_paths(data, -1),
-		start_exec(data), free_struct(data));
+	return (signal_change(1), set_cur_path(data), init_ops(data), check_folder(data), init_paths(data, -1),
+		start_exec(data), free_struct(data), signal_head());
 }
