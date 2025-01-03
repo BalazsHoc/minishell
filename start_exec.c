@@ -61,7 +61,7 @@ int is_valid_in(t_pipex *data, int index)
     fd = -1;
     while (data->cmnds[index][++i])
     {
-        if (!ft_strncmp(data->cmnds[index][i], "<", 2) && data->cmnds[index][i + 1])
+        if (!ft_strncmp(data->cmnds[index][i], "<", 2) && data->cmnds[index][i + 1] && data->red_cmnd[index][i] == 0)
         {
             if (fd > 0)
                 close(fd);
@@ -84,7 +84,7 @@ int first_invalid_in(t_pipex *data, int index)
     fd = -1;
     while (data->cmnds[index][++i])
     {
-        if (!ft_strncmp(data->cmnds[index][i], "<", 2) && data->cmnds[index][i + 1])
+        if (!ft_strncmp(data->cmnds[index][i], "<", 2) && data->cmnds[index][i + 1] && data->red_cmnd[index][i] == 0)
         {
             if (fd > 0)
                 close(fd);
@@ -108,7 +108,7 @@ int first_invalid_out(t_pipex *data, int index)
     while (data->cmnds[index][++i])
     {
         if ((!ft_strncmp(data->cmnds[index][i], ">>", 3) || !ft_strncmp(data->cmnds[index][i], ">", 2))
-            && data->cmnds[index][i + 1])
+            && data->cmnds[index][i + 1] && data->red_cmnd[index][i] == 0)
         {
             if (fd > 0)
                 close(fd);
@@ -134,8 +134,8 @@ int open_out(t_pipex *data, int index)
         return (1);
     while (data->cmnds[index][++i])
     {
-        if (!ft_strncmp(data->cmnds[index][i], ">>", 3)
-            || !ft_strncmp(data->cmnds[index][i], ">", 2))
+        if ((!ft_strncmp(data->cmnds[index][i], ">>", 3)
+            || !ft_strncmp(data->cmnds[index][i], ">", 2)) && data->red_cmnd[index][i] == 0)
             {
                 if (fd)
                     close(fd);
@@ -199,7 +199,10 @@ void start_exec(t_pipex *data)
         {
             waitpid(pid[i], &status, 0);
             if (WIFEXITED(status))
+            {
+                // printf("EXIT STATUS: %d\n", WEXITSTATUS(status));
                 data->exit_codes[i] = WEXITSTATUS(status);
+            }
         }
     }
     // printf("LAST1: %d\n", data->exit_codes[data->cmnd_count - 1]);

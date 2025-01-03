@@ -26,15 +26,18 @@ void	print_that_shit(t_pipex *data)
 		while (data->cmnds[i][++j])
 		{
 			if (data->cmnds[i][j])
-				printf("ELEM: %d:%d | $%s$\n", i, j, data->cmnds[i][j]);
+				printf("ELEM: %d:%d | |%s| ", i, j, data->cmnds[i][j]);
+			if (data->red_cmnd[i][j])
+				printf("FLAG");
+			printf("\n");
 		}
-		// j = -1;
-		// if (data->ops && data->ops[i])
-		// {
-		// 	while (data->ops[i][++j])
-		// 		printf("OP:   %d:%d | %s\n", i, j, data->ops[i][j]);
-		// }
-		// printf("PATH: %s\n", data->paths[i]);
+		j = -1;
+		if (data->ops && data->ops[i])
+		{
+			while (data->ops[i][++j])
+				printf("OP:   %d:%d | |%s|\n", i, j, data->ops[i][j]);
+		}
+		printf("PATH: %s\n", data->paths[i]);
 	}
 	// i = -1;
 	// while (data->mini_env[++i])
@@ -97,6 +100,9 @@ void	init_cmds(t_pipex *data, char **env)
 	data->cmnds[data->cmnd_count] = NULL;
 	while (++i < data->cmnd_count)
 	{
+		data->red_cmnd[i] = malloc(sizeof(int *) * (count_elem(data, i, 0)));
+		if (!data->red_cmnd[i])
+			return (perror("malloc fail!\n"), error_code(data));
 		data->cmnds[i] = malloc(sizeof(char *) * (count_elem(data, i, 0) + 1));
 		if (!data->cmnds[i])
 			return (perror("malloc fail!\n"), error_code(data));
@@ -142,12 +148,16 @@ void	parsing(t_pipex *data)
 	data->paths = NULL;
 	data->cmnds = NULL;
 	data->ops = NULL;
+	data->red_cmnd = malloc(sizeof(int **) * (data->cmnd_count + 1));
+	if (!data->red_cmnd)
+		return (perror("malloc failed!"), error_code(data));
+	data->red_cmnd[data->cmnd_count] = 0;
 	while (check_open(data->line))
 		return (printf("bash: syntax error: open quotes \n"), exit_child(data, 0, 1), free_struct(data));
 	init_cmds(data, data->cur_env);
 	// print_that_shit(data);
 	if (!check_reds(data))
 		return (free_struct(data));
-	return (set_cur_path(data), init_ops(data), check_folder(data), init_paths(data, -1),
+	return (set_cur_path(data), init_ops(data), init_paths(data, -1), check_folder(data),
 		start_exec(data), free_struct(data));
 }

@@ -8,18 +8,27 @@ void	ft_strncpy_2(char *dest, char *src, int size, int open)
 
 	i = 0;
 	j = 0;
-	// printf("OPEN : %d\n", open);
+	// printf("COPY START  SRC: |%s| OPEN : %d\n", src, open);
 	while (j < size)
 	{
-		while (((!open && is_quote(src[i]))
-			|| (open == 1 && is_quote_one(src[i]))
-			|| (open == 2 && is_quote_two(src[i])))
-			 && !is_space(src[i - 1]))
-			i++;
-		dest[j] = src[i];
-		// printf("DEST: %c\n", dest[j]);
+		// printf("COPY LINE 1  SRC: |%s| OPEN : %d\n", src, open);
+		// while (((!open && is_quote(src[i]))
+		// 	|| (open == 1 && is_quote_one(src[i]))
+		// 	|| (open == 2 && is_quote_two(src[i])))
+		// 	 && !is_space(src[i - 1]))
+		// 	i++;
+		if (is_quote_one(src[i]) && !open)
+			open = 1;
+		else if (is_quote_two(src[i]) && !open)
+			open = 2;
+		else if ((is_quote_one(src[i]) && open == 1) || (is_quote_two(src[i]) && open == 2))
+			open = 0;
+		// printf("COPY LINE 2  SRC: |%s| OPEN : %d\n", src, open);
+		if (src[i] && ((!is_quote(src[i])) || ((open == 1 && is_quote_two(src[i]))
+			|| (open == 2 && is_quote_one(src[i])))))
+			// || (open == 2 && is_quote_one(src[i])))) && printf("CPY THIS: %c\n", src[i]))
+			dest[j++] = src[i];
 		i++;
-		j++;
 	}
 }
 
@@ -38,6 +47,7 @@ int	count_key(char *line, int j, int open)
 		if (check && !open && (!line[j] || is_space(line[j]) || line[j] == '\n'
 			|| is_real_pipe(line, j)
 			|| is_red_clean(line, j)
+			|| (line[j] == '$' && check)
 			|| is_quote(line[j])))
 			break;
 		if (check)
@@ -70,6 +80,7 @@ char *extract_key(t_pipex *data, int j, int open, int check)
 		if (check && !open && (!data->line[j] || is_space(data->line[j]) || data->line[j] == '\n'
 			|| is_real_pipe(data->line, j)
 			|| is_red_clean(data->line, j)
+			|| (data->line[j] == '$' && check)
 			|| is_quote(data->line[j])))
 			break;
 		if (check)
@@ -125,19 +136,18 @@ int	count_expansion(t_pipex *data, int i, int open, char **env)
 	char *elem;
 
 	count = 0;
-	// printf("COUNT ELEM: %d\n", count);
+	// printf("START COUNT EXPANSION: %d\n", count);
 	elem = NULL;
 	while (data->line[i])
 	{
-		// if (line[i] == '$' && elem)
-		// 	i += ft_strlen(elem) - 2;
-		// printf("POS1: %s\n", line + i);
-		if (data->line[i] == '$' && data->line[i + 1] && data->line[i + 1] != '?')
+		// printf("EXPANSION 1: |%s| COUNT: %d OPEN: %d\n", data->line + i, count, open);
+		if (open != 1 && data->line[i] == '$' && data->line[i + 1] && data->line[i + 1] != '?')
 		{
 			elem = find_elem(data, i, open, env);
-			i += count_chars(data->line, i, 0);
+			// printf("ELEM : %s\n", elem);
+			i += count_chars_2(data, i);
 		}
-		else if (data->line[i] == '$')
+		else if (open != 1 && data->line[i] == '$' && data->line[i + 1] == '?')
 		{
 			i += 2;
 			elem = ft_itoa(data->last_exit_status);
@@ -148,20 +158,28 @@ int	count_expansion(t_pipex *data, int i, int open, char **env)
 			free(elem);
 			elem = NULL;
 		}
-		// printf("POS2: %s\n", line + i);
-		if (!data->line[i])
-			break;
-		if (open == 2 && is_quote_two(data->line[i]))
-			break;
+		// printf("EXPANSION     2: |%s| COUNT: %d OPEN: %d\n", data->line + i, count, open);
+		if (is_quote_one(data->line[i]) && !open)
+			open = 1;
+		else if (is_quote_two(data->line[i]) && !open)
+			open = 2;
+		else if ((is_quote_one(data->line[i]) && open == 1) || (is_quote_two(data->line[i]) && open == 2))
+			open = 0;
+		// printf("EXPANSION           3: %s COUNT: %d OPEN: %d\n", data->line + i, count, open);
 		if (!open && (!data->line[i] || is_space(data->line[i]) || data->line[i] == '\n'
 			|| is_real_pipe(data->line, i)
 			|| is_red_clean(data->line, i)
 			|| (is_space(data->line[i]) && is_quote(data->line[i + 1]))
 			|| ((!data->line[i + 2] || is_space(data->line[i + 2]) || data->line[i + 2] == '\n') && is_quote(data->line[i + 1]))))
 			break;
-		count++;
-		i++;
+		if (data->line[i] && (((data->line[i] != '$' || (data->line[i] == '$' && is_delim_front(data->line, i + 1))) && !open) || open)
+			&& ((!is_quote(data->line[i])) || ((open == 1 && is_quote_two(data->line[i]))
+				|| (open == 2 && is_quote_one(data->line[i])))))
+			count++;
+		if (open || (data->line[i] != '$' || (data->line[i] == '$' && is_delim_front(data->line, i + 1))))
+			i++;
 	}
+	// count += check_for_empty(data, i);
 	// printf("COUNT EXPANSION: %d\n", count);
 	return (count);
 }
@@ -181,18 +199,18 @@ char	*expand_it(t_pipex *data, int i, int open, char **env)
 	j = 0;
 	while (data->line[i])
 	{
-		// printf("START EXPANSION: #%s# | I: %d | OPEN: %d\n", data->line + i, i ,open);
-		if (data->line[i] == '$' && (data->line[i + 1] == '?'))
+		// printf("START EXPANSION:  |%s|     I: %d|       OPEN: %d\n", data->line + i, i ,open);
+		if (open != 1 && data->line[i] == '$' && (data->line[i + 1] == '?'))
 		{
 			elem = ft_itoa(data->last_exit_status);
 			ft_strncpy_2(new + j, elem, ft_strlen(elem), open);
 			i += 2;
 		}
-		else if (data->line[i] == '$')
+		else if (open != 1 && data->line[i] == '$' && data->line[i + 1] != '?')
 		{
-			elem = find_elem(data, i++, open, env);
+			elem = find_elem(data, i, open, env);
 			ft_strncpy_2(new + j, elem, ft_strlen(elem), 0);
-			i += count_chars(data->line, i, 0);
+			i += count_chars_2(data, i);
 		}
 		if (elem)
 		{
@@ -200,61 +218,158 @@ char	*expand_it(t_pipex *data, int i, int open, char **env)
 			free(elem);
 			elem = NULL;
 		}
-		// printf("i: %d\n", i);
-		if (open && is_quote_two(data->line[i]))
+		// printf("LINE: 1	 |%s|   			  I: %d|     OPEN: %d\n", data->line + i, i ,open);
+		if (open == 2 && is_quote_two(data->line[i]) && (!data->line[i + 1] || is_space(data->line[i + 1])))
 			break;
+		if (is_quote_one(data->line[i]) && !open)
+			open = 1;
+		else if (is_quote_two(data->line[i]) && !open)
+			open = 2;
+		else if ((is_quote_one(data->line[i]) && open == 1) || (is_quote_two(data->line[i]) && open == 2))
+			open = 0;
+		// printf("LINE: 	2	 |%s|   			 I: %d|    OPEN: %d\n", data->line + i, i ,open);
 		if (!open && (!data->line[i] || is_space(data->line[i]) || data->line[i] == '\n'
 			|| is_real_pipe(data->line, i)
 			|| is_red_clean(data->line, i)
-			|| is_quote(data->line[i])))
-			// || ((!line[i + 2] || is_space(line[i + 2]) || line[i + 2] == '\n') && is_quote(line[i + 1]))))
+			|| (is_space(data->line[i]) && is_quote(data->line[i + 1]))
+			|| ((!data->line[i + 2] || is_space(data->line[i + 2]) || data->line[i + 2] == '\n') && is_quote(data->line[i + 1]))))
 			break;
-		new[j] = data->line[i++];
-		// printf("POS NEW: %s$\n", data->line + i);
-		j++;
+		if (data->line[i] && (((data->line[i] != '$' || (data->line[i] == '$' && is_delim_front(data->line, i + 1))) && !open) || open)
+			&& ((!is_quote(data->line[i])) || ((open == 1 && is_quote_two(data->line[i]))
+			|| (open == 2 && is_quote_one(data->line[i])))))
+		// if (data->line[i] && (!check_for_empty(data, i) || (!open && check_for_empty(data, i) && is_quote(data->line[i + 1]))) && ((!is_quote(data->line[i])) || ((open == 1 && is_quote_two(data->line[i]))
+			// || (open == 2 && is_quote_one(data->line[i]))) || (check_for_empty(data, i) && printf("THIS: %s\n", data->line + i) && is_quote_one(data->line[i + 1]) && is_space(data->line[i]))))
+			new[j++] = data->line[i];
+		if (open || (data->line[i] != '$' || (data->line[i] == '$' && is_delim_front(data->line, i + 1))))
+			i++;
 	}
 	// printf("NEW: $%s$\n", new);
 	return (new);
 }
 
-char *fill_normal(t_pipex *data, int j, int open)
+char *fill_normal(t_pipex *data, int index, int open)
 {
 	char *new;
+	int char_count;
+	// int empty_space;
 
-	new = malloc(sizeof(char) * (count_chars(data->line, j, open) + 1));
+	// printf("FILL NORMAL: START: %s | J: %d \n", data->line + j, j);
+	char_count = count_chars(data, index, open);
+	// empty_space = check_for_empty(data, index + char_count);
+	// printf("EMPTY SPACE %d\n", empty_space);
+	new = malloc(sizeof(char) * (char_count + 1));
 	if (!new)
 		return (perror("malloc fail\n"), error_code(data), NULL);
-	new[count_chars(data->line, j, open)] = 0;
-	ft_strncpy_2(new, data->line + j, count_chars(data->line, j, open), open);
+	new[char_count] = 0;
+	ft_strncpy_2(new, data->line + index, char_count, open);
+	// while (--empty_space > 0)
+	// 	new[empty_space] = ' ';
 	return (new);
 }
 
 int dollar_in(char *line, int j, int open)
 {
+	// printf("START DOLLAR IN: |%s| OPEN: %d\n", line + j, open);
+	// while (line[j])
+	// {
+	// 	if (is_quote_one(line[j]) && open == 1)
+	// 		break;
+	// 	if (line[j] == '$')
+	// 		return (-1);
+	// 	j++;
+	// }
+	// if (!line[j] || is_delim_front(line, j))
+	// 	return (-1);
+	// printf("DOLLAR 1: |%s| OPEN: %d\n", line + j, open);
 	while (line[j])
 	{
-		if (open == 2 && is_quote_two(line[j]))
+		// printf("DOLLAR 2: |%s| OPEN: %d\n", line + j, open);
+		if (open == 1 && is_quote_one(line[j]) && is_delim_front(line, j + 1))
 			break;
-		if (!open && (!line[j + 1] || is_space(line[j + 1]) || line[j + 1] == '\n'
+		if (open == 2 && is_quote_two(line[j]) && is_delim_front(line, j + 1))
+			break;
+		else if ((is_quote_two(line[j]) && open == 2) || (is_quote_one(line[j]) && open == 1))
+			open = 0;
+		else if (is_quote_two(line[j]) && !open)
+			open = 2;
+		else if (is_quote_one(line[j]) && !open)
+			open = 1;
+		// printf("DOLLAR 3: |%s| OPEN: %d\n", line + j, open);
+		if (!open && (is_delim_front(line, j + 1)
 			|| is_real_pipe(line, j + 1)
 			|| (is_red_1(line[j]) && !is_red_1(line[j + 1]))
 			|| (is_red_1(line[j + 1]) && !is_space(line[j]) && !is_red_1(line[j]))
 			|| (is_space(line[j]) && is_quote(line[j + 1]))
 			|| ((!line[j + 2] || is_space(line[j + 2]) || line[j + 2] == '\n') && is_quote(line[j + 1]))))
 			break;
-		if (line[j] == '$' && line[j + 1] && (!is_space(line[j + 1]) && !(open == 2 && is_quote_two(line[j + 1]))))
+		// printf("DOLLAR 4: |%s| OPEN: %d\n", line + j, open);
+		if (open != 1 && line[j] == '$' && line[j + 1] && (!is_space(line[j + 1]) && !(open == 2 && is_quote_two(line[j + 1]))))
 			return (j);
+			// return (printf("DOLLAR IN %d\n", j), j);
 		j++;
 	}
+	// printf("DOLLAR IN is -1 \n");
 	return (-1);
 }
 
-int		is_delim(char *str, int i)
+int		is_delim_back(char *line, int i)
 {
-	if (is_space(str[i - 1])
-		|| (i >= 3 && ((is_quote_one(str[i - 1]) && is_quote_one(str[i - 2]) && is_space(str[i - 3])) || (is_quote_two(str[i - 1]) && is_quote_two(str[i - 2]) && is_space(str[i - 3])))))
+	int open;
+
+	open = 0;
+	// printf("IS DELIM BACK??\n");
+	if (i < 0 || !line[i])
+		return (1);
+	// printf("LNE: %s\n", line + i);
+	while (is_quote(line[i]))
+	{
+		if ((open == 1 && is_quote_two(line[i])) || (open == 2 && is_quote_one(line[i])))
+			return (0);
+		if (is_quote_one(line[i]) && !open)
+			open = 1;
+		else if (is_quote_two(line[i]) && !open)
+			open = 2;
+		else if (((is_quote_one(line[i]) && open == 1) || (is_quote_two(line[i]) && open == 2)))
+			open = 0;
+		i--;
+	}
+	if (i < 0 || is_space(line[i]) || (is_red_1(line[i]) && line[i + 1] && !is_red_1(line[i + 1])) || is_red_clean(line, i) || is_real_pipe(line, i))
+		return (1);
+	// printf("NO DELIM\n");
+	return (0);
+}
+
+int		is_delim_front(char *line, int i)
+{
+	int open;
+
+	open = 0;
+	while (line[i] && is_quote(line[i]))
+	{
+		if ((open == 1 && is_quote_two(line[i])) || (open == 2 && is_quote_one(line[i])))
+			return (0);
+		if (is_quote_one(line[i]) && !open)
+			open = 1;
+		else if (is_quote_two(line[i]) && !open)
+			open = 2;
+		else if (((is_quote_one(line[i]) && open == 1) || (is_quote_two(line[i]) && open == 2)))
+			open = 0;
+		i++;
+	}
+	if (!line[i] || line[i] == '\n' || is_space(line[i]) || is_red_clean(line, i) || is_real_pipe(line, i))
 		return (1);
 	return (0);
+}
+
+char *fill_for_empty(t_pipex *data)
+{
+	char *new;
+
+	new = malloc(sizeof(char) * (1));
+	if (!new)
+		return (perror("malloc fail\n"), error_code(data), NULL);
+	new[0] = 0;
+	return (new);
 }
 
 char	**fill_cmnds(char **arr, t_pipex *data, int i, char **env)
@@ -268,58 +383,69 @@ char	**fill_cmnds(char **arr, t_pipex *data, int i, char **env)
 	index = -1;
 	open = 0;
 	k = -i;
+	// printf("START FILLING COMMANDS !!!!!!!!!!\n");
 	while (data->line[++j] && i >= 0)
 	{
-		if (is_quote_one(data->line[j]) && !open && (is_space(data->line[j - 1]) || is_real_pipe(data->line, j -1) || is_red_clean(data->line, j - 1)))
+		// printf("FILL_CMNDS: 1 |%s| | OPEN: %d | K: %d | INDEX: %d \n", data->line + j, open, k, index);
+		if (is_quote_one(data->line[j]) && !open)
 			open = 1;
-		else if (is_quote_two(data->line[j]) && !open && (is_space(data->line[j - 1]) || is_real_pipe(data->line, j -1) || is_red_clean(data->line, j - 1)))
+		else if (is_quote_two(data->line[j]) && !open)
 			open = 2;
-		else if (is_quote_one(data->line[j]) && !open && !is_space(data->line[j - 1]))
-			open = 1;
-		else if (is_quote_two(data->line[j]) && !open && !is_space(data->line[j - 1]))
-			open = 2;
-		else if (((is_quote_one(data->line[j]) && open == 1) || (is_quote_two(data->line[j]) && open == 2)) && ++j)
+		else if (((is_quote_one(data->line[j]) && open == 1) || (is_quote_two(data->line[j]) && open == 2)))
 			open = 0;
-		// // "this is 'hi there ' last word "
-		// printf("FILL_CMNDS: %s | OPEN: %d | K: %d | INDEX: %d \n", data->line + j, open, k, index);
-		if (k == 0 && data->line[j] && !is_real_pipe(data->line, j) && ((dollar_in(data->line, j, open) >= 0 && count_expansion(data, j, open, data->cur_env)) || dollar_in(data->line, j, open) == -1) && ((j == 0 && !is_space(data->line[j]))
-				|| (is_delim(data->line, j) && !is_space(data->line[j]) && !open)
+		// printf("FILL_CMNDS:     2 |%s| | OPEN: %d | K: %d | INDEX: %d J: %d\n", data->line + j, open, k, index, j);
+		else if (k == 0 && !open && check_for_empty(data, j) && is_quote(data->line[j + 1]))
+			arr[++index] = fill_for_empty(data);
+		else if (k == 0 && data->line[j]
+			&& ((dollar_in(data->line, j, open) >= 0 && count_expansion(data, j, open, data->cur_env))
+				|| dollar_in(data->line, j, open) == -1)
+			&& ((j == 0 && !is_quote(data->line[j])) || (j > 0 && (
+					// (is_delim(data->line, j, open) && ((!is_space(data->line[j]) && !is_quote(data->line[j]) && !open) || open))
 				// || (is_space(data->line[j - 1]) && !is_space(data->line[j]) && !open)
-				|| (((j > 1 && (is_space(data->line[j - 2]) || is_real_pipe(data->line, j - 2) || is_red_clean(data->line, j - 2))) || j < 2) 
-					&& ((open == 1 && is_quote_one(data->line[j - 1])) || (open == 2 && is_quote_two(data->line[j - 1]))))
-				|| (is_red_clean(data->line, j) && !open)
+				// || (((j > 1 && (is_space(data->line[j - 2]) || is_real_pipe(data->line, j - 2) || is_red_clean(data->line, j - 2) || (open == 1))) || j < 2) 
+				(is_red_clean(data->line, j) && !open)
+				|| (((j > 1 && is_delim_back(data->line, j - 2)) || j < 2)
+						&& ((open == 1 && is_quote_one(data->line[j - 1]) && !is_quote_one(data->line[j])) || (open == 2 && is_quote_two(data->line[j - 1]) && !is_quote_two(data->line[j]))))
+				|| (!open && !is_real_pipe(data->line, j) && !is_quote(data->line[j]) && !is_space(data->line[j]) && is_delim_back(data->line, j - 1) && !is_red_1(data->line[j]))
 				|| ((is_red_in(data->line[j - 1]) && is_red_out(data->line[j])) || (is_red_out(data->line[j - 1]) && is_red_in(data->line[j])))
 				|| (is_red_1(data->line[j - 1]) && !is_red_1(data->line[j]) && !is_space(data->line[j]) && data->line[j] != '|' && !open)
 				|| ((is_real_pipe(data->line, j - 1)
-					|| (data->line[j - 1] == '|' && data->line[j - 2] == '>')) && !is_space(data->line[j]))))
+					|| (data->line[j - 1] == '|' && data->line[j - 2] == '>')) && !is_space(data->line[j]))))))
 				// && (!open || ((open == 1 && is_quote_one(line[j - 1])) || (open == 2 && is_quote_two(line[j - 1])))))
 		{
-			// printf("TRUE!\n");
-			if (dollar_in(data->line, j, open) >= 0 && open != 1
+			// printf("TRUE! J %d\n", j);
+			if (dollar_in(data->line, j, open) >= 0
 				&& (index == -1 || (index >= 0 && ft_strncmp(arr[index], "<<", 3))))
 				arr[++index] = expand_it(data, j, open, env);
 			// else if (line[dollar_in(line, j, open) + 1] != '?')
 			// 	arr[++index] = echo_exit_code();
 			else
 				arr[++index] = fill_normal(data, j, open);
+			if (open && (!ft_strncmp(arr[index], ">>", ft_strlen(arr[index]))
+				|| !ft_strncmp(arr[index], "<<", ft_strlen(arr[index]))
+				|| !ft_strncmp(arr[index], ">", ft_strlen(arr[index]))
+				|| !ft_strncmp(arr[index], "<", ft_strlen(arr[index]))))
+				data->red_cmnd[i][index] = 1;
+			else 
+				data->red_cmnd[i][index] = 0;
 			if (!arr[index])
 				error_code(data);
 			// j += count_chars(data->line, j, open);
 		}//   single quotes: 																// we have the beginning of the sandwich														// or the end of the sandwich
-		if ((open == 1 && is_quote_one(data->line[j]) && is_quote_one(data->line[j + 1]) && !((j > 0 && !is_space(data->line[j - 1])) || (data->line[j + 2] && !is_space(data->line[j + 2]))))
-			|| (open == 2 && is_quote_two(data->line[j]) && is_quote_two(data->line[j + 1]) && !((j > 0 && !is_space(data->line[j - 1])) || (data->line[j + 2] && !is_space(data->line[j + 2])))))
-		// if ((open == 1 && is_quote_one(data->line[j]) && is_quote_one(data->line[j + 1]) && (((j == 0 || is_space(data->line[j - 1])) && data->line[j + 2] && !is_space(data->line[j + 2])) || (!is_space(data->line[j - 1]) && (!data->line[j + 2] || is_space(data->line[j + 2])))))
-		// 	|| (open == 2 && is_quote_two(data->line[j]) && is_quote_two(data->line[j + 1]) && (((j == 0 || is_space(data->line[j - 1])) && data->line[j + 2] && !is_space(data->line[j + 2])) || (!is_space(data->line[j - 1]) && (!data->line[j + 2] || is_space(data->line[j + 2]))))))
-		{
-			// printf("FILL NULL\n");
-			arr[++index] = malloc(sizeof(char) * (1));
-			arr[index][0] = 0;
-		}
+		// if ((open == 1 && is_quote_one(data->line[j]) && is_quote_one(data->line[j + 1]) && !((j > 0 && !is_space(data->line[j - 1])) || (data->line[j + 2] && !is_space(data->line[j + 2]))))
+		// 	|| (open == 2 && is_quote_two(data->line[j]) && is_quote_two(data->line[j + 1]) && !((j > 0 && !is_space(data->line[j - 1])) || (data->line[j + 2] && !is_space(data->line[j + 2])))))
+		// // if ((open == 1 && is_quote_one(data->line[j]) && is_quote_one(data->line[j + 1]) && (((j == 0 || is_space(data->line[j - 1])) && data->line[j + 2] && !is_space(data->line[j + 2])) || (!is_space(data->line[j - 1]) && (!data->line[j + 2] || is_space(data->line[j + 2])))))
+		// // 	|| (open == 2 && is_quote_two(data->line[j]) && is_quote_two(data->line[j + 1]) && (((j == 0 || is_space(data->line[j - 1])) && data->line[j + 2] && !is_space(data->line[j + 2])) || (!is_space(data->line[j - 1]) && (!data->line[j + 2] || is_space(data->line[j + 2]))))))
+		// {
+		// 	printf("FILL NULL\n");
+		// 	arr[++index] = malloc(sizeof(char) * (1));
+		// 	arr[index][0] = 0;
+		// }
 		// printf("I1: %d\n", i);
+		if (!data->line[j + 1])
+			break;
 		if (is_real_pipe(data->line, j) && j > 0 && !is_red_1(data->line[j - 1]) && k++ != INT_MIN)
 			i--;
-		if (!data->line[j])
-			break;
 		// printf("I2: %d\n", i);
 	}
 	return (arr);

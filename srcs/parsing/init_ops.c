@@ -89,6 +89,8 @@ void    fill_ops(t_pipex *data, int index)
                 return (printf("malloc fail!\n"), error_code(data));
             data->ops[index][j][ft_strlen(data->cmnds[index][i])] = 0;
             ft_strcpy(data->cmnds[index][i], data->ops[index][j]);
+            // if (j == 0)
+                // data->ops[index][0] = ft_strtrim(data->ops[index][j], " ");
         }
         else 
             break ;
