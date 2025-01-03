@@ -9,6 +9,7 @@ void	error_code(t_pipex *data)
 			free_list(data->cur_env);
 		free(data);
 	}
+	rl_clear_history();
 	exit(errno);
 }
 

@@ -25,6 +25,7 @@
 
 int is_red_in(char c)
 {
+	// printf("c: %c\n", c);
 	if (!ft_strncmp(&c, "<", 1) || !ft_strncmp(&c, "<<", 2))
 		return (1);
 	return (0);

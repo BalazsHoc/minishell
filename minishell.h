@@ -24,6 +24,7 @@
 # include <stdint.h>
 # include <limits.h>
 # include <signal.h>
+# include <termios.h>
 # include <errno.h>
 # include <dirent.h>
 
@@ -63,8 +64,6 @@ typedef struct pipex_s
 	int		last_exit_status;
 	int		fd_out;
 	int		cmnd_count;
-
-	struct	sigaction main_sa;
 
 }	t_pipex;
 
@@ -144,17 +143,21 @@ int		is_red_out(char c);
 // start_exec.c
 
 void 	start_exec(t_pipex *data);
-
+char	*get_input(t_pipex *data, int index_1, int index_2);
 int		is_red_inline(t_pipex *data, int index);
 int		is_in_inline(t_pipex *data, int index);
 
 //	signal_handling.c
+void	signal_main(int sig);
+void    signal_head();
+void    signal_change(int flag);
+//void	terminal_settings();
 
-char	*get_input(t_pipex *data, int index_1, int index_2);
 
 //	start_exec_utils.c
 
 int		is_valid_cwd(t_pipex *data);
+char	*get_input(t_pipex *data, int index_1, int index_2);
 int		here_doc(t_pipex *data, int index);
 int		open_out(t_pipex *data, int index);
 int		bigger_one(char *s1, char *s2);
