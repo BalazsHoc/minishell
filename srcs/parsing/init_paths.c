@@ -27,6 +27,19 @@ int is_mini(t_pipex *data, int i)
 	return (0);
 }
 
+int	slash_in_cmnd(char *str)
+{
+	int i;
+
+	i = -1;
+	while (str[++i])
+	{
+		if (str[i] == '/')
+			return (1);
+	}
+	return (0);
+}
+
 char *find_path_2(char **arr, char *cmnd)
 {
 	int i;
@@ -34,10 +47,15 @@ char *find_path_2(char **arr, char *cmnd)
 	char *new;
 
 	i = -1;
-	new = ft_strjoin("/", cmnd);
+	new = NULL;
+	if (!slash_in_cmnd(cmnd))
+		new = ft_strjoin("/", cmnd);
 	while (arr[++i])
 	{
-		full_path = ft_strjoin(arr[i], new);
+		if (!slash_in_cmnd(cmnd))
+			full_path = ft_strjoin(arr[i], new);
+		else
+			full_path = ft_strdup(cmnd);
 		if (!access(full_path, X_OK))
 			return (free_list((void *)arr), free_str(new), full_path);
 		free_str(full_path);

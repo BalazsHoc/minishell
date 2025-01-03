@@ -59,6 +59,7 @@ typedef struct pipex_s
 	char	*cur_path;
 
 	int		*exit_codes;
+	int		**red_cmnd;
 
 	int		last_exit_status;
 	int		fd_out;
@@ -86,7 +87,8 @@ void    check_folder(t_pipex *data);
 
 int		dollar_in(char *line, int j, int open);
 int		count_expansion(t_pipex *data, int i, int open, char **env);
-
+int		is_delim_back(char *str, int i);
+int		is_delim_front(char *str, int i);
 char	**fill_cmnds(char **arr, t_pipex *data, int i, char **env);
 
 
@@ -113,7 +115,10 @@ int		is_mini(t_pipex *data, int i);
 
 int		count_cmnds(char *line);
 int		count_elem(t_pipex *data, int i, int count);
-int		count_chars(char *line, int i, int open);
+int		count_chars(t_pipex *data, int i, int open);
+int		count_chars_2(t_pipex *data, int i);
+int		check_for_empty(t_pipex *data, int i);
+
 
 
 //	parsing_utils_is_1.c

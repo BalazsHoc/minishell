@@ -16,6 +16,8 @@ int	is_real_pipe(char *line, int index)
 {
 	if (index > 0 && !line[index - 1])
 		return (0);
+	else if (!line[index] || !line[index + 1])
+		return (0);
 	// printf("IS REAL PIPE: %s\n", line + index);
 	if (line[index] == '|')
 	{
@@ -45,8 +47,10 @@ int check_reds(t_pipex *data)
     while (data->cmnds[++i])
     {
         j = -1;
+		// printf("PENIS\n");
         while (data->cmnds[i][++j])
         {
+			// printf("PENIS 2 %d |  %s\n", j,  data->cmnds[i][j]);
 			if (is_red(data, i, j) && !data->cmnds[i][j + 1]) // if nothing comes after the red;
 			{
 				if (!data->cmnds[i + 1]) // and nothing comes after the pipe [ so no pipe ]

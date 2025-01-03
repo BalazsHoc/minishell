@@ -6,13 +6,13 @@ void    check_folder(t_pipex *data)
     int j;
 
     i = -1;
-    while (data->ops[++i])
+    while (data->cmnds[++i])
     {
         j = -1;
-        while (!data->ops[i][0])
+        while (!data->ops[i][0] || ft_strncmp(data->paths[i], "pathnfound", 12))
         {
             i++;
-            if (!data->ops[i])
+            if (!data->cmnds[i])
                 return ;
         }
         while (data->ops[i][0][++j]) 
