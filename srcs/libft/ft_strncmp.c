@@ -19,21 +19,24 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 	i = 0;
 	if (n == 0)
 		return (0);
-	if (!s1 || !s2)
+	if (!s1 || !s2 || !*s1 || !*s2)
 		return (-1);
 	// printf("S1: %s$ | S2: %s$\n", s1, s2);
 	while (i < n)
 	{
-		// printf("I: %ld$ | N: %ld$\n", i, n);
-		if (s1[i] && s1[i] == s2[i])
+		if (!s1[i])
 		{
-			// printf("here: %c \n", s1[i]);
-			while (s1[i] && s1[i] == s2[i] && i < n)
-				i++;
+			if (s2[i])
+				return (-1);
 		}
-		else
-			return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+		else if (!s2[i])
+			return (-1);
+		// printf("I: %s$ | N: %ld$\n", s1 + i, n);
+		else if (s1[i] != s2[i])
+			return (s1[i] - s2[i]);
+		i++;
 	}
+	// return (printf("THE SAME\n"), 0);
 	return (0);
 }
 

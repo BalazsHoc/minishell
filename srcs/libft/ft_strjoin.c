@@ -20,9 +20,11 @@ char	*ft_strjoin(char const *s1, char const *s2)
 
 	if (s1 == 0 && s2 == 0)
 		return (0);
-	joined = (char *)malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1));
+	i = ft_strlen(s1) + ft_strlen(s2);
+	joined = ft_calloc(sizeof(char), (i + 1));
 	if (!joined)
 		return (0);
+	joined[i] = 0;
 	i = 0;
 	while (s1[i])
 	{
@@ -35,6 +37,5 @@ char	*ft_strjoin(char const *s1, char const *s2)
 		joined[i + j] = s2[j];
 		j++;
 	}
-	joined[i + j] = '\0';
 	return (joined);
 }

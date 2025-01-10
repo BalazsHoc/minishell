@@ -14,7 +14,7 @@
 
 int	is_real_pipe(char *line, int index)
 {
-	if (index > 0 && !line[index - 1])
+	if (index == 0)
 		return (0);
 	else if (!line[index] || !line[index + 1])
 		return (0);
@@ -30,37 +30,37 @@ int	is_real_pipe(char *line, int index)
 	return (0);
 }
 
-int special_case(t_pipex *data, int i, int j)
-{
-	if (!ft_strncmp(data->cmnds[i][j], "<", 2)
-		&& !ft_strncmp(data->cmnds[i][j + 1], ">>", 3))
-		return (1);
-	return (0);
-}
+// int special_case(t_pipex *data, int index_1, int i, int j)
+// {
+// 	if (!ft_strncmp(data->lines[index_1]->cmnds[i][j], "<", 2)
+// 		&& !ft_strncmp(data->lines[index_1]->cmnds[i][j + 1], ">>", 3))
+// 		return (1);
+// 	return (0);
+// }
 
-int check_reds(t_pipex *data)
+int check_reds(t_pipex *data, int index_1)
 {
     int i;
     int j;
 
     i = -1;
-    while (data->cmnds[++i])
+    while (data->lines[index_1]->cmnds[++i])
     {
         j = -1;
-		// printf("PENIS\n");
-        while (data->cmnds[i][++j])
+        while (data->lines[index_1]->cmnds[i][++j])
         {
-			// printf("PENIS 2 %d |  %s\n", j,  data->cmnds[i][j]);
-			if (is_red(data, i, j) && !data->cmnds[i][j + 1]) // if nothing comes after the red;
+			// printf("PENIS 2 %d |  %s\n", data->lines[index_1]->red_cmnd[i][j], data->lines[index_1]->cmnds[i][j]);
+			if (is_red(data, index_1, i, j) && !data->lines[index_1]->cmnds[i][j + 1] && !data->lines[index_1]->red_cmnd[i][j]) // if nothing comes after the red;
 			{
-				if (!data->cmnds[i + 1]) // and nothing comes after the pipe [ so no pipe ]
-					return (write(2, "-bash: syntax error near unexpected token `newline'\n", 53), exit_child(data, i, 2), 0);
-				return (write(2, "-bash: syntax error near unexpected token `|'\n", 47), exit_child(data, i, 2), 0);
+				if (!data->lines[index_1]->cmnds[i + 1]) // and nothing comes after the pipe [ so no pipe ]
+					return (write(2, "-bash: syntax error near unexpected token `newline'\n", 53), exit_child(data, index_1, i, 2), 0);
+				return (write(2, "-bash: syntax error near unexpected token `|'\n", 47), exit_child(data, index_1, i, 2), 0);
 			}
-			else if (is_red(data, i, j) && is_red(data, i, j + 1))
-				return (printf("-bash: syntax error near unexpected token `%s'\n", data->cmnds[i][j + 1]), exit_child(data, i, 2), 0);
+			else if (is_red(data, index_1, i, j) && is_red(data, index_1, i, j + 1))
+				return (printf("-bash: syntax error near unexpected token `%s'\n", data->lines[index_1]->cmnds[i][j + 1]), exit_child(data, index_1, i, 2), 0);
         }
     }
+	// printf("FINISH CHECK REDS\n");
     return (1);
 }
 

@@ -14,13 +14,20 @@
 
 void	init_data(t_pipex *data, char **env)
 {
+	data->lines = NULL;
 	data->cur_env = env;
-	data->cmnds = NULL;
-	data->ops = NULL;
-	data->paths = NULL;
+	data->export = NULL;
+	data->buf_array = NULL;
 	data->input = NULL;
-	data->exit_codes = 0;
+	data->line = NULL;
+	data->cur_path = NULL;
+	data->line_count = 0;
+	data->here = 0;
+	data->here_2 = 0;
+	data->last_exit_status = 0;
 	data->fd_out = 0;
+	data->buf_int = 0;
+	data->count_elem = 0;
 }
 
 void	init_env(char ***env)
@@ -52,19 +59,25 @@ void	init_export(t_pipex *data)
 {
 	// make sure _= can not be deleted
 	int i;
+	int count;
 
-	i = 0;
-	while (data->cur_env[i])
-		i++;
-	data->export = malloc(sizeof(char *) * (i - 1 + 1));
-	if (!data->export)
-		error_code(data);
-	data->export[i - 1] = 0;
 	i = -1;
+	count = 0;
 	while (data->cur_env[++i])
 	{
 		if (ft_strncmp(data->cur_env[i], "_=", 2))
-			data->export[i] = malloc_cpy_export(data, data->cur_env[i], 0, -1);
+			count++;
+	}
+	data->export = ft_calloc(sizeof(char *), (count + 1));
+	if (!data->export)
+		return (perror("malloc failed"), error_code(data));
+	data->export[count] = 0;
+	i = -1;
+	count = 0;
+	while (data->cur_env[++i])
+	{
+		if (ft_strncmp(data->cur_env[i], "_=", 2))
+			data->export[count++] = malloc_cpy_export(data, data->cur_env[i], 0, -1);
 	}
 }
 
@@ -72,14 +85,14 @@ int	main(int argc, char **argv, char **env)
 {
 	t_pipex *data;
 
-	terminal_settings();
+	// terminal_settings();
 	if (argc != 1 && argv)
 		return (printf("No argument is accepted\n"), 1);
 	init_env(&env);
-	data = malloc(sizeof(t_pipex) * 1);
+	data = ft_calloc(sizeof(t_pipex), 1);
 	if (!data)
 		return (perror("malloc failed!"), free_list(env), errno);
-	data->cur_env = env;
+	init_data(data, env);
 	init_export(data);
 	data->fd_out = 0;
 	data->last_exit_status = 0;
@@ -92,14 +105,14 @@ int	main(int argc, char **argv, char **env)
 		{
 			printf("\nexit\n");
 			error_code(data);
-		}
+		} 
 		if (data->line[0] != '\0')
 		{
-			add_history(data->line);
+			// add_history(data->line);
 			parsing(data);
 		}
 		else
 			free_str(data->line);
 	}
-	return (printf("\n"), free_struct(data), free_list(data->cur_env), free(data), rl_clear_history(), 0);
+	return (printf("\n"), free_struct(data), rl_clear_history(), 0);
 }

@@ -19,52 +19,52 @@ void ft_strcpy(char *s1, char *s2)
         s2[i] = s1[i];
 }
 
-int count_reds(t_pipex *data, int index)
+int count_reds(t_pipex *data, int index_1, int index_2)
 {
     int i;
     int count;
 
     i = -1;
     count = 0;
-    // printf("COUNT REDS\n");
-    while (data->cmnds[index][++i])
+    // printf("COUNT REDS START\n");
+    while (data->lines[index_1]->cmnds[index_2][++i])
     {
         // printf("THIS %s\n", data->cmnds[index][i]);
-        if (is_red(data, index, i))
+        if (is_red(data, index_1, index_2, i))
             count++;
-        if (!data->cmnds[index][i + 1])
+        if (!data->lines[index_1]->cmnds[index_2][i + 1])
             break;
     }
     // printf("COUNT REDS END %d\n", count);
     return (count);
 }
 
-int count_ops(t_pipex *data, int index)
+int count_ops(t_pipex *data, int index_1, int index_2)
 {
     int i;
 
     i = 0;
     // printf("COUNT OPS START\n");
-    while (data->cmnds[index][i])
+    while (data->lines[index_1]->cmnds[index_2][i])
         i++;
     // printf("COUNT OPS %d\n", i - (count_reds(data, index) * 2));
-    return (i - (count_reds(data, index) * 2));
+    return (i - (count_reds(data, index_1, index_2) * 2));
 }
 
-void    fill_echo_exit(t_pipex *data, int index)
-{
-    data->ops[index][0] = ft_strdup("/bin/bash");
-    if (!data->ops[index][0])
-        error_code(data);
-    data->ops[index][1] = ft_strdup("-c");
-    if (!data->ops[index][1])
-        error_code(data);
-    data->ops[index][2] = ft_strdup("echo $?");
-    if (!data->ops[index][2])
-        error_code(data);
-}
+// void    fill_echo_exit(t_pipex *data, int index)
+// {
+//     data->ops[index][0] = ft_strdup("/bin/bash");
+//     if (!data->ops[index][0])
+//         error_code(data);
+//     data->ops[index][1] = ft_strdup("-c");
+//     if (!data->ops[index][1])
+//         error_code(data);
+//     data->ops[index][2] = ft_strdup("echo $?");
+//     if (!data->ops[index][2])
+//         error_code(data);
+// }
 
-void    fill_ops(t_pipex *data, int index)
+void    fill_ops(t_pipex *data, int index_1, int index_2)
 {
     int i;
     int j;
@@ -73,22 +73,22 @@ void    fill_ops(t_pipex *data, int index)
     j = -1;
 
     // printf("FILL OPS\n");
-    while (data->cmnds[index][++i])
+    while (data->lines[index_1]->cmnds[index_2][++i])
     {
-        while (data->cmnds[index][i] && is_red(data, index, i))
+        while (data->lines[index_1]->cmnds[index_2][i] && is_red(data, index_1, index_2, i))
         {
             i += 2;
-            if (!data->cmnds[index][i])
+            if (!data->lines[index_1]->cmnds[index_2][i])
                 break;
         }
-        if (data->cmnds[index][i])
+        if (data->lines[index_1]->cmnds[index_2][i])
         {
             // printf("I: %d S: %s\n", i, data->cmnds[index][i]);
-            data->ops[index][++j] = ft_calloc(sizeof(char *), (ft_strlen(data->cmnds[index][i]) + 1));
-            if (!data->ops[index][j])
+            data->lines[index_1]->ops[index_2][++j] = ft_calloc(sizeof(char *), (ft_strlen(data->lines[index_1]->cmnds[index_2][i]) + 1));
+            if (!data->lines[index_1]->ops[index_2][j])
                 return (printf("malloc fail!\n"), error_code(data));
-            data->ops[index][j][ft_strlen(data->cmnds[index][i])] = 0;
-            ft_strcpy(data->cmnds[index][i], data->ops[index][j]);
+            data->lines[index_1]->ops[index_2][j][ft_strlen(data->lines[index_1]->cmnds[index_2][i])] = 0;
+            ft_strcpy(data->lines[index_1]->cmnds[index_2][i], data->lines[index_1]->ops[index_2][j]);
             // if (j == 0)
                 // data->ops[index][0] = ft_strtrim(data->ops[index][j], " ");
         }
