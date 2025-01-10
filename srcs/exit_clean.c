@@ -3,31 +3,26 @@
 void	error_code(t_pipex *data)
 {
 	if (data)
-	{
 		free_struct(data);
-		if (data->cur_env)
-			free_list(data->cur_env);
-		free(data);
-	}
 	rl_clear_history();
 	exit(errno);
 }
 
-void exit_child(t_pipex *data, int index, int errnum)
+void exit_child(t_pipex *data, int index_1, int index_2, int errnum)
 {
-	int pid[data->cmnd_count];
+	int pid[data->lines[index_1]->cmnd_count];
 	int status;
 
 	// printf("ERRRNUM: %d\n", errnum);
-	pid[index] = fork();
-	if (pid[index] == -1)
+	pid[index_2] = fork();
+	if (pid[index_2] == -1)
 		return (perror("fork failed\n"), error_code(data));
-	if (!pid[index])
+	if (!pid[index_2])
 		exit(errnum);
 	else
 	{
-		if (waitpid(pid[index], &status, 0) == -1)
+		if (waitpid(pid[index_2], &status, 0) == -1)
 			return (perror("waitpid failed!"), error_code(data));
-		data->exit_codes[index] = WEXITSTATUS(status);
+		data->lines[index_1]->exit_codes[index_2] = WEXITSTATUS(status);
 	}
 }

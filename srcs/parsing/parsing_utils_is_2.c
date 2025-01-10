@@ -23,32 +23,32 @@
 // 	return (0);
 // }
 
-int is_red_in(char c)
+int is_red_in(char *str, int index)
 {
 	// printf("c: %c\n", c);
-	if (!ft_strncmp(&c, "<", 1) || !ft_strncmp(&c, "<<", 2))
+	if (!ft_strncmp(str + index, "<", 1) || !ft_strncmp(str + index, "<<", 2))
 		return (1);
 	return (0);
 }
 
-int is_red_out(char c)
+int is_red_out(char *str, int index)
 {
-	if (!ft_strncmp(&c, ">", 1) || !ft_strncmp(&c, ">>", 2))
+	if (!ft_strncmp(str + index, ">", 1) || !ft_strncmp(str + index, ">>", 2))
 		return (1);
 	return (0);
 }
 
-int is_red(t_pipex *data, int index_1, int index_2)
+int is_red(t_pipex *data, int index_1, int index_2, int index_3)
 {
 	// printf("Data1: %d | %d \n", index_1, index_2);
-	// printf("Data: %s\n", data->cmnds[index_1][index_2]);
-	if (!data->cmnds[index_1][index_2])
+	// printf("Data: %s\n", data->lines[index_1]->cmnds[index_2][index_3]);
+	if (!data->lines[index_1]->cmnds[index_2][index_3])
 		return (0);
-    if ((!ft_strncmp(data->cmnds[index_1][index_2], "<<", 3)
-        || !ft_strncmp(data->cmnds[index_1][index_2], ">", 2)
-        || !ft_strncmp(data->cmnds[index_1][index_2], "<", 2)
-        || !ft_strncmp(data->cmnds[index_1][index_2], ">>", 3))
-		&& data->red_cmnd[index_1][index_2] == 0)
+    if ((!ft_strncmp(data->lines[index_1]->cmnds[index_2][index_3], "<<", 3)
+        || !ft_strncmp(data->lines[index_1]->cmnds[index_2][index_3], ">", 2)
+        || !ft_strncmp(data->lines[index_1]->cmnds[index_2][index_3], "<", 2)
+        || !ft_strncmp(data->lines[index_1]->cmnds[index_2][index_3], ">>", 3))
+		&& data->lines[index_1]->red_cmnd[index_2][index_3] == 0)
         return (1);
     return (0);
 }
