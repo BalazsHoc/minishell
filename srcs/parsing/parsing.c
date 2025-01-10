@@ -336,6 +336,7 @@ void	parsing(t_pipex *data)
 	init_lines(data);
 	while (data->lines[++i] && ((data->here_2_old > 0 && data->line[data->here_2_old - 1]) || data->here_2_old == 0))
 	{
+		signal_change(1);
 		// printf("PENIS: %d\n", i);
 		data->lines[i]->cmnd_count = count_cmnds(data->line + data->here_2, i);
 		// printf("CMND COUNT %d\n", data->lines[i]->cmnd_count);
@@ -353,6 +354,7 @@ void	parsing(t_pipex *data)
 		check_folder(data, i);
 		set_cur_path(data);
 		start_exec(data, i);
+		signal_back(data);
 	}
 	free_lines(data);
 }

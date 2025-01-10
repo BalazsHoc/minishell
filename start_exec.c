@@ -277,11 +277,13 @@ void start_exec(t_pipex *data, int index)
 {
     int     i;
     int     status;
-    pid_t   pid[data->lines[index]->cmnd_count];
+    pid_t   *pid;
 
     i = -1;
+	status = 0;
     create_pipes(data, index);
-    // printf("INDEX %d\n", index);
+    pid = ft_calloc(sizeof(pid_t), data->lines[index]->cmnd_count);
+	// printf("INDEX %d\n", index);
     // signal(SIGCHLD, SIG_IGN);
     while (data->lines[index]->cmnds[++i] && here_doc(data, index , i))
     {
@@ -303,7 +305,7 @@ void start_exec(t_pipex *data, int index)
                     data->input = get_input(data, index, i, is_red_inline(data, index, i));
                 // printf("INPUT: %s$\n", data->input);
             }
-            if (!ft_strncmp(data->lines[index]->paths[i], "minicmnds", 11))
+            if (!ft_strncmp(data->lines[index]->paths[i], "minicmnds", 10))
                exec_mini(data, index, i);
             else
                 exec_cmnd(data, index, i, pid);
@@ -333,6 +335,7 @@ void start_exec(t_pipex *data, int index)
             {
                 // printf("EXIT STATUS: %d\n", WEXITSTATUS(status));
                 data->lines[index]->exit_codes[i] = WEXITSTATUS(status);
+				errno = data->lines[index]->exit_codes[i];
             }
         }
     }

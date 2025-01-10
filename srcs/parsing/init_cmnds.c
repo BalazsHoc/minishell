@@ -271,7 +271,10 @@ char	*expand_it_1(t_pipex *data, int i, int open)
 		// printf("START EXPANSION:  |%s|     I: %d|       OPEN: %d\n", data->line + i, i ,open);
 		if (open != 1 && data->line[i] == '$' && (data->line[i + 1] == '?'))
 		{
-			elem = ft_itoa(data->last_exit_status);
+			if (errno != 130)
+				elem = ft_itoa(data->last_exit_status);
+			else
+				elem = "130";
 			data->buf_int = open;
 			ft_strncpy_2(new + j, elem, ft_strlen(elem), data);
 			i += 2;

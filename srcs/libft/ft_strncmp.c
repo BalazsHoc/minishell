@@ -21,7 +21,7 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 		return (0);
 	if (!s1 || !s2 || !*s1 || !*s2)
 		return (-1);
-	// printf("S1: %s$ | S2: %s$\n", s1, s2);
+	// printf("S1: %s$ | S2: %s$ %ld\n", s1, s2, n);
 	while (i < n)
 	{
 		if (!s1[i])

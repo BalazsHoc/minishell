@@ -82,6 +82,8 @@ typedef struct pipex_s
 	int					buf_int;
 	int					count_elem;
 
+	struct sigaction main_sa;
+
 }	t_pipex;
 
 int		main(int argc, char **argv, char **env);
@@ -168,8 +170,9 @@ int		last_one(char **arr);
 
 //	signal_handling.c
 void	signal_main(int sig);
-void    signal_head();
-void    signal_change(int flag);
+void	signal_back(t_pipex *data);
+void	signal_change(int flag);
+
 //void	terminal_settings();
 
 
