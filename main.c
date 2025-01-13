@@ -21,6 +21,7 @@ void	init_data(t_pipex *data, char **env)
 	data->input = NULL;
 	data->line = NULL;
 	data->cur_path = NULL;
+	data->pid = NULL;
 	data->line_count = 0;
 	data->here = 0;
 	data->here_2 = 0;
@@ -100,10 +101,10 @@ int	main(int argc, char **argv, char **env)
 	signal(SIGQUIT, signal_main);
 	while (1)
 	{
-		data->line = readline("minishell$ ");
+		data->line = ft_strtrim(readline("minishell$ "), " \n\t\v\f\r\b");
 		if (!data->line)
 		{
-			printf("\nexit\n");
+			printf("exit\n");
 			error_code(data);
 		} 
 		if (data->line[0] != '\0')

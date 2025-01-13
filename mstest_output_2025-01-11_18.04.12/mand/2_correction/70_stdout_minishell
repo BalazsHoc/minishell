@@ -1,0 +1,6 @@
+LD_PRELOAD=/home/carlito/42_minishell_tester/utils/libintercept/libintercept.so
+LOGNAME=carlito
+HOME=/home/carlito
+USER=carlito
+OLDPWD=/home/carlito/Documents/projects/minishell_jan_10
+_=/home/carlito/Documents/projects/minishell_jan_10/minishell

@@ -74,6 +74,7 @@ typedef struct pipex_s
 	char				*buf_str;
 
 	int					line_count;
+	int					chars_in_line;
 	int					here;
 	int					here_2;
 	int					here_2_old;
@@ -81,6 +82,8 @@ typedef struct pipex_s
 	int					fd_out;
 	int					buf_int;
 	int					count_elem;
+
+	pid_t				*pid;
 
 	struct sigaction main_sa;
 
@@ -133,12 +136,13 @@ int		is_mini(t_pipex *data, int index_1, int index_2);
 
 //	count.c
 
+void	set_line_count(t_pipex *data);
 int		count_cmnds(char *line, int index);
 int		count_elem(t_pipex *data, int index_1, int i, int here);
 int		count_chars(t_pipex *data, int i, int open);
 int		count_chars_2(t_pipex *data, int i);
 int		check_for_empty(t_pipex *data, int i);
-int		count_lines(char *line);
+
 
 //	parsing_utils_is_1.c
 
@@ -162,7 +166,7 @@ int		is_red_out(char *str, int index);
 // start_exec.c
 
 char	*get_input(t_pipex *data, int index_1, int index_2, int index_3);
-void	start_exec(t_pipex *data, int index);
+void	start_exec(t_pipex *data, int index, int i, int status);
 int		is_red_inline(t_pipex *data, int index_1, int index_2);
 int		is_in_inline(t_pipex *data, int index_1, int index_2);
 
@@ -186,7 +190,7 @@ int		bigger_one(char *s1, char *s2);
 int		find_key(t_pipex *data, int index_1, int index_2, int index_3);
 
 
-void	mini_parent(t_pipex *data, int index_1, int index_2, int cmnd_count);
+void	mini_parent(t_pipex *data, int index_1, int index_2);
 void	mini_child(t_pipex *data, int index_1, int index_2);
 
 char	*malloc_cpy_export(t_pipex *data, char *str, int track, int i);
@@ -194,7 +198,7 @@ char	*malloc_cpy_export(t_pipex *data, char *str, int track, int i);
 //	exec.c
 
 void	exec_mini(t_pipex *data, int index_1, int index_2);
-void	exec_cmnd(t_pipex *data, int index_1, int index_2, pid_t *pid);
+void	exec_cmnd(t_pipex *data, int index_1, int index_2);
 char 	*join_this(char *s1, char *s2);
 
 //	exec_cmnd_utils.c
@@ -223,6 +227,9 @@ void	error_code(t_pipex *data);
 void	exit_child(t_pipex *data, int index_1, int index_2, int errnum);
 
 //	env.c
+
+
+char	*malloc_str(size_t size, t_pipex *data);
 
 // void	init_env(char **env);
 

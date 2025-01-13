@@ -67,7 +67,7 @@ int is_valid_in(t_pipex *data, int index_1, int index_2)
             close_pipe(data, fd);
             fd = open(data->lines[index_1]->cmnds[index_2][i + 1], O_RDONLY);
             if (fd == -1)
-                return (perror("open"), 0);
+                return (0);
         }
     }
     close_pipe(data, fd);
@@ -89,7 +89,7 @@ int first_invalid_in(t_pipex *data, int index_1, int index_2)
             close_pipe(data, fd);
             fd = open(data->lines[index_1]->cmnds[index_2][i + 1], O_RDONLY);
             if (fd == -1)
-                return (perror("open"), 0);
+                return (i + 1);
         }
     }
     close_pipe(data, fd);
@@ -111,7 +111,7 @@ int first_invalid_out(t_pipex *data, int index_1, int index_2)
             close_pipe(data, fd);
             fd = open(data->lines[index_1]->cmnds[index_2][i + 1], O_WRONLY | O_CREAT | O_APPEND, 0644);
             if (fd == -1)
-                return (perror("open"), 0);
+                return (i + 1);
         }
     }
     close_pipe(data, fd);
@@ -146,7 +146,7 @@ int open_out(t_pipex *data, int index_1, int index_2)
 }
 
 
-char *get_input_2(t_pipex *data, int index_1, int i)
+int get_input_2(t_pipex *data, int index_1, int i)
 {
     int k;
     int j;
@@ -165,13 +165,15 @@ char *get_input_2(t_pipex *data, int index_1, int i)
     (void)index_1;
     new = malloc(sizeof(char) * (((data->here_2 - (j + 1) - data->here_2_old) + 1) + 1));
     if (!new)
-        return (perror("malloc failed!"), error_code(data), NULL);
+        return (perror("malloc failed!"), error_code(data), 0);
     new[(data->here_2 - (j + 1) - data->here_2_old) + 1 + 1] = 0;
     while (k < (data->here_2 - (j + 1) - data->here_2_old) + 1 + 1)
     {
         new[k] = data->line[data->here_2_old + k];
         k++;
     }
+    data->input = new;
+    return (1);
     // data->buf_int = 2;
     // k = data->lines[index_1]->pos_in_line[data->lines[index_1]->cmnd_count - 1][i - 1];
     // i = 0;
@@ -197,7 +199,6 @@ char *get_input_2(t_pipex *data, int index_1, int i)
     //     new[i] = data->line[k + i];
     // data->buf_int = 0;
     // printf("NEW GET INPUT 2: %s\n", new);
-    return (new);
 }
 
 int last_one(char **arr)
@@ -245,7 +246,8 @@ void set_data_here_2(t_pipex *data, int index_1)
 
     i = -1;
     check = 0;
-    while (!check && data->lines[index_1]->cmnds[++i])
+    // printf("HERE HRE EHERE %d\n",data->lines[index_1]->cmnd_count);
+    while (!check && data->lines[index_1]->cmnds[++i] && data->lines[index_1]->cmnds[i][0] && data->lines[index_1]->cmnds[i][0][0] && data->lines[index_1]->cmnds[i][0][1] && !is_quote_one(data->lines[index_1]->cmnds[i][0][0]) && !is_quote_one(data->lines[index_1]->cmnds[i][0][1]))
     {
         j = -1;
         while (data->lines[index_1]->cmnds[i][++j])
@@ -258,79 +260,85 @@ void set_data_here_2(t_pipex *data, int index_1)
         }
         j = 0;
     }
-    if (!check)
+    if (!check && data->lines[index_1]->cmnds[0][0][0])
+    // if (!check && printf("PENIS6\n") && data->lines[index_1]->cmnds[0][0][0])
     {
         i = 0;
-        while (data->line[data->lines[index_1]->pos_in_line[data->lines[index_1]->cmnd_count - 1][last_one(data->lines[index_1]->cmnds[data->lines[index_1]->cmnd_count - 1])] + i] 
+        while (!(is_quote_one(data->lines[index_1]->cmnds[0][0][0]) && is_quote_one(data->lines[index_1]->cmnds[0][0][1] == 34)) && data->line[data->lines[index_1]->pos_in_line[data->lines[index_1]->cmnd_count - 1][last_one(data->lines[index_1]->cmnds[data->lines[index_1]->cmnd_count - 1])] + i] 
             && data->line[data->lines[index_1]->pos_in_line[data->lines[index_1]->cmnd_count - 1][last_one(data->lines[index_1]->cmnds[data->lines[index_1]->cmnd_count - 1])] + i] != '\n')
+        // while (!(printf("HI\n") && is_quote_one(data->lines[index_1]->cmnds[0][0][0]) && printf("PENIS2\n") && is_quote_one(data->lines[index_1]->cmnds[0][0][1] == 34)) && printf("PENIS2\n") && data->line[data->lines[index_1]->pos_in_line[data->lines[index_1]->cmnd_count - 1][last_one(data->lines[index_1]->cmnds[data->lines[index_1]->cmnd_count - 1])] + i] 
+        //     && printf("PENIS3\n") && data->line[data->lines[index_1]->pos_in_line[data->lines[index_1]->cmnd_count - 1][last_one(data->lines[index_1]->cmnds[data->lines[index_1]->cmnd_count - 1])] + i] != '\n')
             i++;
         // printf("SET DATA HERE & OLD: I: %d\n", data->lines[index_1]->pos_in_line[data->lines[index_1]->cmnd_count - 1][last_one(data->lines[index_1]->cmnds[data->lines[index_1]->cmnd_count - 1])] + i);
         data->here_2 = data->lines[index_1]->pos_in_line[data->lines[index_1]->cmnd_count - 1][last_one(data->lines[index_1]->cmnds[data->lines[index_1]->cmnd_count - 1])] + i + 1;
         data->here_2_old = data->lines[index_1]->pos_in_line[data->lines[index_1]->cmnd_count - 1][last_one(data->lines[index_1]->cmnds[data->lines[index_1]->cmnd_count - 1])] + i + 1;
     }
-    if (check)
+    else if (check && data->lines[index_1]->cmnd_count)
     // if (check && printf("SET_DATE_HERE & OLD: CALL FROM FIRST HERE_DOC I: %d | J: %d\n", i, check + 1))
         data->here_2_old = find_key(data, index_1, i, check + 1);
+    // else
+    // {
+    //     i = 0;
+    //     while(data->line[i]) 
+    //         i++;
+    //     data->here_2_old = i - 1;
+    // }
+}
+int check_exec_cmnd_1(t_pipex *data, int index, int i)
+{
+    if (ft_strncmp(data->lines[index]->paths[i], "pathnfound", 11)
+            && is_valid_in(data, index, i) && data->fd_out >= 0 && data->lines[index]->ops[i][0][0])
+        return (1);
+    return (0);
 }
 
-void start_exec(t_pipex *data, int index)
+int check_exec_cmnd_2(t_pipex *data, int index, int i)
 {
-    int     i;
-    int     status;
-    pid_t   *pid;
+    if (!is_valid_in(data, index, i) && !data->lines[index]->exit_codes[i]
+        && printf("bash: %s: No such file or directory\n", data->lines[index]->cmnds[i][first_invalid_in(data, index, i)]))
+        return (1);
+    return (0);
+}
 
-    i = -1;
-	status = 0;
-    create_pipes(data, index);
-    pid = ft_calloc(sizeof(pid_t), data->lines[index]->cmnd_count);
-	// printf("INDEX %d\n", index);
-    // signal(SIGCHLD, SIG_IGN);
+void    exec_cmnds(t_pipex *data, int index, int i)
+{
     while (data->lines[index]->cmnds[++i] && here_doc(data, index , i))
     {
-        // printf("OPS: %s\n", data->lines[index]->ops[i][0]);
         data->fd_out = open_out(data, index, i);
-        if (ft_strncmp(data->lines[index]->paths[i], "pathnfound", 11)
-            && is_valid_in(data, index, i) && data->fd_out >= 0 && data->lines[index]->ops[i][0][0])
+        if (check_exec_cmnd_1(data, index, i))
         {
             if (check_here_doc(data, index, i) && free_this(data->input))
             {
-                // if (printf("START_EXEC() CALL FROM IF I: %d | J: %d\n", i, is_red_inline(data, index, i) + 1) && find_key(data, index, i, is_red_inline(data, index, i) + 1))
-                if (data->here_2_old < find_key(data, index, i, is_red_inline(data, index, i) + 1))
-                {
-                    // printf("START_EXEC(): SET HERE & OLD : CALL FROM INSIDE IF I: %d | J: %d\n", i, is_red_inline(data, index, i) + 1);
-                    data->input = get_input_2(data, index, 0);
+                if (data->here_2_old < find_key(data, index, i, is_red_inline(data, index, i) + 1) && get_input_2(data, index, 0))
                     data->here_2_old = find_key(data, index, i, is_red_inline(data, index, i) + 1);
-                }
                 else
                     data->input = get_input(data, index, i, is_red_inline(data, index, i));
-                // printf("INPUT: %s$\n", data->input);
             }
             if (!ft_strncmp(data->lines[index]->paths[i], "minicmnds", 10))
-               exec_mini(data, index, i);
+                exec_mini(data, index, i);
             else
-                exec_cmnd(data, index, i, pid);
-            // printf("_________________________________________________________________________________________\n");
+                exec_cmnd(data, index, i);
         }
-        else if (!is_valid_in(data, index, i) && !data->lines[index]->exit_codes[i])
-        {
-            printf("bash: %s: No such file or directory\n", data->lines[index]->cmnds[i][first_invalid_in(data, index, i)]);
+        else if (check_exec_cmnd_2(data, index, i))
             exit_child(data, index, i, 1);
-        }
-        else if (!ft_strncmp(data->lines[index]->paths[i], "pathnfound", 11) && data->lines[index]->ops[i][0] && !data->lines[index]->exit_codes[i])
-        {
-            printf("bash: command not found %s\n", data->lines[index]->ops[i][0]);
+        else if (!ft_strncmp(data->lines[index]->paths[i], "pathnfound", 11)
+            && data->lines[index]->ops[i][0] && !data->lines[index]->exit_codes[i] 
+            && printf("bash: command not found %s\n", data->lines[index]->ops[i][0]))
             exit_child(data, index, i, 127);
-        }
         close_pipe(data, data->fd_out);
     }
-    i = -1;
+}
+
+void start_exec(t_pipex *data, int index, int i, int status)
+{
+    exec_cmnds(data, index, i);
     close_pipes(data, index);
     while (++i < data->lines[index]->cmnd_count)
     {
         if (!data->lines[index]->exit_codes[i])
         {
             // printf("waiting..\n");
-            waitpid(pid[i], &status, 0);
+            waitpid(data->pid[i], &status, 0);
             if (WIFEXITED(status))
             {
                 // printf("EXIT STATUS: %d\n", WEXITSTATUS(status));

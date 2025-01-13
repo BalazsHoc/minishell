@@ -1,0 +1,146 @@
+==307061== Memcheck, a memory error detector
+==307061== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==307061== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info
+==307061== Command: /home/carlito/Documents/projects/minishell_jan_10/minishell
+==307061== Parent PID: 307060
+==307061== 
+==307062== 
+==307062== FILE DESCRIPTORS: 4 open (3 std) at exit.
+==307062== Open file descriptor 3: /tmp/tmp.wnI0efT94a/tmp_valgrind_out
+==307062==    <inherited from parent>
+==307062== 
+==307062== 
+==307062== HEAP SUMMARY:
+==307062==     in use at exit: 4,016 bytes in 1 blocks
+==307062==   total heap usage: 154 allocs, 153 frees, 19,802 bytes allocated
+==307062== 
+==307062== LEAK SUMMARY:
+==307062==    definitely lost: 0 bytes in 0 blocks
+==307062==    indirectly lost: 0 bytes in 0 blocks
+==307062==      possibly lost: 0 bytes in 0 blocks
+==307062==    still reachable: 0 bytes in 0 blocks
+==307062==         suppressed: 4,016 bytes in 1 blocks
+==307062== 
+==307062== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 1 from 1)
+--307062-- 
+--307062-- used_suppression:      1 libreadline /home/carlito/42_minishell_tester/utils/minishell.supp:2 suppressed: 4,016 bytes in 1 blocks
+==307062== 
+==307062== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 1 from 1)
+==307061== Invalid read of size 4
+==307061==    at 0x10B6B0: set_data_here_2 (start_exec.c:267)
+==307061==    by 0x10BFF3: start_exec (start_exec.c:350)
+==307061==    by 0x11386F: parsing (parsing.c:369)
+==307061==    by 0x109713: main (main.c:113)
+==307061==  Address 0x4b65700 is 0 bytes after a block of size 0 alloc'd
+==307061==    at 0x4885250: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-arm64-linux.so)
+==307061==    by 0x112F27: init_pos_in_line (parsing.c:228)
+==307061==    by 0x1137DB: parsing (parsing.c:358)
+==307061==    by 0x109713: main (main.c:113)
+==307061== 
+==307061== Invalid read of size 4
+==307061==    at 0x10B780: set_data_here_2 (start_exec.c:268)
+==307061==    by 0x10BFF3: start_exec (start_exec.c:350)
+==307061==    by 0x11386F: parsing (parsing.c:369)
+==307061==    by 0x109713: main (main.c:113)
+==307061==  Address 0x4b65700 is 0 bytes after a block of size 0 alloc'd
+==307061==    at 0x4885250: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-arm64-linux.so)
+==307061==    by 0x112F27: init_pos_in_line (parsing.c:228)
+==307061==    by 0x1137DB: parsing (parsing.c:358)
+==307061==    by 0x109713: main (main.c:113)
+==307061== 
+==307061== Invalid read of size 4
+==307061==    at 0x10B848: set_data_here_2 (start_exec.c:273)
+==307061==    by 0x10BFF3: start_exec (start_exec.c:350)
+==307061==    by 0x11386F: parsing (parsing.c:369)
+==307061==    by 0x109713: main (main.c:113)
+==307061==  Address 0x4b65700 is 0 bytes after a block of size 0 alloc'd
+==307061==    at 0x4885250: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-arm64-linux.so)
+==307061==    by 0x112F27: init_pos_in_line (parsing.c:228)
+==307061==    by 0x1137DB: parsing (parsing.c:358)
+==307061==    by 0x109713: main (main.c:113)
+==307061== 
+==307061== Invalid read of size 4
+==307061==    at 0x10B908: set_data_here_2 (start_exec.c:274)
+==307061==    by 0x10BFF3: start_exec (start_exec.c:350)
+==307061==    by 0x11386F: parsing (parsing.c:369)
+==307061==    by 0x109713: main (main.c:113)
+==307061==  Address 0x4b65700 is 0 bytes after a block of size 0 alloc'd
+==307061==    at 0x4885250: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-arm64-linux.so)
+==307061==    by 0x112F27: init_pos_in_line (parsing.c:228)
+==307061==    by 0x1137DB: parsing (parsing.c:358)
+==307061==    by 0x109713: main (main.c:113)
+==307061== 
+==307061== 
+==307061== FILE DESCRIPTORS: 4 open (3 std) at exit.
+==307061== Open file descriptor 3: /tmp/tmp.wnI0efT94a/tmp_valgrind_out
+==307061==    <inherited from parent>
+==307061== 
+==307061== 
+==307061== HEAP SUMMARY:
+==307061==     in use at exit: 4,016 bytes in 1 blocks
+==307061==   total heap usage: 167 allocs, 166 frees, 21,044 bytes allocated
+==307061== 
+==307061== LEAK SUMMARY:
+==307061==    definitely lost: 0 bytes in 0 blocks
+==307061==    indirectly lost: 0 bytes in 0 blocks
+==307061==      possibly lost: 0 bytes in 0 blocks
+==307061==    still reachable: 0 bytes in 0 blocks
+==307061==         suppressed: 4,016 bytes in 1 blocks
+==307061== 
+==307061== ERROR SUMMARY: 27 errors from 4 contexts (suppressed: 1 from 1)
+==307061== 
+==307061== 1 errors in context 1 of 4:
+==307061== Invalid read of size 4
+==307061==    at 0x10B908: set_data_here_2 (start_exec.c:274)
+==307061==    by 0x10BFF3: start_exec (start_exec.c:350)
+==307061==    by 0x11386F: parsing (parsing.c:369)
+==307061==    by 0x109713: main (main.c:113)
+==307061==  Address 0x4b65700 is 0 bytes after a block of size 0 alloc'd
+==307061==    at 0x4885250: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-arm64-linux.so)
+==307061==    by 0x112F27: init_pos_in_line (parsing.c:228)
+==307061==    by 0x1137DB: parsing (parsing.c:358)
+==307061==    by 0x109713: main (main.c:113)
+==307061== 
+==307061== 
+==307061== 1 errors in context 2 of 4:
+==307061== Invalid read of size 4
+==307061==    at 0x10B848: set_data_here_2 (start_exec.c:273)
+==307061==    by 0x10BFF3: start_exec (start_exec.c:350)
+==307061==    by 0x11386F: parsing (parsing.c:369)
+==307061==    by 0x109713: main (main.c:113)
+==307061==  Address 0x4b65700 is 0 bytes after a block of size 0 alloc'd
+==307061==    at 0x4885250: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-arm64-linux.so)
+==307061==    by 0x112F27: init_pos_in_line (parsing.c:228)
+==307061==    by 0x1137DB: parsing (parsing.c:358)
+==307061==    by 0x109713: main (main.c:113)
+==307061== 
+==307061== 
+==307061== 12 errors in context 3 of 4:
+==307061== Invalid read of size 4
+==307061==    at 0x10B780: set_data_here_2 (start_exec.c:268)
+==307061==    by 0x10BFF3: start_exec (start_exec.c:350)
+==307061==    by 0x11386F: parsing (parsing.c:369)
+==307061==    by 0x109713: main (main.c:113)
+==307061==  Address 0x4b65700 is 0 bytes after a block of size 0 alloc'd
+==307061==    at 0x4885250: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-arm64-linux.so)
+==307061==    by 0x112F27: init_pos_in_line (parsing.c:228)
+==307061==    by 0x1137DB: parsing (parsing.c:358)
+==307061==    by 0x109713: main (main.c:113)
+==307061== 
+==307061== 
+==307061== 13 errors in context 4 of 4:
+==307061== Invalid read of size 4
+==307061==    at 0x10B6B0: set_data_here_2 (start_exec.c:267)
+==307061==    by 0x10BFF3: start_exec (start_exec.c:350)
+==307061==    by 0x11386F: parsing (parsing.c:369)
+==307061==    by 0x109713: main (main.c:113)
+==307061==  Address 0x4b65700 is 0 bytes after a block of size 0 alloc'd
+==307061==    at 0x4885250: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-arm64-linux.so)
+==307061==    by 0x112F27: init_pos_in_line (parsing.c:228)
+==307061==    by 0x1137DB: parsing (parsing.c:358)
+==307061==    by 0x109713: main (main.c:113)
+==307061== 
+--307061-- 
+--307061-- used_suppression:      1 libreadline /home/carlito/42_minishell_tester/utils/minishell.supp:2 suppressed: 4,016 bytes in 1 blocks
+==307061== 
+==307061== ERROR SUMMARY: 27 errors from 4 contexts (suppressed: 1 from 1)

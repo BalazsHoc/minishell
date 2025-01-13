@@ -31,7 +31,9 @@ void signal_main(int sig)
 		rl_redisplay();
 	}
 	if (sig == SIGQUIT)
+	{
 		return;
+	}
 }
 
 void    signal_back(t_pipex *data)
@@ -46,7 +48,6 @@ void    signal_back(t_pipex *data)
 
 void signal_mini_commands(int sig) // here_doc
 {
-
      if (sig == SIGINT)
 	 {
 		errno = 130;

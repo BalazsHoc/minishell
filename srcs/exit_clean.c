@@ -10,19 +10,21 @@ void	error_code(t_pipex *data)
 
 void exit_child(t_pipex *data, int index_1, int index_2, int errnum)
 {
-	int pid[data->lines[index_1]->cmnd_count];
 	int status;
 
-	// printf("ERRRNUM: %d\n", errnum);
-	pid[index_2] = fork();
-	if (pid[index_2] == -1)
+	data->pid[index_2] = fork();
+	if (data->pid[index_2] == -1)
 		return (perror("fork failed\n"), error_code(data));
-	if (!pid[index_2])
-		exit(errnum);
+	if (!data->pid[index_2])
+	{
+		errno = errnum;
+		error_code(data);
+	}
 	else
 	{
-		if (waitpid(pid[index_2], &status, 0) == -1)
+		if (waitpid(data->pid[index_2], &status, 0) == -1)
 			return (perror("waitpid failed!"), error_code(data));
 		data->lines[index_1]->exit_codes[index_2] = WEXITSTATUS(status);
+		errno = WEXITSTATUS(status);
 	}
 }

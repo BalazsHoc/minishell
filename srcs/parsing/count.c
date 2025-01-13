@@ -1,18 +1,14 @@
 #include "../../minishell.h"
 
-int count_lines(char *line)
+void set_line_count(t_pipex *data)
 {
-	int i;
-	int count;
-
-	i = -1;
-	count = 1;
-	while (line[++i])
+	data->chars_in_line = -1;
+	data->line_count = 1;
+	while (data->line[++data->chars_in_line])
 	{
-		if (line[i] == '\n' && line[i + 1])
-			count++;
+		if (data->line[data->chars_in_line] == '\n' && data->line[data->chars_in_line + 1])
+			data->line_count++;
 	}
-	return (count);
 }
 
 int	count_cmnds(char *line, int index)
@@ -79,7 +75,9 @@ int	count_elem(t_pipex *data, int index_1, int i, int j)
 			// 	open = 2;
 			// else if (((is_quote_one(data->line[j]) && open == 1) || (is_quote_two(data->line[j]) && open == 2)))
 			// 	open = 0;
-			if (is_quote_one(data->line[j]) && !open)
+			if (!open && check_for_empty(data, j) && is_quote(data->line[j + 1]) && is_quote(data->line[j]))
+				data->count_elem++;
+			else if (is_quote_one(data->line[j]) && !open)
 				open = 1;
 			else if (is_quote_two(data->line[j]) && !open)
 				open = 2;
@@ -97,23 +95,22 @@ int	count_elem(t_pipex *data, int index_1, int i, int j)
 			// 		|| (data->line[j - 1] == '|' && data->line[j - 2] == '>')) && !is_space(data->line[j]))))
 			// printf("LINE:   2 |%s| COUNT: %d OPEN: %d | J: %d\n", data->line + j, count, open, j);
 			else if (data->line[j]
+			&& ((dollar_in(data->line, j, open) >= 0 && count_expansion(data, j, open))
+				|| dollar_in(data->line, j, open) == -1)
 			&& ((j == 0 && !is_quote(data->line[j])) || (j > 0 && (
 					// (is_delim(data->line, j, open) && ((!is_space(data->line[j]) && !is_quote(data->line[j]) && !open) || open))
 				// || (is_space(data->line[j - 1]) && !is_space(data->line[j]) && !open)
 				// || (((j > 1 && (is_space(data->line[j - 2]) || is_real_pipe(data->line, j - 2) || is_red_clean(data->line, j - 2) || (open == 1))) || j < 2) 
 					(is_red_clean(data->line, j) && !open)
-					|| (!open && check_for_empty(data, j) && is_quote(data->line[j + 1]))
 					|| (!open && j > 1 && is_delim_back(data->line, j - 1) && !is_delim_back(data->line, j))
-					|| (open && j > 1 && is_space(data->line[j - 1]) && !is_space(data->line[j]))
+					// || (open && j > 1 && is_space(data->line[j - 1]) && !is_space(data->line[j]) && dollar_in(data->line, j, open))
 					|| (((j > 1 && is_delim_back(data->line, j - 2)) || j < 2)
 						&& ((open == 1 && is_quote_one(data->line[j - 1]) && !is_quote_one(data->line[j])) || (open == 2 && is_quote_two(data->line[j - 1]) && !is_quote_two(data->line[j]))))
 					|| (!open && !is_real_pipe(data->line, j) && !is_quote(data->line[j]) && !is_space(data->line[j]) && is_delim_back(data->line, j - 1) && !is_red_1(data->line[j]))
 					|| ((is_red_in(data->line, j - 1) && is_red_out(data->line, j)) || (is_red_out(data->line, j - 1) && is_red_in(data->line, j)))
 					|| (is_red_1(data->line[j - 1]) && !is_red_1(data->line[j]) && !is_space(data->line[j]) && data->line[j] != '|' && !open)
 					|| ((is_real_pipe(data->line, j - 1)
-						|| (data->line[j - 1] == '|' && data->line[j - 2] == '>')) && !is_space(data->line[j])))))
-			&& ((dollar_in(data->line, j, open) >= 0 && count_expansion(data, j, open))
-				|| dollar_in(data->line, j, open) == -1))
+						|| (data->line[j - 1] == '|' && data->line[j - 2] == '>')) && !is_space(data->line[j]))))))
 					data->count_elem++;
 		}
 		else if (is_real_pipe(data->line, j) && --i != INT_MIN)
@@ -125,7 +122,8 @@ int	count_elem(t_pipex *data, int index_1, int i, int j)
 
 int check_for_empty(t_pipex *data, int i)
 {
-	if (!data->line[i] || !is_space(data->line[i]))
+	// printf("CHECK FOR EMPTY\n");
+	if (!data->line[i] || !(is_space(data->line[i]) || (is_quote(data->line[i]) && i == 0)))
 		return (0);
 	while (data->line[i] && is_space(data->line[i]))
 		i++;
@@ -134,11 +132,13 @@ int check_for_empty(t_pipex *data, int i)
 		&& ((data->line[i + 2] && (is_space(data->line[i + 2]) || is_real_pipe(data->line, i + 2) || data->line[i + 2] == '\n'))
 			|| (!data->line[i + 2])))
 		return (i += 2, check_for_empty(data, i) + 1);
+		// return (i += 2, printf("FOUND FOR EMPTY: %d\n", i), check_for_empty(data, i) + 1);
 	else if (data->line[i] && is_quote_two(data->line[i])
 		&& data->line[i + 1] && is_quote_two(data->line[i + 1])
 		&& ((data->line[i + 2] && (is_space(data->line[i + 2]) || is_real_pipe(data->line, i + 2) || data->line[i + 2] == '\n'))
 			|| (!data->line[i + 2])))
 		return (i += 2, check_for_empty(data, i) + 1);
+		// return (i += 2,printf("FOUND FOR EMPTY: %d\n", i), check_for_empty(data, i) + 1);
 	else
 		return (0);
 }
@@ -181,8 +181,8 @@ int	count_chars(t_pipex *data, int i, int open)
 			break;
 		else if (count > 0 && !open && is_quote(data->line[i]) && is_delim_back(data->line, i - 1))
 			break;
-		else if (count > 0 && open && is_delim_back(data->line, i))
-			break;
+		// else if (count > 0 && open && is_delim_back(data->line, i))
+		// 	break;
 		else if (is_quote_one(data->line[i]) && !open)
 			open = 1;
 		else if (is_quote_two(data->line[i]) && !open)

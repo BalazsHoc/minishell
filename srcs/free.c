@@ -107,7 +107,13 @@ void 	free_lines(t_pipex *data)
 	data->here_2 = 0;
 	data->here_2_old = 0;
 	free(data->lines);
+	if (data->pid)
+	{
+		free(data->pid);
+		data->pid = NULL;
+	}
 	data->lines = NULL;
+	free_str(data->line);
 }
 
 void	free_struct(t_pipex *data)
@@ -121,8 +127,12 @@ void	free_struct(t_pipex *data)
 			free_list(data->cur_env);
 		if (data->export)
 			free_list(data->export);
-		free_str(data->line);
 		free_str(data->buf_str);
+		if (data->pid)
+		{
+			free(data->pid);
+			data->pid = NULL;
+		}
 		free_str(data->input);
 		free(data);
 		data = NULL;

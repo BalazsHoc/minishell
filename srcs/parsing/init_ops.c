@@ -42,13 +42,19 @@ int count_reds(t_pipex *data, int index_1, int index_2)
 int count_ops(t_pipex *data, int index_1, int index_2)
 {
     int i;
+    int count;
 
     i = 0;
+    count = 0;
     // printf("COUNT OPS START\n");
     while (data->lines[index_1]->cmnds[index_2][i])
+    {
+        if (data->lines[index_1]->cmnds[index_2][i][0])
+            count++;
         i++;
+    }
     // printf("COUNT OPS %d\n", i - (count_reds(data, index) * 2));
-    return (i - (count_reds(data, index_1, index_2) * 2));
+    return (count - (count_reds(data, index_1, index_2) * 2));
 }
 
 // void    fill_echo_exit(t_pipex *data, int index)
