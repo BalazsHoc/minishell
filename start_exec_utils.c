@@ -73,6 +73,7 @@ int here_doc(t_pipex *data, int index_1, int index_2)
 
     i = -1;
     this = 0;
+	signal_change(1);
     // printf("\n\nHERE DOOOOOC %d\n", index_2);
     while (data->lines[index_1]->cmnds[index_2][++i])
     {
@@ -82,7 +83,7 @@ int here_doc(t_pipex *data, int index_1, int index_2)
                 && i == is_red_inline(data, index_1, index_2)) || i != is_red_inline(data, index_1, index_2)) 
             && find_key(data, index_1 + this, index_2, i + 1) == data->here_2_old)
         {
-            // printf("HEREDOC! %d | I: %d\n", index_2, i);
+            printf("HEREDOC! %d | I: %d\n", index_2, i);
             infile = get_input(data, index_1, index_2, i);
             if (!infile)
                 break ;
@@ -101,7 +102,7 @@ int here_doc(t_pipex *data, int index_1, int index_2)
             // printf("THIS: %d", this);
         }
     }
-    return (1);
+    return (signal_change(0), 1);
 }
 
 void print_list(char **arr)

@@ -372,7 +372,7 @@ void	parsing(t_pipex *data)
 		check_folder(data, i);
 		set_cur_path(data);
 		start_exec(data, i, -1, 0);
-		signal_back(data);
+		signal_change(0);
 	}
 	free_lines(data);
 }

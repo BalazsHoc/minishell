@@ -40,7 +40,7 @@ $(NAME): $(OBJ) $(OBJ_PARSING)
 all: $(NAME)
 
 clean:
-	@rm -f $(OBJ_PARSING)
+	@rm -f $(OBJ) $(OBJ_PARSING)
 
 fclean: clean
 	@rm -f $(NAME)

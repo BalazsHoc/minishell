@@ -91,9 +91,6 @@ typedef struct pipex_s
 
 extern int g_signal;
 
-# include "srcs/libft/libft.h"
-
-
 int		main(int argc, char **argv, char **env);
 
 //	parsing.c
