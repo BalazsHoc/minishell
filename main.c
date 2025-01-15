@@ -98,9 +98,9 @@ int	main(int argc, char **argv, char **env)
 	data->fd_out = 0;
 	data->last_exit_status = 0;
 	g_signal = 0;
-	signal_change(0);
 	while (1)
 	{
+		signal_change(0);
 		g_signal = 0;
 		data->line = readline("minishell$ ");
 		if (!data->line)

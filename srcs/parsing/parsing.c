@@ -355,7 +355,7 @@ void	parsing(t_pipex *data)
 		return (printf("bash: syntax error: open quotes \n"), data->last_exit_status = 1, free_lines(data));
 	while (data->lines[++i] && data->here_2_old < data->chars_in_line)
 	{
-		signal_change(1);
+		signal_change(2);
 		data->lines[i]->cmnd_count = count_cmnds(data->line + data->here_2, i);
 		// printf("CMND COUNT %d\n", data->lines[i]->cmnd_count);
 		init_exit_codes(data, data->lines[i]->cmnd_count, i);
@@ -372,7 +372,6 @@ void	parsing(t_pipex *data)
 		check_folder(data, i);
 		set_cur_path(data);
 		start_exec(data, i, -1, 0);
-		signal_change(0);
 	}
 	free_lines(data);
 }

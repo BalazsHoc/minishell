@@ -102,7 +102,7 @@ int here_doc(t_pipex *data, int index_1, int index_2)
             // printf("THIS: %d", this);
         }
     }
-    return (signal_change(0), 1);
+    return (signal_change(2), 1);
 }
 
 void print_list(char **arr)
