@@ -13,15 +13,17 @@ void	ft_strncpy_2(char *dest, char *src, int size, t_pipex *data)
 	j = 0;
 	open = data->buf_int;
 	// printf("COPY START  SRC: |%s| OPEN : %d\n", src, open);
+	if (!src || !*src)
+		return ;
 	while (j < size)
 	{
-		// printf("COPY LINE 1  SRC: |%s| OPEN : %d\n", src, open);
+		// printf("COPY LINE 1  SRC: |%s| OPEN : %d\n", src + i, open);
 		// while (((!open && is_quote(src[i]))
 		// 	|| (open == 1 && is_quote_one(src[i]))
 		// 	|| (open == 2 && is_quote_two(src[i])))
 		// 	 && !is_space(src[i - 1]))
 		// 	i++;
-		if (is_quote_one(src[i]) && !open)
+		if (src[i] && is_quote_one(src[i]) && !open)
 			open = 1;
 		else if (is_quote_two(src[i]) && !open)
 			open = 2;
@@ -30,11 +32,44 @@ void	ft_strncpy_2(char *dest, char *src, int size, t_pipex *data)
 		// printf("COPY LINE 2  SRC: |%s| OPEN : %d\n", src, open);
 		if (src[i] && ((!is_quote(src[i])) || ((open == 1 && is_quote_two(src[i]))
 			|| (open == 2 && is_quote_one(src[i])))))
-			// || (open == 2 && is_quote_one(src[i])))) && printf("CPY THIS: %c\n", src[i]))
 			dest[j++] = src[i];
 		i++;
 	}
 	data->buf_int = 0;
+}
+
+void	ft_strncpy(char *dest, char *src, int size)
+{
+	int i;
+
+	// CHECK IF OPEN IS NECESSARY !!!
+	i = -1;
+	// printf("COPY START  SRC: |%s| OPEN : %d\n", src, open);
+	if (!src || !*src)
+		return ;
+	while (++i < size)
+		dest[i] = src[i];
+}
+
+int ft_strlen_2(char *s)
+{
+	size_t	i;
+	int	count;
+
+	i = 0;
+	count = 0;
+	if (!s || !*s)
+		return (0);
+	// printf("FT_STRLEN_2: %s\n", s);
+	while (s[i])
+	{
+		if (!(((i == 0 || !s[i + 1]) || ft_strlen(s) == 1 ) && s[i] == 34 && s[i] == 39))
+			count++;
+		if (!s[i + 1])
+			break;
+		i++;
+	}
+	return (count);
 }
 
 // void	ft_strncpy_3(char *dest, char *src, int size, t_pipex *data)
@@ -84,7 +119,7 @@ int	count_key(char *line, int j, int open)
 	check = 0;
 	while (line[j])
 	{
-		// printf("COUNT KEY POS: %s CHECK: %d\n", line + j, check);
+		// printf("COUNT KEY POS: %s | OPEN %d CHECK: %d\n", line + j, open, check);
 		if (check && open == 2 && (is_space(line[j]) || line[j] == '\n' || is_quote(line[j])))
 			break;
 		if (check && !open && (!line[j] || is_space(line[j]) || line[j] == '\n'
@@ -97,13 +132,13 @@ int	count_key(char *line, int j, int open)
 			break;
 		if (check)
 			k++;
-		// printf("KEY ______ %d\n", k);
 		if (line[j] == '$')
 			check = 1;
 		if (check && !k && line[j + 1] == '?')
 			return (1);
 		j++;
 	}
+	// printf("KEY ______ %d\n", k);
 	return (k);
 }
 
@@ -146,6 +181,10 @@ char *fill_key(t_pipex *data, char *str)
 	int i;
 	char *new;
 
+	if (!str)
+		return (NULL);
+	// printf("FILL STR: %s\n", str);
+	// printf("THIS:1 %d | THIS:2 %ld\n", ft_strlen_2(str), ft_strlen(str));
 	new = malloc(sizeof(char) * (ft_strlen(str) + 1));
 	if (!new)
 		return (error_code(data), NULL);
@@ -172,7 +211,7 @@ char *find_elem(t_pipex *data, int i, int open)
 		if (!ft_strncmp(key, data->cur_env[j], ft_strlen(key)) && data->cur_env[j][ft_strlen(key)] == '=')
 			elem = fill_key(data, data->cur_env[j] + (count_key(data->line, i, open) + 1));
 	}
-	free_str(key);
+	free_str(&key);
 	key = NULL;
 	// printf("FOUND ELEM :%s$\n", elem);
 	return (elem);
@@ -203,18 +242,38 @@ int count_elem_spaces(t_pipex *data, char *elem)
 	return (count);
 }
 
+char *get_pid(t_pipex *data)
+{
+	pid_t pid;
+
+	pid = fork();
+	if (pid < 0)
+		return (perror("fork() failed!"), error_code(data), NULL);
+	if (pid == 0)
+		exit(EXIT_SUCCESS);
+	if (wait(NULL) == -1)
+		return (perror("wait() failed!"), error_code(data), NULL);
+	return (ft_itoa(pid));
+}
+
+
 int	count_expansion(t_pipex *data, int i, int open)
 {
 	int count;
 	char *elem;
 
 	count = 0;
-	// printf("START COUNT EXPANSION: %d\n", count);
+	// printf("START COUNT EXPANSION: %s\n", data->line + i);
 	elem = NULL;
 	while (data->line[i])
 	{
 		// printf("EXPANSION 1: |%s| COUNT: %d OPEN: %d\n", data->line + i, count, open);
-		if (open != 1 && data->line[i] == '$' && data->line[i + 1] && data->line[i + 1] != '?')
+		if (open != 1 && data->line[i] == '$' && data->line[i + 1] && data->line[i + 1] == '$')
+		{
+			elem = get_pid(data);
+			i += 2;
+		}
+		else if (open != 1 && data->line[i] == '$' && data->line[i + 1] && (data->line[i + 1] != '?' && data->line[i + 1] != '$'))
 		{
 			elem = find_elem(data, i, open);
 			count_elem_spaces(data, elem);
@@ -228,7 +287,7 @@ int	count_expansion(t_pipex *data, int i, int open)
 		}
 		if (elem)
 		{
-			count += ft_strlen(elem);
+			count += ft_strlen_2(elem);
 			free(elem);
 			elem = NULL;
 		}
@@ -243,8 +302,8 @@ int	count_expansion(t_pipex *data, int i, int open)
 		if (!open && (!data->line[i] || is_space(data->line[i]) || data->line[i] == '\n'
 			|| is_real_pipe(data->line, i)
 			|| is_red_clean(data->line, i)
-			|| (is_space(data->line[i]) && is_quote(data->line[i + 1]))
-			|| ((!data->line[i + 2] || is_space(data->line[i + 2]) || data->line[i + 2] == '\n') && is_quote(data->line[i + 1]))))
+			|| (data->line[i + 1] && is_space(data->line[i]) && is_quote(data->line[i + 1]))
+			|| (data->line[i + 1] && (!data->line[i + 2] || is_space(data->line[i + 2]) || data->line[i + 2] == '\n') && is_quote(data->line[i + 1]))))
 			break;
 		if (data->line[i] && (((data->line[i] != '$' || (data->line[i] == '$' && is_delim_front(data->line, i + 1))) && !open) || open)
 			&& ((!is_quote(data->line[i])) || ((open == 1 && is_quote_two(data->line[i]))
@@ -268,12 +327,14 @@ char	*expand_it_1(t_pipex *data, int i, int open)
 	elem = NULL;
 	new = malloc(sizeof(char) * (count_expansion(data, i, open) + 1));
 	if (!new)
-		return (printf("malloc fail\n"), free_str(elem), error_code(data), NULL);
+		return (printf("malloc fail\n"), free_str(&elem), error_code(data), NULL);
 	new[count_expansion(data, i, open)] = 0;
 	j = 0;
 	while (data->line[i])
 	{
 		// printf("START EXPANSION:  |%s|     I: %d|       OPEN: %d\n", data->line + i, i ,open);
+		if (open != 1 && data->line[i] == '$' && data->line[i + 1] == '$')
+			return (free_str(&new), get_pid(data));
 		if (open != 1 && data->line[i] == '$' && (data->line[i + 1] == '?'))
 		{
 			if (errno != 130)
@@ -281,19 +342,19 @@ char	*expand_it_1(t_pipex *data, int i, int open)
 			else
 				elem = ft_strdup("130");
 			data->buf_int = open;
-			ft_strncpy_2(new + j, elem, ft_strlen(elem), data);
+			ft_strncpy(new + j, elem, ft_strlen_2(elem));
 			i += 2;
 		}
 		else if (open != 1 && data->line[i] == '$' && data->line[i + 1] != '?')
 		{
 			elem = find_elem(data, i, open);
 			data->buf_int = open;
-			ft_strncpy_2(new + j, elem, ft_strlen(elem), data);
+			ft_strncpy(new + j, elem, ft_strlen_2(elem));
 			i += count_chars_2(data, i);
 		}
 		if (elem)
 		{
-			j += ft_strlen(elem);
+			j += ft_strlen_2(elem);
 			free(elem);
 			elem = NULL;
 		}
@@ -310,8 +371,8 @@ char	*expand_it_1(t_pipex *data, int i, int open)
 		if (!open && (!data->line[i] || is_space(data->line[i]) || data->line[i] == '\n'
 			|| is_real_pipe(data->line, i)
 			|| is_red_clean(data->line, i)
-			|| (is_space(data->line[i]) && is_quote(data->line[i + 1]))
-			|| ((!data->line[i + 2] || is_space(data->line[i + 2]) || data->line[i + 2] == '\n') && is_quote(data->line[i + 1]))))
+			|| (data->line[i + 1] && is_space(data->line[i]) && is_quote(data->line[i + 1]))
+			|| (data->line[i + 1] && (!data->line[i + 2] || is_space(data->line[i + 2]) || data->line[i + 2] == '\n') && is_quote(data->line[i + 1]))))
 			break;
 		if (data->line[i] && (((data->line[i] != '$' || (data->line[i] == '$' && is_delim_front(data->line, i + 1))) && !open) || open)
 			&& ((!is_quote(data->line[i])) || ((open == 1 && is_quote_two(data->line[i]))
@@ -348,8 +409,10 @@ int	expand_it_2(t_pipex *data, int index_1, int index_2, int index_3)
 	i = -1;
 	j = -1;
 	count = -1;
+	data->buf_str = NULL;
 	// if (!data->lines[index_1]->cmnds[index_2][index_3 + count_elem_spaces(data, data->lines[index_1]->cmnds[index_2][index_3])] || !count_elem_spaces(data, data->lines[index_1]->cmnds[index_2][index_3]))
-	if (data->count_elem <= index_3 + count_elem_spaces(data, data->lines[index_1]->cmnds[index_2][index_3]) || !count_elem_spaces(data, data->lines[index_1]->cmnds[index_2][index_3]))
+	if (data->count_elem <= index_3 + count_elem_spaces(data, data->lines[index_1]->cmnds[index_2][index_3])
+		|| !count_elem_spaces(data, data->lines[index_1]->cmnds[index_2][index_3]))
 		return (0);
 	data->buf_str = data->lines[index_1]->cmnds[index_2][index_3];
 	// printf("BUF STR: %s\n", data->buf_str);
@@ -368,8 +431,7 @@ int	expand_it_2(t_pipex *data, int index_1, int index_2, int index_3)
 			// printf("NEW: %s at %d\n", data->lines[index_1]->cmnds[index_2][index_3 + count], index_3 + count);
 		}
 	}
-	// WHY THE FUCK DONT I NEED TO FREE THE data->buf_str; when using valgrind and using return (free_str(data->buf_str), it says it is invalid free()); IN my opinion I have one malloc to much which is not freeed because I use the data->lines[index_1]->cmnds[index_2][index_3] at replace it with buf which is also malloced for;
-	return (data->buf_str = NULL, count);
+	return (free_str(&data->buf_str), count);
 }
 
 
@@ -450,7 +512,7 @@ int		is_delim_back(char *line, int i)
 	if (i < 0 || !line[i])
 		return (1);
 	// printf("LNE: %s\n", line + i);
-	while (is_quote(line[i]))
+	while (i >= 0 && is_quote(line[i]))
 	{
 		if ((open == 1 && is_quote_two(line[i])) || (open == 2 && is_quote_one(line[i])))
 			return (0);
@@ -493,14 +555,31 @@ int		is_delim_front(char *line, int i)
 void	fill_for_empty(t_pipex *data, char **str, int *pos, int j)
 {
 	// printf("FILL FOR EMPTY!\n");
-	*str = malloc(sizeof(char) * (3));
-	if (!*str)
-		return (perror("malloc fail\n"), error_code(data));
-	(*str)[0] = 39;
-	(*str)[1] = 39;
-	(*str)[2] = 0;
+	if (j == 0)
+	{
+		*str = malloc(sizeof(char) * (3));
+		if (!*str)
+			return (perror("malloc fail\n"), error_code(data));
+		(*str)[0] = 39;
+		(*str)[1] = 39;
+		(*str)[2] = 0;
+	}
+	else 
+	{
+		*str = malloc(sizeof(char) * (1));
+		if (!*str)
+			return (perror("malloc fail\n"), error_code(data));
+		(*str)[0] = 0;
+	}
 	*pos = j;
 	// printf("NEW: %s\n", *str);
+}
+
+int flag_empty(int *this, int pos)
+{
+	if (pos == 0)
+		*this = 1;
+	return (1);
 }
 
 void	fill_cmnds(t_pipex *data, int index_1, int i, int j)
@@ -512,17 +591,19 @@ void	fill_cmnds(t_pipex *data, int index_1, int i, int j)
 	index_2 = -1;
 	open = 0;
 	k = - i;
+	// printf("START FILLING COMMANDS\n");
 	while (data->line[++j] && data->line[j] != '\n' && k <= 0)
 	{
+		// printf("FILL_CMNDS: 1 |%s| | OPEN: %d | K: %d | INDEX: %d J: %d\n", data->line + j, open, k, index_1, j);
 		if (k == 0 && !open && check_for_empty(data, j) && is_quote(data->line[j]) && is_quote(data->line[j + 1]) && ++index_2 != INT_MIN)
+		// if (k == 0 && !open && check_for_empty(data, j) && is_quote(data->line[j]) && is_quote(data->line[j + 1]) && ++index_2 != INT_MIN && flag_empty(&data->lines[index_1]->red_cmnd[index_2][j], j))
 			fill_for_empty(data, &data->lines[index_1]->cmnds[i][index_2], &data->lines[index_1]->pos_in_line[i][index_2], j);
-		else if (is_quote_one(data->line[j]) && !open)
+		if (is_quote_one(data->line[j]) && !open)
 			open = 1;
 		else if (is_quote_two(data->line[j]) && !open)
 			open = 2;
 		else if (((is_quote_one(data->line[j]) && open == 1) || (is_quote_two(data->line[j]) && open == 2)))
 			open = 0;
-		// printf("FILL_CMNDS:     2 |%s| | OPEN: %d | K: %d | INDEX: %d J: %d\n", data->line + j, open, k, index, j);
 		else if (k == 0 && data->line[j]
 			&& ((j == 0 && !is_quote(data->line[j])) || (j > 0 && (
 					// (is_delim(data->line, j, open) && ((!is_space(data->line[j]) && !is_quote(data->line[j]) && !open) || open))
@@ -533,7 +614,7 @@ void	fill_cmnds(t_pipex *data, int index_1, int i, int j)
 					|| (!open && j > 1 && is_delim_back(data->line, j - 1) && !is_delim_back(data->line, j))
 					|| (((j > 1 && is_delim_back(data->line, j - 2)) || j < 2)
 						&& ((open == 1 && is_quote_one(data->line[j - 1]) && !is_quote_one(data->line[j])) || (open == 2 && is_quote_two(data->line[j - 1]) && !is_quote_two(data->line[j]))))
-				|| (!open && !is_real_pipe(data->line, j) && !is_quote(data->line[j]) && !is_space(data->line[j]) && is_delim_back(data->line, j - 1) && !is_red_1(data->line[j]))
+				|| (!open && !is_real_pipe(data->line, j) && data->line[j] != '|' && !is_quote(data->line[j]) && !is_space(data->line[j]) && is_delim_back(data->line, j - 1) && !is_red_1(data->line[j]))
 				|| (((is_red_in(data->line, j - 1) && is_red_out(data->line, j)) || (is_red_out(data->line, j - 1) && is_red_in(data->line, j))))
 				|| (is_red_1(data->line[j - 1]) && !is_red_1(data->line[j]) && !is_space(data->line[j]) && data->line[j] != '|' && !open)
 				|| ((is_real_pipe(data->line, j - 1)
@@ -542,6 +623,7 @@ void	fill_cmnds(t_pipex *data, int index_1, int i, int j)
 				|| dollar_in(data->line, j, open) == -1))
 				// && (!open || ((open == 1 && is_quote_one(line[j - 1])) || (open == 2 && is_quote_two(line[j - 1])))))
 		{
+			// printf("TRUE\n");
 			if (dollar_in(data->line, j, open) >= 0
 				&& (index_2 == -1 || (index_2 >= 0 && ft_strncmp(data->lines[index_1]->cmnds[i][index_2], "<<", 3))))
 				{
@@ -553,7 +635,8 @@ void	fill_cmnds(t_pipex *data, int index_1, int i, int j)
 			else
 				data->lines[index_1]->cmnds[i][++index_2] = fill_normal(data, j, open);
 			data->lines[index_1]->pos_in_line[i][index_2] = j;
-			if ((open || dollar_in(data->line, j, open) >= 0) && (!ft_strncmp(data->lines[index_1]->cmnds[i][index_2], ">>", ft_strlen(data->lines[index_1]->cmnds[i][index_2]))
+			if ((open || dollar_in(data->line, j, open) >= 0)
+				&& (!ft_strncmp(data->lines[index_1]->cmnds[i][index_2], ">>", ft_strlen(data->lines[index_1]->cmnds[i][index_2]))
 				|| !ft_strncmp(data->lines[index_1]->cmnds[i][index_2], "<<", ft_strlen(data->lines[index_1]->cmnds[i][index_2]))
 				|| !ft_strncmp(data->lines[index_1]->cmnds[i][index_2], ">", ft_strlen(data->lines[index_1]->cmnds[i][index_2]))
 				|| !ft_strncmp(data->lines[index_1]->cmnds[i][index_2], "<", ft_strlen(data->lines[index_1]->cmnds[i][index_2]))))
@@ -577,7 +660,7 @@ void	fill_cmnds(t_pipex *data, int index_1, int i, int j)
 		// printf("I1: %d\n", i);
 		if (!data->line[j + 1] )
 			break;
-		if ((is_real_pipe(data->line, j) && j > 0 && !is_red_1(data->line[j - 1])))
+		if (data->line[j] == '|' && (is_real_pipe(data->line, j) && j > 0 && data->line[j - 1] != '>'))
 			k++;
 		// printf("I2: %d\n", i);
 	}

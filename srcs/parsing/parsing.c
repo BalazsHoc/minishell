@@ -97,7 +97,7 @@ void	init_cmnds(t_pipex *data, int index_1, int i)
 	{
 		if (!count_elem(data, index_1, i, data->here_2 - 1) && dollar_in(data->line, 0, 0) != -1)
 		{
-			printf("MALLOC FOR NOT FOUND DOLLAR IN\n");
+			// printf("MALLOC FOR NOT FOUND DOLLAR IN\n");
 			data->lines[index_1]->cmnds[i] = ft_calloc(sizeof(char *), (1 + 1));
 			if (!data->lines[index_1]->cmnds[i])
 				return (perror("malloc fail!\n"), error_code(data));
@@ -266,19 +266,24 @@ void	init_lines_2_continue(t_pipex *data, int i)
 	char *new;
 	int j;
 
+	data->buf_int = 0;
 	if (i == 0)
 	{
 		i = count_nl(data);
 		data->buf_int = data->here_2_old;
 	}
-	// printf("I: %d data->here_2: %d \n", i, (data->buf_int - i));
-    new = ft_calloc(sizeof(char), (i + 1));
+	if (i == data->buf_int)
+		data->buf_int = 0;
+	// printf("I: %d data->here_2: %d \n", i, (data->buf_int));
+    new = ft_calloc(sizeof(char), (i));
     if (!new)
         return (perror("malloc failed!"), error_code(data));
-    new[i] = 0;
+    new[i - 1] = 0;
 	j = -1;
-    while (++j < i)
+    while (++j < i - 1)
+	{
 		new[j] = data->line[data->buf_int + j];
+	}
 	add_history(new);
     // printf("NEW LINE: %s\n", new);
 	free(new);
@@ -358,11 +363,11 @@ void	parsing(t_pipex *data)
 		init_pos_in_line(data, i);
 		init_cmnds(data, i, -1);
 		init_lines_2(data, i, -1, 0);
+		init_pipes_pids(data, i);
 		if (!check_reds(data, i))
 			return (free_lines(data));
 		init_ops(data, i);
 		init_paths(data, i, -1);
-		init_pipes_pids(data, i);
 		// print_that_shit(data, i);
 		check_folder(data, i);
 		set_cur_path(data);

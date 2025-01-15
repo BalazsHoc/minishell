@@ -101,7 +101,7 @@ int	main(int argc, char **argv, char **env)
 	signal(SIGQUIT, signal_main);
 	while (1)
 	{
-		data->line = ft_strtrim(readline("minishell$ "), " \n\t\v\f\r\b");
+		data->line = readline("minishell$ ");
 		if (!data->line)
 		{
 			printf("exit\n");
@@ -109,11 +109,12 @@ int	main(int argc, char **argv, char **env)
 		} 
 		if (data->line[0] != '\0')
 		{
+			data->line = ft_strtrim(data->line, " \n\t\v\f\r\b");
 			// add_history(data->line);
 			parsing(data);
 		}
 		else
-			free_str(data->line);
+			free_str(&data->line);
 	}
 	return (printf("\n"), free_struct(data), rl_clear_history(), 0);
 }

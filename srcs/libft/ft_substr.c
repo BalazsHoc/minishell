@@ -21,12 +21,12 @@ char	*ft_substr(char *s, unsigned int start, size_t len)
 	if (!(s))
 		return (0);
 	if ((start >= ft_strlen(s)) || (len == 0))
-		return (free_str(s), ft_calloc(1, sizeof(char)));
+		return (free_str(&s), ft_calloc(1, sizeof(char)));
 	if (len > (ft_strlen(s) - start))
 		len = ft_strlen(s) - start;
 	sub = (char *)malloc(sizeof(char) * (len + 1));
 	if (!sub)
-		return (free_str(s), NULL);
+		return (free_str(&s), NULL);
 	while (i < len)
 	{
 		sub[i] = s[start];
@@ -34,5 +34,5 @@ char	*ft_substr(char *s, unsigned int start, size_t len)
 		start++;
 	}
 	sub[i] = '\0';
-	return (free_str(s), sub);
+	return (free_str(&s), sub);
 }

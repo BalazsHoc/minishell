@@ -205,7 +205,7 @@ char 	*join_this(char *s1, char *s2);
 
 char	*create_tmp(t_pipex *data, int index, char *tmp_name, int count);
 void	close_pipes(t_pipex *data, int index);
-void	close_pipe(t_pipex *data, int fd);
+void	close_pipe(t_pipex *data, int *fd);
 void	close_pipes_2(t_pipex *data, int index_1, int index_2);
 void	create_pipes(t_pipex *data, int index);
 
@@ -216,8 +216,10 @@ int		check_infile(t_pipex *data, int index_1, int index_2);
 int		free_this(char *s);
 void	free_struct(t_pipex *data);
 void	free_list_list(char ***arr);
+void	free_list_list_1(char ***arr);
+void	free_list_1(char **arr);
 void	free_list(char **arr);
-void	free_str(char *s);
+void	free_str(char **s);
 void	free_lines(t_pipex *data);
 void	free_env(char **env);
 

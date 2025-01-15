@@ -18,16 +18,18 @@ int	is_real_pipe(char *line, int index)
 		return (0);
 	else if (!line[index] || !line[index + 1])
 		return (0);
-	// printf("IS REAL PIPE: %s\n", line + index);
+	// printf("PIPE?: %s\n", line + index);
 	if (line[index] == '|')
 	{
 		if (line[index - 1] == '|'
 		|| line[index - 1] == '>'
 		|| line[index + 1] == '|')
 			return (0);
+		// return (printf("YESSS REAL PIPE\n"), 1);
 		return (1);
 	}
 	return (0);
+	// return (printf("NOO REAL PIPE\n"), 0);
 }
 
 // int special_case(t_pipex *data, int index_1, int i, int j)
@@ -92,7 +94,7 @@ int syntax_check(char *line, int i, int count)
 	{
 		if (i == 0 && line[0] == '|' && (!line[i + 1] || line[i + 1] != '|'))
 			return (0);
-		else if (!is_real_pipe(line, i) && ++word)
+		else if (!is_real_pipe(line, i) && line[i] != '|' && ++word)
 			count = 0;
 		else
 			count++;

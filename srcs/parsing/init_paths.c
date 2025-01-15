@@ -57,8 +57,8 @@ char *find_path_2(char **arr, char *cmnd)
 		else
 			full_path = ft_strdup(cmnd);
 		if (!access(full_path, X_OK))
-			return (free_list((void *)arr), free_str(new), full_path);
-		free_str(full_path);
+			return (free_list((void *)arr), free_str(&new), full_path);
+		free_str(&full_path);
 	}
 	return (free_list((void *)arr), free(new), NULL);
 }

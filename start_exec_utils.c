@@ -17,7 +17,7 @@ char *get_input(t_pipex *data, int index_1, int index_2, int index_3)
         free(buf);
         buf = get_next_line(fd, data);
     }
-    return (free_str(buf), input);
+    return (free_str(&buf), input);
 }
 
 int find_key(t_pipex *data, int index_1, int index_2, int index_3)
@@ -30,6 +30,9 @@ int find_key(t_pipex *data, int index_1, int index_2, int index_3)
     // printf("POS IN LNE: %d\n", data->lines[index_1]->pos_in_line[index_2][index_3]);
     // if (data->here_2_old > data->lines[index_1]->pos_in_line[index_2][index_3])
     i = data->here_2_old;
+    // printf("DATA OLD: %d\n", i);
+    if (i == 0 || !data->line[i - 1] || !data->line[i] || !data->line[i + 1])
+        return (i);
     // else
         // i = data->lines[index_1]->pos_in_line[index_2][index_3];
     // i = data->lines[index_1]->pos_in_line[index_2][index_3];
@@ -44,8 +47,8 @@ int find_key(t_pipex *data, int index_1, int index_2, int index_3)
         while (data->line[i + j] && data->lines[index_1]->cmnds[index_2][index_3][j] && data->line[i + j] == data->lines[index_1]->cmnds[index_2][index_3][j])
             j++;
         if (!data->lines[index_1]->cmnds[index_2][index_3][j] && (!data->line[i + j] || data->line[i + j] == '\n' || is_space(data->line[i + j])))
-            return (data->here_2 = i + j + 1, printf("SET HERE: %d\n", i+j+1), i + j + 1);
-            // return (data->here_2 = i + j + 1, i + j + 1);
+            return (data->here_2 = i + j + 1, i + j + 1);
+            // return (data->here_2 = i + j + 1, printf("SET HERE: %d\n", i+j+1), i + j + 1);
         // {
             // while (data->line[i + j + k] && is_space(data->line[i + j + k]))
             //     k++;
@@ -53,8 +56,8 @@ int find_key(t_pipex *data, int index_1, int index_2, int index_3)
             //     return (printf("RETURN : %d\n", i + j + k + 1), i + j + k + 1);
         // }
     }
-    // return (data->here_2_old);
-    return (printf("NOT FOUND\n"), data->here_2_old);
+    return (data->here_2_old);
+    // return (printf("NOT FOUND\n"), data->here_2_old);
 }
 
 int here_doc(t_pipex *data, int index_1, int index_2)
@@ -78,7 +81,7 @@ int here_doc(t_pipex *data, int index_1, int index_2)
             infile = get_input(data, index_1, index_2, i);
             if (!infile)
                 break ;
-            free_str(infile);
+            free_str(&infile);
         }
         // else if (!ft_strncmp(data->lines[index_1]->cmnds[index_2][i], "<<", 3)
         //     && (!ft_strncmp(data->lines[index_1]->paths[index_2], "pathnfound", 11)
@@ -191,7 +194,7 @@ void    update_env(t_pipex *data, int index_1, int index_2)
             }
             else
             {
-                free_str(data->cur_env[i]);
+                free_str(&data->cur_env[i]);
                 data->cur_env[i] = ft_strjoin("PWD=", buf);
             }
             // printf("THIS IS NEW PWD: %s\n", data->cur_env[i]);
@@ -398,7 +401,7 @@ void export_env(t_pipex *data, int index_1, int index_2, int count)
         {
             data->buf_str = data->cur_env[already_there(data, data->lines[index_1]->ops[index_2][i + 1])];
             data->cur_env[already_there(data, data->lines[index_1]->ops[index_2][i + 1])] = ft_strdup(data->lines[index_1]->ops[index_2][i + 1]);
-            free_str(data->buf_str);
+            free_str(&data->buf_str);
         }
         else if (is_it_last(data, index_1, index_2, i + 1))
             buf[rand] = ft_strdup(data->lines[index_1]->ops[index_2][i + 1]);
@@ -420,29 +423,40 @@ void export_display(t_pipex *data)
 char *malloc_cpy_export(t_pipex *data, char *str, int track, int i)
 {
     char *new;
+    int count;
 
     new = NULL;
+    count = 0;
     while (str[++i])
     {
-        if (str[i] == '=')
-            track++;
+        count++;
+        if (!track && str[i] == '=' && str[i + 1])
+            track = 1;
+        if (str[i] == 34)
+            count++;
     }
     if (!track)
         return (ft_strdup(str));
-    new = ft_calloc(sizeof(char), (i + 2 + 1));
-    if (!new)
+    else if (track == 1)
+    // printf("STR: %s | COUNT: %d\n", str, count);
+        new = ft_calloc(sizeof(char), (count + 2 + 1));
+    if (!new)   
         return (error_code(data), NULL);
-    new[i + 2] = 0;
-    i = 0;
-    while (str[i] && (i == 0 || (str[i - 1] != '=')))
-    {
+    new[count + 2] = 0;
+    i = -1;
+    while (str[++i] && (i == 0 || (str[i - 1] != '=')))
         new[i] = str[i];
-        i++;
-    }
     new[i--] = 34;
+    count = 0;
     while (str[++i])
-        new[i + 1] = str[i];
-    new[i + 1] = 34;
+    {
+        if (str[i] == 34)
+        {
+            new[i + 1 + count++] = 92;
+        } 
+        new[i + 1 + count] = str[i];
+    }
+    new[i + 1 + count] = 34;
     return (new);
 }
 
@@ -482,10 +496,11 @@ void    update_export(t_pipex *data, int index_1, int index_2, int count)
             data->buf_str = data->buf_array[already_there_2(data, data->lines[index_1]->ops[index_2][1 + j])];
             // printf("BUF: STR: %s\n", data->buf_str);
             data->buf_array[already_there_2(data, data->lines[index_1]->ops[index_2][1 + j])] = ft_strdup(data->lines[index_1]->ops[index_2][1 + j]);
-            // free_str(data->buf_str);
+            free_str(&data->buf_str);
         }
         else if (is_it_last(data, index_1, index_2, 1 + j))
-            data->buf_array[count++] = ft_strdup(data->lines[index_1]->ops[index_2][1 + j]);
+            data->buf_array[count++] = malloc_cpy_export(data, data->lines[index_1]->ops[index_2][1 + j], 0, -1);
+            // data->buf_array[count++] = ft_strdup(data->lines[index_1]->ops[index_2][1 + j]);
     }
     free_list(data->export);
     data->export = data->buf_array;
@@ -603,7 +618,7 @@ int count_unset_export(t_pipex *data, int index_1, int index_2)
             if (!ft_strncmp(data->lines[index_1]->ops[index_2][i + 1], key, bigger_one(data->lines[index_1]->ops[index_2][i + 1], key)))
                 k++;
             j++;
-            free_str(key);
+            free_str(&key);
         }
     }
     if (k == 0)
@@ -645,7 +660,7 @@ void unset_env(t_pipex *data, int index_1, int index_2, int i)
             if (!ft_strncmp(data->lines[index_1]->ops[index_2][j + 1], key, bigger_one(data->lines[index_1]->ops[index_2][j + 1], key)))
                 check = 1;
         }
-        free_str(key);
+        free_str(&key);
         if (!check)
             data->buf_array[data->buf_int++] = data->cur_env[i];
         else
@@ -675,7 +690,7 @@ void unset_export(t_pipex *data, int index_1, int index_2, int i)
             if (!ft_strncmp(data->lines[index_1]->ops[index_2][j + 1], key, bigger_one(data->lines[index_1]->ops[index_2][j + 1], key)))
                 check = 1;
         }
-        free_str(key);
+        free_str(&key);
         if (!check)
             data->buf_array[data->buf_int++] = data->export[i];
         else
@@ -748,7 +763,7 @@ void    exit_cmnd(t_pipex *data, int index_1, int index_2)
             i = i % 256;
         errno = i;
     }
-    if (data->lines[index_1]->ops[index_2][2])
+    if (data->lines[index_1]->ops[index_2][1] && data->lines[index_1]->ops[index_2][0] && data->lines[index_1]->ops[index_2][2])
        return (write(2, "bash: exit: too many arguments\n", 32), errno = 1, exit_child(data, index_1, index_2, 1));
     else
         error_code(data);

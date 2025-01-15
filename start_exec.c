@@ -61,16 +61,16 @@ int is_valid_in(t_pipex *data, int index_1, int index_2)
     fd = -1;
     while (data->lines[index_1]->cmnds[index_2][++i])
     {
-        if (!ft_strncmp(data->lines[index_1]->cmnds[index_2][i], "<", 2) && data->lines[index_1]->cmnds[index_2][i + 1]
+        if (!ft_strncmp(data->lines[index_1]->cmnds[index_2][i], "<", 2) && !data->lines[index_1]->red_cmnd[index_2][i] && data->lines[index_1]->cmnds[index_2][i + 1]
             && data->lines[index_1]->red_cmnd[index_2][i] == 0)
         {
-            close_pipe(data, fd);
+            close_pipe(data, &fd);
             fd = open(data->lines[index_1]->cmnds[index_2][i + 1], O_RDONLY);
             if (fd == -1)
                 return (0);
         }
     }
-    close_pipe(data, fd);
+    close_pipe(data, &fd);
     return (fd);
 }
 
@@ -86,13 +86,13 @@ int first_invalid_in(t_pipex *data, int index_1, int index_2)
         if (!ft_strncmp(data->lines[index_1]->cmnds[index_2][i], "<", 2) && data->lines[index_1]->cmnds[index_2][i + 1]
             && data->lines[index_1]->red_cmnd[index_2][i] == 0)
         {
-            close_pipe(data, fd);
+            close_pipe(data, &fd);
             fd = open(data->lines[index_1]->cmnds[index_2][i + 1], O_RDONLY);
             if (fd == -1)
                 return (i + 1);
         }
     }
-    close_pipe(data, fd);
+    close_pipe(data, &fd);
     return (0);
 }
 
@@ -108,13 +108,13 @@ int first_invalid_out(t_pipex *data, int index_1, int index_2)
         if ((!ft_strncmp(data->lines[index_1]->cmnds[index_2][i], ">>", 3) || !ft_strncmp(data->lines[index_1]->cmnds[index_2][i], ">", 2))
             && data->lines[index_1]->cmnds[index_2][i + 1] && data->lines[index_1]->red_cmnd[index_2][i] == 0)
         {
-            close_pipe(data, fd);
+            close_pipe(data, &fd);
             fd = open(data->lines[index_1]->cmnds[index_2][i + 1], O_WRONLY | O_CREAT | O_APPEND, 0644);
             if (fd == -1)
                 return (i + 1);
         }
     }
-    close_pipe(data, fd);
+    close_pipe(data, &fd);
     return (i);
 }
 
@@ -133,7 +133,7 @@ int open_out(t_pipex *data, int index_1, int index_2)
         if ((!ft_strncmp(data->lines[index_1]->cmnds[index_2][i], ">>", 3)
             || !ft_strncmp(data->lines[index_1]->cmnds[index_2][i], ">", 2)) && data->lines[index_1]->red_cmnd[index_2][i] == 0)
             {
-                close_pipe(data, fd);
+                close_pipe(data, &fd);
                 if (!ft_strncmp(data->lines[index_1]->cmnds[index_2][i], ">>", 3))
                     fd = open(data->lines[index_1]->cmnds[index_2][i + 1], O_WRONLY | O_CREAT | O_APPEND, 0644);
                 else
@@ -163,11 +163,11 @@ int get_input_2(t_pipex *data, int index_1, int i)
     // while (data->lines[index_1]->cmnds[data->lines[index_1]->cmnd_count - 1][i])
     //     i++;
     (void)index_1;
-    new = malloc(sizeof(char) * (((data->here_2 - (j + 1) - data->here_2_old) + 1) + 1));
+    new = ft_calloc(sizeof(char), (((data->here_2 - (j + 1) - data->here_2_old) + 1) + 1));
     if (!new)
         return (perror("malloc failed!"), error_code(data), 0);
-    new[(data->here_2 - (j + 1) - data->here_2_old) + 1 + 1] = 0;
-    while (k < (data->here_2 - (j + 1) - data->here_2_old) + 1 + 1)
+    new[(data->here_2 - (j + 1) - data->here_2_old) + 1] = 0;
+    while (k < (data->here_2 - (j + 1) - data->here_2_old) + 1)
     {
         new[k] = data->line[data->here_2_old + k];
         k++;
@@ -323,9 +323,10 @@ void    exec_cmnds(t_pipex *data, int index, int i)
             exit_child(data, index, i, 1);
         else if (!ft_strncmp(data->lines[index]->paths[i], "pathnfound", 11)
             && data->lines[index]->ops[i][0] && !data->lines[index]->exit_codes[i] 
-            && printf("bash: command not found %s\n", data->lines[index]->ops[i][0]))
+            && write(2, "bash: command not found: ", 26) && write(2, data->lines[index]->ops[i][0], ft_strlen(data->lines[index]->ops[i][0])) && write(2, "\n", 1))
+            //  data->lines[index]->ops[i][0]))
             exit_child(data, index, i, 127);
-        close_pipe(data, data->fd_out);
+        close_pipe(data, &data->fd_out);
     }
 }
 

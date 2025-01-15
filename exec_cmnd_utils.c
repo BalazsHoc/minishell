@@ -61,34 +61,24 @@ void close_pipes(t_pipex *data, int index)
     i = -1;
     while (++i < data->lines[index]->cmnd_count)
     {
-        // printf("CLOSING: %d | I: %d\n", index, i);
+        // printf("CLOSING: %d | I: %d\n", index, i );
         // if (data->lines[index]->pipes[i][0] > 2 && printf("CLOSING0: %d | I: %d\n", index, i) && close(data->lines[index]->pipes[i][0]) == -1)
-        if (data->lines[index]->pipes[i][0] > 2 && close(data->lines[index]->pipes[i][0]) == -1)
-        {
-            perror("close1");
-            error_code(data);
-        }
-        else
-            data->lines[index]->pipes[i][0] = -1;
-        // if (data->lines[index]->pipes[i][1] > 2 && printf("CLOSING1: %d | I: %d\n", index, i) && close(data->lines[index]->pipes[i][1]) == -1)
-        if (data->lines[index]->pipes[i][1] >= 0 && close(data->lines[index]->pipes[i][1]) == -1)
-        {
-            perror("close2");
-            error_code(data);
-        }
-        else
-            data->lines[index]->pipes[i][1] = -1;
+        if (data->lines[index]->pipes[i][0] > 0)
+            close_pipe(data, &data->lines[index]->pipes[i][0]);
+        if (data->lines[index]->pipes[i][1] > 0)
+            close_pipe(data, &data->lines[index]->pipes[i][1]);
     }
 }
 
-void close_pipe(t_pipex *data, int fd)
+void close_pipe(t_pipex *data, int *fd)
 {
-    // printf("CLOSE: %d\n", fd);
-    if (fd > 2 && close(fd) == -1)
+    if (*fd > 0 && close(*fd) == -1)
+    // if (*fd > 2 && printf("CLOSE: %d\n", *fd) && close(*fd) == -1)
     {
         perror("close");
         error_code(data);
     }
+    *fd = -1;
 }
 
 void close_pipes_2(t_pipex *data, int index_1, int index_2)
@@ -101,16 +91,8 @@ void close_pipes_2(t_pipex *data, int index_1, int index_2)
         // printf("CLOSING: %d | I: %d\n", index, i);
         if (i != index_2)
         {
-            if (data->lines[index_1]->pipes[i][0] >= 0 && close(data->lines[index_1]->pipes[i][0]) == -1)
-            {
-                perror("close01");
-                error_code(data);
-            }
-            if (data->lines[index_1]->pipes[i][1] >= 0 && close(data->lines[index_1]->pipes[i][1]) == -1)
-            {
-                perror("close02");
-                error_code(data);
-            }
+            close_pipe(data, &data->lines[index_1]->pipes[i][0]);
+            close_pipe(data, &data->lines[index_1]->pipes[i][1]);
         }
     }
 }

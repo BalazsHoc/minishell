@@ -113,27 +113,27 @@ void 	free_lines(t_pipex *data)
 		data->pid = NULL;
 	}
 	data->lines = NULL;
-	free_str(data->line);
+	free_str(&data->line);
 }
 
 void	free_struct(t_pipex *data)
 {
 	if (data)
 	{
-		close_pipe(data, data->fd_out);
+		close_pipe(data, &data->fd_out);
 		if (data->lines)
 			free_lines(data);
 		if (data->cur_env)
 			free_list(data->cur_env);
 		if (data->export)
 			free_list(data->export);
-		free_str(data->buf_str);
+		free_str(&data->buf_str);
 		if (data->pid)
 		{
 			free(data->pid);
 			data->pid = NULL;
 		}
-		free_str(data->input);
+		free_str(&data->input);
 		free(data);
 		data = NULL;
 	}
@@ -149,7 +149,7 @@ void	free_list(char **arr)
 	if (arr[0])
 	{
 		while (arr[++i])
-			free(arr[i]);
+			free_str(&arr[i]);
 	}
 	free(arr);
 	arr = NULL;
@@ -171,9 +171,9 @@ void	free_list_list(char ***arr)
 	arr = NULL;
 }
 
-void	free_str(char *str)
+void	free_str(char **str)
 {
-	if (str)
-		free(str);
-	str = NULL;
+	if (*str)
+		free(*str);
+	*str = NULL;
 }
