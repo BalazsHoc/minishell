@@ -84,7 +84,10 @@ void	free_line(t_pipex *data, int index)
 	if (data->lines[index]->pos_in_line)
 		free_list_int(data->lines[index]->pos_in_line, data->lines[index]->cmnd_count);
 	if (data->lines[index]->pipes)
+	{
 		free(data->lines[index]->pipes);
+		data->lines[index]->pipes = NULL;
+	}
 	if (data->lines[index]->exit_codes)
 		free(data->lines[index]->exit_codes);
 	free(data->lines[index]);
