@@ -18,20 +18,11 @@ CC				= cc
 CFLAGS			= -Wall -Wextra -Werror -g
 RL_FLAGS		= -lreadline -lncurses
 
-#	LIBFT
-
-LIBFT_PATH		= srcs/libft/
-LIBFT			= $(LIBFT_PATH)libft.a
-
-
-#	GNL
-
-GNL_SRCS		= srcs/get_next_line/get_next_line.c srcs/get_next_line/get_next_line_utils.c 
 
 #	SRCS && OBJS
 
-SRCS			= main.c srcs/free.c srcs/exit_clean.c srcs/signal_handling.c start_exec.c start_exec_utils.c exec.c exec_cmnd_utils.c
-OBJ				= $(SRCS:.c=.o) $(GNL_SRCS:.c=.o)
+SRCS			= main.c srcs/free.c srcs/exit_clean.c srcs/signal_handling.c start_exec.c start_exec_utils.c exec.c exec_cmnd_utils.c srcs/utils_libft_01.c srcs/utils_libft_02.c srcs/utils_libft_03.c srcs/utils_libft_04.c
+OBJ				= $(SRCS:.c=.o)
 
 #	PARSING
 
@@ -44,17 +35,14 @@ OBJ_PARSING		= $(PATH_PARSING:.c=.o)
 	@$(CC) $(CFLAGS) -c -o $@ $<
 
 $(NAME): $(OBJ) $(OBJ_PARSING)
-	@make -C $(LIBFT_PATH) all
-	@$(CC) $(CFLAGS) $(OBJ) $(OBJ_PARSING) $(LIBFT) $(GNL) -o $(NAME) $(RL_FLAGS)
+	@$(CC) $(CFLAGS) $(OBJ_PARSING) $(OBJ) -o $(NAME) $(RL_FLAGS)
 
 all: $(NAME)
 
 clean:
-	@make -C $(LIBFT_PATH) clean
-	@rm -f $(OBJ) $(OBJ_PARSING)
+	@rm -f $(OBJ_PARSING)
 
 fclean: clean
-	@make -C $(LIBFT_PATH) fclean
 	@rm -f $(NAME)
 
 re: fclean all

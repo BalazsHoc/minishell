@@ -13,8 +13,6 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-
-
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <stdlib.h>
@@ -31,6 +29,7 @@
 
 # include <sys/types.h>
 # include <sys/wait.h>
+# include <sys/ioctl.h>
 
 # ifndef BUFFER_SIZE
 # define BUFFER_SIZE 50
@@ -93,6 +92,7 @@ typedef struct pipex_s
 extern int g_signal;
 
 # include "srcs/libft/libft.h"
+
 
 int		main(int argc, char **argv, char **env);
 
@@ -241,21 +241,31 @@ char	*malloc_str(size_t size, t_pipex *data);
 // void	init_env(char **env);
 
 
-//	get_next_line.c
+// libft_utils.c
 
-char	*get_next_line(int fd, t_pipex *data);
-char	*gnl_join_buffer(char *line, char *buffer);
+char		*ft_strchr(const char *s, int c);
+char		*ft_strdup(t_pipex *data, const char *s);
+size_t		ft_strlen(const char *str);
+char		*ft_strtrim(char *s1, char const *set);
 
-void	*gnl_calloc(size_t nmemb, size_t size);
+int			ft_atoi(const char *nptr);
+void		*ft_calloc(size_t nmemb, size_t size);
+size_t		ft_digit_count(long int n);
+char		*ft_itoa(int n);
+void		*ft_memcpy(void *dest, const void *src, size_t n);
+int			ft_strncmp(const char *s1, const char *s2, size_t n);
+int			ft_strcmp_2(char *s1, char *s2);
+char		*ft_substr(char *s, unsigned int start, size_t len);
+char		*ft_strjoin(char const *s1, char const *s2);
 
-//	get_next_line_utils.c
+int			ft_strncmp(const char *s1, const char *s2, size_t n);
+int			ft_strcmp_2(char *s1, char *s2);
+char		*ft_substr(char *s, unsigned int start, size_t len);
+char		**ft_split(const char *s1, char c);
 
-char	*gnl_fromnl(char *buf);
-char	*gnl_strcpy(char *buf, t_pipex *data);
+void		ft_bzero(void *s, size_t n);
 
-int		gnl_newline(char *str);
-int		gnl_strlen(char *str);
 
-void	gnl_free(char **ptr);
+
 
 #endif

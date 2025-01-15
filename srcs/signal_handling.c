@@ -1,5 +1,4 @@
 #include "../minishell.h"
-#include <sys/ioctl.h>
 
 int	g_signal;
 
