@@ -1,4 +1,7 @@
 #include "../minishell.h"
+#include <sys/ioctl.h>
+
+int	g_signal;
 
 //	It will take sigquit access from printing anything 
 void	terminal_settings()
@@ -25,110 +28,81 @@ void signal_main(int sig)
 {
 	if (sig == SIGINT)
 	{
-		write(1, "\n", 1);
+		g_signal = 1;
+		write(STDIN_FILENO, "\n", 1);
 		rl_replace_line("", 0);
 		rl_on_new_line();
 		rl_redisplay();
 	}
 	if (sig == SIGQUIT)
 	{
+		// printf("SIGQUIT here\n");
 		return;
 	}
 }
 
-void    signal_back(t_pipex *data)
+void    signal_back()
 {
-    struct sigaction sa;
+	signal(SIGINT, signal_main);
+	signal(SIGQUIT, signal_main);
+    // struct sigaction sa;
 
-    sa.sa_handler = signal_main;
-    sigemptyset(&sa.sa_mask);
-    sa.sa_flags = 0;
-    sigaction(SIGINT, &sa,  &data->main_sa);
+    // sa.sa_handler = signal_main;
+    // sigemptyset(&sa.sa_mask);
+    // sa.sa_flags = 0;
+    // sigaction(SIGINT, &sa,  &data->main_sa);
+	// sigaction(SIGQUIT, &sa,  &data->main_sa);
+	// // signal(SIGQUIT, SIG_IGN);
 }
 
 void signal_mini_commands(int sig) // here_doc
 {
      if (sig == SIGINT)
 	 {
+		g_signal += 1;
 		errno = 130;
-        printf("\n");
+        ioctl(STDIN_FILENO, TIOCSTI, "\n");
+		// rl_replace_line("", 0);
+		// rl_on_new_line();
 	 }
+	if (sig == SIGQUIT)
+		printf("SIGQUIT\n");
 }
 
 void signal_exec_cmnd(int sig) // cat
 {
     if (sig == SIGINT)
 	{
+		g_signal += 1;
 		errno = 130;
-        printf("\n");
+		printf("\n");
+		return ;
 	}
+	if (sig == SIGQUIT)
+		printf("Quit (core dumped)\n");
 }
 
 void	signal_change(int flag)
 {
-    struct sigaction sa, main_sa;
-
+	if (flag == 0)
+	{
+		signal(SIGINT, signal_main);
+		signal(SIGQUIT, signal_main);
+	}
     if (flag == 1) // for our commands
-        sa.sa_handler = signal_mini_commands;
+	{
+		signal(SIGINT, signal_mini_commands);
+		signal(SIGQUIT, signal_mini_commands);
+	}
+        // signal_mini_commands;
     if (flag == 2) // for prebuilt commands
-        sa.sa_handler = signal_exec_cmnd;
-    sigemptyset(&sa.sa_mask);
-    sa.sa_flags = 0;
-    sigaction(SIGINT, &sa, &main_sa);
+	{
+		signal(SIGINT, signal_exec_cmnd);
+		signal(SIGQUIT, signal_exec_cmnd);
+	}
+        // signal_exec_cmnd();
+    // sigemptyset(&sa.sa_mask);
+    // sa.sa_flags = 0;
+    // sigaction(SIGINT, &sa, &main_sa);
+	// sigaction(SIGQUIT, &sa, &main_sa);
 }
-
-// void signal_main(int sig)
-// {
-// 	if (sig == SIGINT)
-// 	{
-// 		write(1, "\n", 1);
-// 		rl_replace_line("", 0);
-// 		rl_on_new_line();
-// 		rl_redisplay();
-// 	}
-// 	if (sig == SIGQUIT)
-// 	{
-// 		rl_replace_line("", 0);
-// 		rl_on_new_line();
-// 		rl_redisplay();
-// 		return ;
-// 	}
-// }
-
-
-// void	signal_head()
-// {
-//     signal(SIGINT, signal_main);
-// 	signal(SIGQUIT, signal_main);
-// }
-
-// void signal_mini_commands(int sig) // here_doc
-// {
-//     if (sig == SIGINT)
-// 	{
-// 		write(STDOUT_FILENO, "\n", 1);
-//     	return ;
-// 	}
-// }
-
-// void signal_exec_cmnd(int sig) // cat
-// {
-//     if (sig == SIGINT)
-//         printf("\n");
-// 	else if (sig == SIGQUIT)
-// 		printf("Quit (core dump)\n");
-// }
-
-// void    signal_change(int flag)
-// {
-//     if (flag == 1) // for our commands
-// 	{
-// 		signal(SIGINT, signal_mini_commands);
-// 		signal(SIGQUIT, signal_mini_commands);
-// 	}
-//     if (flag == 2) // for prebuilt commands
-//     {
-// 		signal(SIGINT, signal_exec_cmnd);
-// 		signal(SIGQUIT, signal_exec_cmnd);
-// 	}
-// }

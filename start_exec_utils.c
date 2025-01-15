@@ -7,17 +7,24 @@ char *get_input(t_pipex *data, int index_1, int index_2, int index_3)
     char    *key;
     char    *input;
  
-    key = data->lines[index_1]->cmnds[index_2][index_3 + 1];
-    fd = 0;
-    buf = get_next_line(fd, data);
-    input = NULL;
-    while (buf && !ft_strcmp_2(buf, key))
-    {
-        input = join_this(input, buf);
-        free(buf);
-        buf = get_next_line(fd, data);
-    }
-    return (free_str(&buf), input);
+	g_signal = 0;
+	key = data->lines[index_1]->cmnds[index_2][index_3 + 1];
+	fd = 0;
+	input = NULL;
+	buf = readline("> ");
+	while (buf && !g_signal && !ft_strcmp_2(buf, key))
+	{
+		if (!buf)
+			break ;
+		if (buf[0] != '\0')
+		{
+			input = join_this(input, buf);
+			free_str(&buf);
+		}
+		buf = readline("> ");
+	}
+	// printf("%d\n", g_signal);
+    return (input);
 }
 
 int find_key(t_pipex *data, int index_1, int index_2, int index_3)

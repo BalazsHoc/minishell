@@ -89,6 +89,8 @@ typedef struct pipex_s
 
 }	t_pipex;
 
+extern int g_signal;
+
 int		main(int argc, char **argv, char **env);
 
 //	parsing.c

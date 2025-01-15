@@ -97,10 +97,11 @@ int	main(int argc, char **argv, char **env)
 	init_export(data);
 	data->fd_out = 0;
 	data->last_exit_status = 0;
-	signal(SIGINT, signal_main);
-	signal(SIGQUIT, signal_main);
+	g_signal = 0;
+	signal_change(0);
 	while (1)
 	{
+		g_signal = 0;
 		data->line = readline("minishell$ ");
 		if (!data->line)
 		{
