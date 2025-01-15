@@ -2,14 +2,12 @@
 
 char *get_input(t_pipex *data, int index_1, int index_2, int index_3)
 {
-    int     fd;
     char    *buf;
     char    *key;
     char    *input;
  
 	g_signal = 0;
 	key = data->lines[index_1]->cmnds[index_2][index_3 + 1];
-	fd = 0;
 	input = NULL;
 	buf = readline("> ");
 	while (buf && !g_signal && !ft_strcmp_2(buf, key))
@@ -407,11 +405,11 @@ void export_env(t_pipex *data, int index_1, int index_2, int count)
         if (already_there(data, data->lines[index_1]->ops[index_2][i + 1]) != -1 && is_it_last(data, index_1, index_2, i + 1))
         {
             data->buf_str = data->cur_env[already_there(data, data->lines[index_1]->ops[index_2][i + 1])];
-            data->cur_env[already_there(data, data->lines[index_1]->ops[index_2][i + 1])] = ft_strdup(data->lines[index_1]->ops[index_2][i + 1]);
+            data->cur_env[already_there(data, data->lines[index_1]->ops[index_2][i + 1])] = ft_strdup(data, data->lines[index_1]->ops[index_2][i + 1]);
             free_str(&data->buf_str);
         }
         else if (is_it_last(data, index_1, index_2, i + 1))
-            buf[rand] = ft_strdup(data->lines[index_1]->ops[index_2][i + 1]);
+            buf[rand] = ft_strdup(data, data->lines[index_1]->ops[index_2][i + 1]);
     }
     set_rest(data, buf);
     free(data->cur_env);
@@ -443,7 +441,7 @@ char *malloc_cpy_export(t_pipex *data, char *str, int track, int i)
             count++;
     }
     if (!track)
-        return (ft_strdup(str));
+        return (ft_strdup(data, str));
     else if (track == 1)
     // printf("STR: %s | COUNT: %d\n", str, count);
         new = ft_calloc(sizeof(char), (count + 2 + 1));
@@ -491,7 +489,7 @@ void    update_export(t_pipex *data, int index_1, int index_2, int count)
     data->buf_array = malloc_arr(data, count + i);
     count = i;
     while (--i >= 0)
-        data->buf_array[i] = ft_strdup(data->export[i]); 
+        data->buf_array[i] = ft_strdup(data, data->export[i]); 
     j = -1;
     // printf("COUNT: %d | %s\n", count, data->buf_array[count - 1]);
     while (data->lines[index_1]->ops[index_2][1 + ++j])
@@ -502,7 +500,7 @@ void    update_export(t_pipex *data, int index_1, int index_2, int count)
             // printf("TRUE: \n");
             data->buf_str = data->buf_array[already_there_2(data, data->lines[index_1]->ops[index_2][1 + j])];
             // printf("BUF: STR: %s\n", data->buf_str);
-            data->buf_array[already_there_2(data, data->lines[index_1]->ops[index_2][1 + j])] = ft_strdup(data->lines[index_1]->ops[index_2][1 + j]);
+            data->buf_array[already_there_2(data, data->lines[index_1]->ops[index_2][1 + j])] = ft_strdup(data, data->lines[index_1]->ops[index_2][1 + j]);
             free_str(&data->buf_str);
         }
         else if (is_it_last(data, index_1, index_2, 1 + j))

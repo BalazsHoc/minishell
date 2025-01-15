@@ -340,7 +340,7 @@ char	*expand_it_1(t_pipex *data, int i, int open)
 			if (errno != 130)
 				elem = ft_itoa(data->last_exit_status);
 			else
-				elem = ft_strdup("130");
+				elem = ft_strdup(data, "130");
 			data->buf_int = open;
 			ft_strncpy(new + j, elem, ft_strlen_2(elem));
 			i += 2;

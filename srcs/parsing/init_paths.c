@@ -40,7 +40,7 @@ int	slash_in_cmnd(char *str)
 	return (0);
 }
 
-char *find_path_2(char **arr, char *cmnd)
+char *find_path_2(t_pipex* data, char **arr, char *cmnd)
 {
 	int i;
 	char *full_path;
@@ -55,7 +55,7 @@ char *find_path_2(char **arr, char *cmnd)
 		if (!slash_in_cmnd(cmnd))
 			full_path = ft_strjoin(arr[i], new);
 		else
-			full_path = ft_strdup(cmnd);
+			full_path = ft_strdup(data, cmnd);
 		if (!access(full_path, X_OK))
 			return (free_list((void *)arr), free_str(&new), full_path);
 		free_str(&full_path);
@@ -87,5 +87,5 @@ char *find_path(t_pipex *data, char *cmnd)
 	arr = ft_split(path, ':');
 	if (!arr || !*arr)
 		return (NULL);
-	return (find_path_2(arr, cmnd));
+	return (find_path_2(data, arr, cmnd));
 }

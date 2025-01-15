@@ -45,9 +45,9 @@ void	init_env(char ***env)
 	i = -1;
 	while (++i < count_env(*env))
 	{
-		new_env[i] = ft_strdup((*env)[i]);
-		if (!new_env[i])
-			return (perror("malloc failed!"), free_list(new_env), error_code(NULL));
+		new_env[i] = ft_strdup(NULL, (*env)[i]);
+		// if (!new_env[i])
+			// return (perror("malloc failed!"), free_list(new_env), error_code(NULL));
 		// new_env[i] = malloc(sizeof(char) * (ft_strlen((*env)[i]) + 1));
 		// ft_memcpy(new_env[i], (*env)[i], ft_strlen((*env)[i]));
 		// new_env[i][ft_strlen((*env)[i])] = 0;

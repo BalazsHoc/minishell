@@ -13,7 +13,8 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include "srcs/libft/libft.h"
+
+
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <stdlib.h>
@@ -90,6 +91,8 @@ typedef struct pipex_s
 }	t_pipex;
 
 extern int g_signal;
+
+# include "srcs/libft/libft.h"
 
 int		main(int argc, char **argv, char **env);
 
@@ -176,7 +179,7 @@ int		last_one(char **arr);
 
 //	signal_handling.c
 void	signal_main(int sig);
-void	signal_back(t_pipex *data);
+void	signal_back();
 void	signal_change(int flag);
 
 //void	terminal_settings();

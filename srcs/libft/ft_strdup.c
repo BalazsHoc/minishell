@@ -12,7 +12,7 @@
 
 #include "libft.h"
 
-char	*ft_strdup(const char *s)
+char	*ft_strdup(t_pipex *data, const char *s)
 {
 	size_t	i;
 	size_t	j;
@@ -24,7 +24,7 @@ char	*ft_strdup(const char *s)
 		j++;
 	ptr = ft_calloc(sizeof(char), (j + 1));
 	if (!ptr)
-		return (perror("malloc failed!"), NULL);
+		return (perror("malloc failed!"), error_code(data), NULL);
 	ptr[j] = 0;
 	while (i < j)
 	{

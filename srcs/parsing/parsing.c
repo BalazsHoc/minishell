@@ -125,17 +125,17 @@ void	init_paths(t_pipex *data, int index_1, int index_2)
 	while (++index_2 < data->lines[index_1]->cmnd_count)
 	{
 		if (is_mini(data, index_1, index_2))
-			data->lines[index_1]->paths[index_2] = ft_strdup("minicmnds");
+			data->lines[index_1]->paths[index_2] = ft_strdup(data, "minicmnds");
 		else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "echo", 5))
-			data->lines[index_1]->paths[index_2] = ft_strdup("/usr/bin/echo");
+			data->lines[index_1]->paths[index_2] = ft_strdup(data, "/usr/bin/echo");
 		else if (data->lines[index_1]->ops[index_2] && data->lines[index_1]->ops[index_2][0])
 		{
 			data->lines[index_1]->paths[index_2] = find_path(data, data->lines[index_1]->ops[index_2][0]);
 			if (!data->lines[index_1]->paths[index_2])
-				data->lines[index_1]->paths[index_2] = ft_strdup("pathnfound");
+				data->lines[index_1]->paths[index_2] = ft_strdup(data, "pathnfound");
 		}
 		else
-			data->lines[index_1]->paths[index_2] = ft_strdup("pathnfound");
+			data->lines[index_1]->paths[index_2] = ft_strdup(data, "pathnfound");
 		if (!data->lines[index_1]->paths[index_2])
 			return (perror("malloc fail!\n"), error_code(data));
 	}
