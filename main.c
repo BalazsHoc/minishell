@@ -22,6 +22,8 @@ void	init_data(t_pipex *data, char **env)
 	data->line = NULL;
 	data->cur_path = NULL;
 	data->pid = NULL;
+	data->buf_pipe[0] = -1;
+	data->buf_pipe[1] = -1;
 	data->line_count = 0;
 	data->here = 0;
 	data->here_2 = 0;

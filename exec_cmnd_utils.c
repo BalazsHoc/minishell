@@ -72,7 +72,7 @@ void close_pipes(t_pipex *data, int index)
 
 void close_pipe(t_pipex *data, int *fd)
 {
-    if (*fd > 0 && close(*fd) == -1)
+    if (*fd > 2 && close(*fd) == -1)
     // if (*fd > 2 && printf("CLOSE: %d\n", *fd) && close(*fd) == -1)
     {
         perror("close");

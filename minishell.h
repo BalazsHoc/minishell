@@ -53,7 +53,7 @@ typedef struct lines_s
 
 	int		**red_cmnd;
 	int		**pos_in_line;
-	int		(*pipes)[2];
+	pid_t	(*pipes)[2];
 	int		*exit_codes;
 	char	*cur_line;
 
@@ -73,6 +73,7 @@ typedef struct pipex_s
 	char				*cur_path;
 	char				*buf_str;
 
+	pid_t				buf_pipe[2];
 	int					line_count;
 	int					chars_in_line;
 	int					here;
@@ -116,6 +117,9 @@ int		count_expansion(t_pipex *data, int i, int open);
 int		is_delim_back(char *str, int i);
 int		is_delim_front(char *str, int i);
 
+int		handle_open(t_pipex *data, int j, int *open);
+
+
 
 //	init_ops.c
 
@@ -158,6 +162,7 @@ int		is_space(char c);
 
 int		is_or(char *cur);
 int		is_red(t_pipex *data, int index_1, int index_2, int index_3);
+int		is_red_basic(t_pipex *data, int index_1, int index_2, int index_3);
 int		is_red_1(char c);
 int		is_red_clean(char *str, int index);
 int		is_real_pipe(char *line, int index);
@@ -171,6 +176,8 @@ char	*get_input(t_pipex *data, int index_1, int index_2, int index_3);
 void	start_exec(t_pipex *data, int index, int i, int status);
 int		is_red_inline(t_pipex *data, int index_1, int index_2);
 int		is_in_inline(t_pipex *data, int index_1, int index_2);
+int 	is_valid_in(t_pipex *data, int index_1, int index_2);
+
 
 int		last_one(char **arr);
 
@@ -262,6 +269,9 @@ char		**ft_split(const char *s1, char c);
 
 void		ft_bzero(void *s, size_t n);
 
+//	GNL
+
+char	*get_next_line(int fd, t_pipex *data);
 
 
 

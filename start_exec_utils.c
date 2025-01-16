@@ -79,11 +79,11 @@ int here_doc(t_pipex *data, int index_1, int index_2)
     {
         if (!ft_strncmp(data->lines[index_1]->cmnds[index_2][i], "<<", 3) && !data->lines[index_1]->red_cmnd[index_2][i]
         // if (printf("\n0000\n") && !ft_strncmp(data->lines[index_1]->cmnds[index_2][i], "<<", 3) && printf("\n0000\n")
-            && ((!ft_strncmp(data->lines[index_1]->paths[index_2], "pathnfound", 11)
+            && (((!ft_strncmp(data->lines[index_1]->paths[index_2], "pathnfound", 11) || (is_valid_in(data, index_1, index_2) == 0))
                 && i == is_red_inline(data, index_1, index_2)) || i != is_red_inline(data, index_1, index_2)) 
             && find_key(data, index_1 + this, index_2, i + 1) == data->here_2_old)
         {
-            printf("HEREDOC! %d | I: %d\n", index_2, i);
+            // printf("HEREDOC! %d | I: %d\n", index_2, i);
             infile = get_input(data, index_1, index_2, i);
             if (!infile)
                 break ;

@@ -124,7 +124,7 @@ int check_here_doc(t_pipex *data, int index_1, int index_2)
         // return (printf("HEREDOC!\n"), 1);
         return (1);
     return (0);
-    // return (prin1tf("NO HEREDOC\n"), 0);
+    // return (printf("NO HEREDOC\n"), 0);
 }
 
 int check_infile(t_pipex *data, int index_1, int index_2)
@@ -137,29 +137,57 @@ int check_infile(t_pipex *data, int index_1, int index_2)
 
 void    handle_child(t_pipex *data, int index_1, int index_2, int fd)
 {
-    int dev_null;
+    int in;
+    int out;
 
     // printf("CHILD: I: %d | cmnd_count: %d\n", index_2, data->lines[index_1]->cmnd_count);
-    dev_null = open_this_write(data, "/dev/null");
+    // dev_null = open_this_write(data, "/dev/null");
     if (check_infile(data, index_1, index_2))
         fd = open_this_read(data, data->lines[index_1]->cmnds[index_2][is_red_inline(data, index_1, index_2) + 1]);
-    if (!fd && data->input && dup2(data->lines[index_1]->pipes[index_2][0], STDIN_FILENO) == -1)
-        return (perror("error dup2"), error_code(data));
-    else if (!fd && !data->input && index_2 > 0 && dup2(data->lines[index_1]->pipes[index_2][0], STDIN_FILENO) == -1)
-        return (perror("error dup2"), error_code(data));
-    else if (fd && dup2(fd, STDIN_FILENO) == -1)
-        return (perror("error dup2"), error_code(data));
+
+
+    // data->buf_int = dup2(data->lines[index_1]->pipes[index_2][0], STDIN_FILENO);
+    // if (!fd && data->input && dup2(data->lines[index_1]->pipes[index_2][0], STDIN_FILENO) == -1)
+    //     return (perror("error dup2"), error_code(data));
+    // else if (!fd && !data->input && index_2 > 0 && dup2(data->lines[index_1]->pipes[index_2][0], STDIN_FILENO) == -1)
+    //     return (perror("error dup2"), error_code(data));
+    // else if (fd && dup2(fd, STDIN_FILENO) == -1)
+    //     return (perror("error dup2"), error_code(data));
+    // data->buf_int = dup2(data->lines[index_1]->pipes[index_2][0], STDIN_FILENO);
     // close_pipe(data, &data->lines[index_1]->pipes[index_2][0]);
+
+
+    // in = dup(STDIN_FILENO);
+    // out = dup(STDOUT_FILENO);
+    // close(out);
+    // close(in);
+    // IN
+    if (!fd && (data->input || (!data->input && index_2 > 0)))
+        in = dup2(data->lines[index_1]->pipes[index_2][0], STDIN_FILENO);
+    else if (fd)
+        in = dup2(fd, STDIN_FILENO);
+    if (in == -1)
+        return (perror("error dup2"), error_code(data));
+
+        
+    // OUT
+    // printf("THIS HERE: %d\n", data->fd_out);
     if (!data->fd_out && index_2 < data->lines[index_1]->cmnd_count - 1
-        && !check_here_doc(data, index_1, index_2 + 1) && dup2(data->lines[index_1]->pipes[index_2 + 1][1], STDOUT_FILENO) == -1)
-        return (perror("dup2"), error_code(data));
-    else if (!data->fd_out && index_2 < data->lines[index_1]->cmnd_count - 1 && check_here_doc(data, index_1, index_2 + 1) && dup2(dev_null, STDOUT_FILENO) == -1)
-                return (printf("dup2"), error_code(data));
-    else if (data->fd_out && dup2(data->fd_out, STDOUT_FILENO) == -1)
-        return (perror("dup2"), error_code(data));
-    // close_pipe(data, &data->lines[index_1]->pipes[index_2][1]);
+        && !check_here_doc(data, index_1, index_2 + 1))
+        out = dup2(data->lines[index_1]->pipes[index_2 + 1][1], STDOUT_FILENO);
+    else if (!data->fd_out && index_2 < data->lines[index_1]->cmnd_count - 1 && check_here_doc(data, index_1, index_2 + 1))
+        out = dup2(data->buf_pipe[1], STDOUT_FILENO);
+    else if (data->fd_out)
+        out = dup2(data->fd_out, STDOUT_FILENO);
+    if (out == -1)
+        return (perror("error dup2"), error_code(data));
+    // close_pipe(data, &data->lines[index_1]->pipes[index_2 + 1][1]);
+
+    // close_pipe(data, &in);
+    // close_pipe(data, &out);
+    close_pipe(data, &data->lines[index_1]->pipes[index_2][0]);
     close_pipe(data, &fd);
-    close_pipe(data, &dev_null);
+    close_pipe(data, &data->fd_out);
     close_pipes(data, index_1);
     if (execve(data->lines[index_1]->paths[index_2], data->lines[index_1]->ops[index_2], NULL) == -1)
         perror("execve"), error_code(data);
@@ -167,36 +195,46 @@ void    handle_child(t_pipex *data, int index_1, int index_2, int fd)
 
 void    handle_mini_child(t_pipex *data, int index_1, int index_2, int fd)
 {
-    int dev_null;
+    int in;
+    int out;
     // printf("MINICHILD: I: %d | cmnd_count: %d\n", index_2, data->lines[index_1]->cmnd_count);
-    dev_null = open_this_write(data, "/dev/null");
-    data->buf_int = 0;
     if (check_infile(data, index_1, index_2))
         fd = open_this_read(data, data->lines[index_1]->cmnds[index_2][is_red_inline(data, index_1, index_2) + 1]);
-    if (!fd && data->input && dup2(data->lines[index_1]->pipes[index_2][0], STDIN_FILENO) == -1)
-        return (perror("error dup2"), error_code(data));
-    else if (!fd && !data->input && index_2 > 0 && dup2(data->lines[index_1]->pipes[index_2][0], STDIN_FILENO) == -1)
-        return (perror("error dup2"), error_code(data));
-    else if (fd && dup2(fd, STDIN_FILENO) == -1)
-        return (perror("error dup2"), error_code(data));
-    if (data->buf_int == -1)
+
+
+    in = dup(STDIN_FILENO);
+    out = dup(STDOUT_FILENO);
+
+    // IN
+    if (!fd && (data->input || (!data->input && index_2 > 0)))
+        in = dup2(data->lines[index_1]->pipes[index_2][0], STDIN_FILENO);
+    else if (fd)
+        in = dup2(fd, STDIN_FILENO);
+    if (in == -1)
         return (perror("dup() failed"), error_code(data));
+
+    // OUT
     if (!data->fd_out && index_2 < data->lines[index_1]->cmnd_count - 1
         && !check_here_doc(data, index_1, index_2 + 1))
-        data->buf_int = dup2(data->lines[index_1]->pipes[index_2 + 1][1], STDOUT_FILENO);
+        out = dup2(data->lines[index_1]->pipes[index_2 + 1][1], STDOUT_FILENO);
     else if (!data->fd_out && index_2 < data->lines[index_1]->cmnd_count - 1 && check_here_doc(data, index_1, index_2 + 1))
-        data->buf_int = dup2(dev_null, STDOUT_FILENO);
+        out = dup2(data->buf_pipe[1], STDOUT_FILENO);
     else if (data->fd_out)
-        data->buf_int = dup2(data->fd_out, STDOUT_FILENO);
-    if (data->buf_int == -1)
+        out = dup2(data->fd_out, STDOUT_FILENO);
+    if (out == -1)
         return (perror("dup2"), error_code(data));
+    
+    // RUN & CLOSE
+    close_pipe(data, &in);
+    close_pipe(data, &out);
     close_pipe(data, &fd);
-    close_pipe(data, &dev_null);
+    close_pipe(data, &data->buf_pipe[1]);
     close_pipes(data, index_1);
     mini_child(data, index_1, index_2);
-    if (dup2(data->buf_int, STDOUT_FILENO) == -1)
+    if (dup2(out, STDOUT_FILENO) == -1)
         return (perror("dup2"), error_code(data));
-    close_pipe(data, &data->buf_int);
+    if (dup2(in, STDIN_FILENO) == -1)
+        return (perror("dup2"), error_code(data));
     error_code(data);
 }
 

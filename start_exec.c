@@ -56,9 +56,11 @@ int is_valid_in(t_pipex *data, int index_1, int index_2)
 {
     int i;
     int fd;
+    int check;
 
     i = -1;
     fd = -1;
+    check = -1;
     while (data->lines[index_1]->cmnds[index_2][++i])
     {
         if (!ft_strncmp(data->lines[index_1]->cmnds[index_2][i], "<", 2) && !data->lines[index_1]->red_cmnd[index_2][i] && data->lines[index_1]->cmnds[index_2][i + 1]
@@ -68,10 +70,11 @@ int is_valid_in(t_pipex *data, int index_1, int index_2)
             fd = open(data->lines[index_1]->cmnds[index_2][i + 1], O_RDONLY);
             if (fd == -1)
                 return (0);
+            check = i + 1;
         }
     }
     close_pipe(data, &fd);
-    return (fd);
+    return (check);
 }
 
 int first_invalid_in(t_pipex *data, int index_1, int index_2)
@@ -287,6 +290,7 @@ void set_data_here_2(t_pipex *data, int index_1)
 int check_exec_cmnd_1(t_pipex *data, int index, int i)
 {
     if (ft_strncmp(data->lines[index]->paths[i], "pathnfound", 11)
+            // && (is_valid_in(data, index, i) - 1 == is_red_inline(data, index, i) ) && data->fd_out >= 0 && data->lines[index]->ops[i][0][0])
             && is_valid_in(data, index, i) && data->fd_out >= 0 && data->lines[index]->ops[i][0][0])
         return (1);
     return (0);
