@@ -466,12 +466,12 @@ int dollar_in(t_pipex *data, int j, int open)
 			break;
 		handle_open(data, j, &open);
 		// printf("DOLLAR 3: |%s| OPEN: %d\n", data->line + j, open);
-		if (!open && (is_delim_front(data->line, j)
+		if (!open && (is_delim_back(data->line, j) || is_delim_front(data->line, j + 1)
 			|| is_real_pipe(data->line, j + 1)
 			|| (is_red_1(data->line[j]) && !is_red_1(data->line[j + 1]))
 			|| (is_red_1(data->line[j + 1]) && !is_space(data->line[j]) && !is_red_1(data->line[j]))
 			|| (is_space(data->line[j]) && is_quote(data->line[j + 1]))
-			|| ((!data->line[j + 2] || is_space(data->line[j + 2]) || data->line[j + 2] == '\n') && is_quote(data->line[j + 1]))))
+			|| (data->line[j + 1] && data->line[j + 2] && (is_space(data->line[j + 2]) || data->line[j + 2] == '\n') && is_quote(data->line[j + 1]))))
 			break;
 		// printf("DOLLAR 4: |%s| OPEN: %d\n", data->line + j, open);
 		if (open != 1 && data->line[j] == '$' && data->line[j + 1] && (is_char(data->line[j + 1]) || data->line[j + 1] == '?' || data->line[j + 1] == '$') && (!is_space(data->line[j + 1]) && !(open == 2 && is_quote_two(data->line[j + 1]))))
