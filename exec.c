@@ -141,41 +141,38 @@ void    handle_child(t_pipex *data, int index_1, int index_2, int fd)
     int out;
 
     // printf("CHILD: I: %d | cmnd_count: %d\n", index_2, data->lines[index_1]->cmnd_count);
-    // dev_null = open_this_write(data, "/dev/null");
     if (check_infile(data, index_1, index_2))
         fd = open_this_read(data, data->lines[index_1]->cmnds[index_2][is_red_inline(data, index_1, index_2) + 1]);
 
-
-    // data->buf_int = dup2(data->lines[index_1]->pipes[index_2][0], STDIN_FILENO);
-    // if (!fd && data->input && dup2(data->lines[index_1]->pipes[index_2][0], STDIN_FILENO) == -1)
-    //     return (perror("error dup2"), error_code(data));
-    // else if (!fd && !data->input && index_2 > 0 && dup2(data->lines[index_1]->pipes[index_2][0], STDIN_FILENO) == -1)
-    //     return (perror("error dup2"), error_code(data));
-    // else if (fd && dup2(fd, STDIN_FILENO) == -1)
-    //     return (perror("error dup2"), error_code(data));
-    // data->buf_int = dup2(data->lines[index_1]->pipes[index_2][0], STDIN_FILENO);
-    // close_pipe(data, &data->lines[index_1]->pipes[index_2][0]);
-
+    in = 0;
+    out = 0;
 
     // in = dup(STDIN_FILENO);
     // out = dup(STDOUT_FILENO);
     // close(out);
     // close(in);
+
     // IN
     if (!fd && (data->input || (!data->input && index_2 > 0)))
         in = dup2(data->lines[index_1]->pipes[index_2][0], STDIN_FILENO);
+    // else if (!fd && (index_2 == 0 && check_here_doc(data, index_1, index_2 + 1 )) && printf("HERE SUCKER\n"))
+        // in = dup2(data->buf_pipe[0], STDIN_FILENO);
     else if (fd)
         in = dup2(fd, STDIN_FILENO);
     if (in == -1)
         return (perror("error dup2"), error_code(data));
-
+    // close_pipe(data, &data->buf_pipe[0]);
+    // close_pipe(data, &in);
         
     // OUT
     // printf("THIS HERE: %d\n", data->fd_out);
     if (!data->fd_out && index_2 < data->lines[index_1]->cmnd_count - 1
         && !check_here_doc(data, index_1, index_2 + 1))
         out = dup2(data->lines[index_1]->pipes[index_2 + 1][1], STDOUT_FILENO);
-    else if (!data->fd_out && index_2 < data->lines[index_1]->cmnd_count - 1 && check_here_doc(data, index_1, index_2 + 1))
+    // else if (!fd && (index_2 == 0 && check_here_doc(data, index_1, index_2 +1 )) && printf("HERE SUCKER2\n"))
+
+    // else if (!data->fd_out && !(index_2 == 0 && check_here_doc(data, index_1, index_2 + 1 )) && index_2 < data->lines[index_1]->cmnd_count - 1 && check_here_doc(data, index_1, index_2 + 1) && printf("THIS: %d\n", index_2))
+    else if (!data->fd_out && index_2 < data->lines[index_1]->cmnd_count - 1 && check_here_doc(data, index_1, index_2 + 1) && printf("THIS: %d\n", index_2))
         out = dup2(data->buf_pipe[1], STDOUT_FILENO);
     else if (data->fd_out)
         out = dup2(data->fd_out, STDOUT_FILENO);
@@ -183,8 +180,10 @@ void    handle_child(t_pipex *data, int index_1, int index_2, int fd)
         return (perror("error dup2"), error_code(data));
     // close_pipe(data, &data->lines[index_1]->pipes[index_2 + 1][1]);
 
-    // close_pipe(data, &in);
-    // close_pipe(data, &out);
+    close_pipe(data, &in);
+    close_pipe(data, &out);
+    close_pipe(data, &data->buf_pipe[1]);
+    close_pipe(data, &data->buf_pipe[0]);
     close_pipe(data, &data->lines[index_1]->pipes[index_2][0]);
     close_pipe(data, &fd);
     close_pipe(data, &data->fd_out);

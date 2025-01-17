@@ -52,7 +52,9 @@ int check_reds(t_pipex *data, int index_1)
         while (data->lines[index_1]->cmnds[i][++j])
         {
 			// printf("PENIS 2 %d |  %s\n", data->lines[index_1]->red_cmnd[i][j], data->lines[index_1]->cmnds[i][j]);
-			if (is_red(data, index_1, i, j) && !data->lines[index_1]->cmnds[i][j + 1] && !data->lines[index_1]->red_cmnd[i][j]) // if nothing comes after the red;
+			if (is_red_basic(data, index_1, i, j) && data->lines[index_1]->red_cmnd[i][j] == 2)
+				return (write(2, "bash: ambigiuous redirect\n", 27), 0);
+			else if (is_red(data, index_1, i, j) && !data->lines[index_1]->cmnds[i][j + 1] && !data->lines[index_1]->red_cmnd[i][j]) // if nothing comes after the red;
 			{
 				if (!data->lines[index_1]->cmnds[i + 1]) // and nothing comes after the pipe [ so no pipe ]
 					return (write(2, "-bash: syntax error near unexpected token `newline'\n", 53), exit_child(data, index_1, i, 2), 0);

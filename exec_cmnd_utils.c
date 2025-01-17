@@ -68,6 +68,8 @@ void close_pipes(t_pipex *data, int index)
         if (data->lines[index]->pipes[i][1] > 0)
             close_pipe(data, &data->lines[index]->pipes[i][1]);
     }
+    close_pipe(data, &data->buf_pipe[0]);
+    close_pipe(data, &data->buf_pipe[1]);
 }
 
 void close_pipe(t_pipex *data, int *fd)

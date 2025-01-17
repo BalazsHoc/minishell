@@ -179,7 +179,7 @@ void    update_env(t_pipex *data, int index_1, int index_2)
     i = -1;
     // printf("BUF: %s\n", buf);
     if (!buf)
-        return (printf("FAILED GETCWD()\n"), error_code(data));
+        return (printf("failed getcwd() !\n"), error_code(data));
     while (data->cur_env[++i] && i < 100)
     {
         if (!ft_strncmp(data->cur_env[i], "PWD=", 4))
@@ -209,32 +209,114 @@ void    update_env(t_pipex *data, int index_1, int index_2)
     }
 }
 
-char    *get_home(t_pipex *data, char **env)
+char    *get_home(t_pipex *data)
 {
-    char *home_dir;
+    int i;
 
-    home_dir = getenv("HOME");
-    // printf("home: %s\n", home_dir);
-    if (!home_dir)
+    i = -1;
+    while (data->cur_env[++i])
     {
-        perror("getenv() failed");
-        return (free_list(env), error_code(data), NULL);
+        if (!ft_strncmp(data->cur_env[i], "HOME=", 5))
+            return (data->cur_env[i] + 5);
     }
-    return (home_dir);
+    return (NULL);
 }
 
-void print_cd_err(int errnum)
+char *get_old(t_pipex *data, int index_1, int index_2)
 {
+    int i;
+
+    i = -1;
+    while (data->cur_env[++i])
+    {
+        if (!ft_strncmp(data->cur_env[i], "OLDPWD=", 7) && printf("%s\n", data->cur_env[i] + 7))
+            return (data->cur_env[i]);
+    }
+    return (write(2, "bash: cd: OLDPWD not set\n", 26), exit_child(data, index_1, index_2, 1), NULL);
+}
+
+char *get_pwd(t_pipex *data)
+{
+    int i;
+
+    i = -1;
+    while (data->cur_env[++i])
+    {
+        if (!ft_strncmp(data->cur_env[i], "PWD=", 4))
+            return (data->cur_env[i]);
+    }
+    return (0);
+}
+
+void print_cd_err(int errnum, char *str)
+{
+    write(2, "bash: cd: ", 11);
+    write(2, str, ft_strlen(str));
     if (errnum == ENOENT)
-        write(2, "bash: cd: %s: No such a file or directory\n", 43);
+        write(2, ": No such file or directory\n", 29);
     else if (errnum == ENOTDIR)
-        write(2, "bash: cd: %s: Not a directory\n", 31);
+        write(2, ": Not a directory\n", 19);
     else if (errnum == EACCES)
-        write(2, "bash: cd: %s: Permission denied\n", 33);
+        write(2, ": Permission denied\n", 21);
     else if (errnum == ENOMEM)
-        write(2, "bash: cd: %s: Cannot allocate memory\n", 38);
+        write(2, ": Cannot allocate memory\n", 26);
     else
-        write(2, "bash: cd: failed\n", 18);
+        write(2, ": failed\n", 10);
+}
+
+void update_env_2_continue(t_pipex *data, char *buf_1, char *buf_2)
+{
+    int i;
+
+    i = -1;
+    while (data->cur_env[++i])
+    {
+        if (!ft_strncmp(data->cur_env[i], "OLDPWD=", 7) && buf_2)
+        {
+            free_str(&data->cur_env[i]);
+            data->cur_env[i] = NULL;
+            data->cur_env[i] = buf_2;
+        }
+        else if (!ft_strncmp(data->cur_env[i], "OLDPWD=", 7) && !buf_2 && buf_1)
+        {
+            free_str(&data->cur_env[i]);
+            data->cur_env[i] = (buf_1);
+        }
+        else if (!ft_strncmp(data->cur_env[i], "PWD=", 4) && buf_2 && buf_1)
+        {
+            free_str(&data->cur_env[i]);
+            data->cur_env[i] = (buf_1);
+        }
+    }
+}
+
+void update_env_2(t_pipex *data, int index_1, int index_2)
+{
+    int j;
+    char *buf_1;
+    char *buf_2;
+
+    buf_1 = NULL;
+    buf_2 = NULL;
+    data->buf_str = get_old(data, index_1, index_2);
+    if (!data->buf_str)
+        return ;
+    chdir(data->buf_str);
+    j = 0;
+    while (data->buf_str[j] && data->buf_str[j] != '=')
+        j++;
+    // printf("%s\n", data->buf_str + j);
+    buf_1 = ft_strjoin("PWD", data->buf_str + j);
+    // printf("BUF 1: %p\n", buf_1);
+    data->buf_str = get_pwd(data);
+    j = 0;
+    while (data->buf_str && data->buf_str[j] && data->buf_str[j] != '=')
+        j++;
+    if (data->buf_str)
+        buf_2 = ft_strjoin("OLDPWD", data->buf_str + j);
+    // printf("BUF 2: %s\n", buf_2);
+    data->buf_str = NULL;
+    update_env_2_continue(data, buf_1, buf_2);
 }
 
 void cd_cmnd(char **argv, t_pipex *data, int index_1, int index_2)
@@ -244,18 +326,20 @@ void cd_cmnd(char **argv, t_pipex *data, int index_1, int index_2)
     if (data->lines[index_1]->ops[index_2][0] && data->lines[index_1]->ops[index_2][1] && data->lines[index_1]->ops[index_2][2])
         return (write(2, "too many arguments\n", 20), exit_child(data, index_1, index_2, 1));
         // return (write(2, "too many arguments\n", 20), data->last_exit_status = 1);
-    home_dir = get_home(data, data->cur_env);
-    if (!ft_strncmp(argv[1], ".", 2))
+    home_dir = get_home(data);
+    if (!ft_strncmp(argv[1], ".", 2) && home_dir)
         return (update_env(data, index_1, index_2));
-    if (!argv[1] || !strncmp(argv[1], "~", 2))
+    if (!ft_strncmp(argv[1], "-", 2))
+        return (update_env_2(data, index_1, index_2));
+    if ((!argv[1] || !strncmp(argv[1], "~", 2)))
     {
         if (chdir(home_dir) == -1)
-            print_cd_err(errno);
+            print_cd_err(errno, argv[1]);
         else
             update_env(data, index_1, index_2);
     }
     else if (argv[1] && chdir(argv[1]) == -1)
-        print_cd_err(errno), exit_child(data, index_1, index_2, 1);
+        print_cd_err(errno, argv[1]), exit_child(data, index_1, index_2, 1);
         // print_cd_err(argv[1], errno), data->last_exit_status = 1, ;
     else if (argv[1])
         update_env(data, index_1, index_2);

@@ -112,13 +112,21 @@ void    check_folder(t_pipex *data, int index);
 
 void	fill_cmnds(t_pipex *data, int i, int index_1, int here);
 
-int		dollar_in(char *line, int j, int open);
+int		dollar_in(t_pipex *data, int j, int open);
 int		count_expansion(t_pipex *data, int i, int open);
 int		is_delim_back(char *str, int i);
 int		is_delim_front(char *str, int i);
 
 int		handle_open(t_pipex *data, int j, int *open);
 
+
+int 	is_char(char c);
+
+
+
+
+
+char 	*get_pwd(t_pipex *data);
 
 
 //	init_ops.c

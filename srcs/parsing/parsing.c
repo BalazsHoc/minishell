@@ -95,7 +95,7 @@ void	init_cmnds(t_pipex *data, int index_1, int i)
 	data->lines[index_1]->cmnds[data->lines[index_1]->cmnd_count] = NULL;
 	while (++i < data->lines[index_1]->cmnd_count)
 	{
-		if (!count_elem(data, index_1, i, data->here_2 - 1) && dollar_in(data->line, 0, 0) != -1)
+		if (!count_elem(data, index_1, i, data->here_2 - 1) && dollar_in(data, 0, 0) != -1)
 		{
 			// printf("MALLOC FOR NOT FOUND DOLLAR IN\n");
 			data->lines[index_1]->cmnds[i] = ft_calloc(sizeof(char *), (1 + 1));
@@ -248,6 +248,11 @@ void	init_pipes_pids(t_pipex *data, int index)
     data->pid = ft_calloc(sizeof(pid_t), data->lines[index]->cmnd_count);
 	if (!data->pid)
 		return (perror("malloc failed"), error_code(data));
+	if (pipe(data->buf_pipe) == -1)
+	{
+		perror("pipe");
+		error_code(data);
+	}
 }
 
 int	count_nl(t_pipex *data)
@@ -275,12 +280,12 @@ void	init_lines_2_continue(t_pipex *data, int i)
 	if (i == data->buf_int)
 		data->buf_int = 0;
 	// printf("I: %d data->here_2: %d \n", i, (data->buf_int));
-    new = ft_calloc(sizeof(char), (i));
+    new = ft_calloc(sizeof(char), (i + 1));
     if (!new)
         return (perror("malloc failed!"), error_code(data));
-    new[i - 1] = 0;
+    new[i] = 0;
 	j = -1;
-    while (++j < i - 1)
+    while (++j < i)
 	{
 		new[j] = data->line[data->buf_int + j];
 	}
