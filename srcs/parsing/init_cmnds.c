@@ -258,11 +258,11 @@ int	count_expansion(t_pipex *data, int i, int open)
 	char *elem;
 
 	count = 0;
-	printf("START COUNT EXPANSION: %s\n", data->line + i);
+	// printf("START COUNT EXPANSION: %s\n", data->line + i);
 	elem = NULL;
 	while (data->line[i])
 	{
-		printf("EXPANSION 1: |%s| COUNT: %d OPEN: %d\n", data->line + i, count, open);
+		// printf("EXPANSION 1: |%s| COUNT: %d OPEN: %d\n", data->line + i, count, open);
 		if (open != 1 && data->line[i] == '$' && data->line[i + 1] && data->line[i + 1] == '$')
 		{
 			elem = get_pid(data);
@@ -273,7 +273,7 @@ int	count_expansion(t_pipex *data, int i, int open)
 			elem = find_elem(data, i, open);
 			count_elem_spaces(data, elem);
 			i += count_chars_2(data, i);
-			printf("ELEM2  : %s\n", elem);
+			// printf("ELEM2  : %s\n", elem);
 		}
 		else if (open != 1 && data->line[i] == '$' && data->line[i + 1] == '?')
 		{
@@ -303,7 +303,7 @@ int	count_expansion(t_pipex *data, int i, int open)
 			i++;
 	}
 	// count += check_for_empty(data, i);
-	printf("COUNT EXPANSION: %d\n", count);
+	// printf("COUNT EXPANSION: %d\n", count);
 	return (count);
 }
 

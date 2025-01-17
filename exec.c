@@ -16,10 +16,11 @@ char *join_this(char *s1, char *s2)
         j++;
     if (i + j == 0)
         return (NULL);
-    new = malloc(sizeof(char) * (i + j + 1));
+    new = malloc(sizeof(char) * (i + j + 1 + 1));
     if (!new)
         return (free_str(&s1), NULL);
-    new[i + j] = 0;
+    new[i + j + 1] = 0;
+    new[i + j] = '\n';
     i = 0;
     while (s1 && s1[i])
     {
@@ -134,6 +135,9 @@ int check_infile(t_pipex *data, int index_1, int index_2)
         return (1);
     return (0);
 }
+    // else if (!fd && (index_2 == 0 && check_here_doc(data, index_1, index_2 +1 )) && printf("HERE SUCKER2\n"))
+
+    // else if (!data->fd_out && !(index_2 == 0 && check_here_doc(data, index_1, index_2 + 1 )) && index_2 < data->lines[index_1]->cmnd_count - 1 && check_here_doc(data, index_1, index_2 + 1) && printf("THIS: %d\n", index_2))
 
 void    handle_child(t_pipex *data, int index_1, int index_2, int fd)
 {
@@ -169,9 +173,6 @@ void    handle_child(t_pipex *data, int index_1, int index_2, int fd)
     if (!data->fd_out && index_2 < data->lines[index_1]->cmnd_count - 1
         && !check_here_doc(data, index_1, index_2 + 1))
         out = dup2(data->lines[index_1]->pipes[index_2 + 1][1], STDOUT_FILENO);
-    // else if (!fd && (index_2 == 0 && check_here_doc(data, index_1, index_2 +1 )) && printf("HERE SUCKER2\n"))
-
-    // else if (!data->fd_out && !(index_2 == 0 && check_here_doc(data, index_1, index_2 + 1 )) && index_2 < data->lines[index_1]->cmnd_count - 1 && check_here_doc(data, index_1, index_2 + 1) && printf("THIS: %d\n", index_2))
     else if (!data->fd_out && index_2 < data->lines[index_1]->cmnd_count - 1 && check_here_doc(data, index_1, index_2 + 1) && printf("THIS: %d\n", index_2))
         out = dup2(data->buf_pipe[1], STDOUT_FILENO);
     else if (data->fd_out)

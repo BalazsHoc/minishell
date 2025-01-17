@@ -324,7 +324,7 @@ void cd_cmnd(char **argv, t_pipex *data, int index_1, int index_2)
     char    *home_dir;
 
     if (data->lines[index_1]->ops[index_2][0] && data->lines[index_1]->ops[index_2][1] && data->lines[index_1]->ops[index_2][2])
-        return (write(2, "too many arguments\n", 20), exit_child(data, index_1, index_2, 1));
+        return (write(2, "bash: cd: ", 11), write(2, "too many arguments\n", 20), exit_child(data, index_1, index_2, 1));
         // return (write(2, "too many arguments\n", 20), data->last_exit_status = 1);
     home_dir = get_home(data);
     if (!ft_strncmp(argv[1], ".", 2) && home_dir)
