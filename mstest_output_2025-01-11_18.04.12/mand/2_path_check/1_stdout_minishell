@@ -1,8 +1,0 @@
-
-bash: /bin/ls: Permission denied
-1
-bash: /bin/ls: Permission denied
-bash: cd: -: No such a file or directory
-42
-bash: /bin/ls: Permission denied
-bash: cd: -: No such a file or directory

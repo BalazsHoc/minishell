@@ -466,7 +466,7 @@ int dollar_in(t_pipex *data, int j, int open)
 			break;
 		handle_open(data, j, &open);
 		// printf("DOLLAR 3: |%s| OPEN: %d\n", data->line + j, open);
-		if (!open && (is_delim_front(data->line, j + 1)
+		if (!open && (is_delim_front(data->line, j)
 			|| is_real_pipe(data->line, j + 1)
 			|| (is_red_1(data->line[j]) && !is_red_1(data->line[j + 1]))
 			|| (is_red_1(data->line[j + 1]) && !is_space(data->line[j]) && !is_red_1(data->line[j]))
