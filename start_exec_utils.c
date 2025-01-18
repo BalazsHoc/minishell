@@ -65,45 +65,7 @@ int find_key(t_pipex *data, int index_1, int index_2, int index_3)
     // return (printf("NOT FOUND\n"), data->here_2_old);
 }
 
-int here_doc(t_pipex *data, int index_1, int index_2)
-{
-    int i;
-    int this;
-    char *infile;
 
-    i = -1;
-    this = 0;
-	signal_change(1);
-    // printf("\n\nHERE DOOOOOC %d\n", index_2);
-    while (data->lines[index_1]->cmnds[index_2][++i])
-    {
-        if (!ft_strncmp(data->lines[index_1]->cmnds[index_2][i], "<<", 3) && !data->lines[index_1]->red_cmnd[index_2][i]
-        // if (printf("\n0000\n") && !ft_strncmp(data->lines[index_1]->cmnds[index_2][i], "<<", 3) && printf("\n0000\n")
-            && (((!ft_strncmp(data->lines[index_1]->paths[index_2], "pathnfound", 11) || (is_valid_in(data, index_1, index_2) == 0))
-                && i == is_red_inline(data, index_1, index_2)) || i != is_red_inline(data, index_1, index_2)) 
-            && find_key(data, index_1 + this, index_2, i + 1) == data->here_2_old)
-        {
-            // printf("HEREDOC! %d | I: %d\n", index_2, i);
-            infile = get_input(data, index_1, index_2, i);
-            if (!infile)
-                break ;
-            free_str(&infile);
-        }
-        // else if (!ft_strncmp(data->lines[index_1]->cmnds[index_2][i], "<<", 3)
-        //     && (!ft_strncmp(data->lines[index_1]->paths[index_2], "pathnfound", 11)
-        //     && index_1 == data->line_count - 1))
-        //     return (0);
-        else if (!ft_strncmp(data->lines[index_1]->cmnds[index_2][i], "<<", 3)
-            && (!ft_strncmp(data->lines[index_1]->paths[index_2], "pathnfound", 11)
-                || i != is_red_inline(data, index_1, index_2)) && find_key(data, index_1 + this, index_2, i + 1))
-        {
-            data->here_2_old = find_key(data, index_1 + this, index_2, i + 1);
-            // printf("SET OLD: %d HEREDOC\n", data->here_2_old);
-            // printf("THIS: %d", this);
-        }
-    }
-    return (signal_change(2), 1);
-}
 
 void print_list(char **arr)
 {
@@ -483,17 +445,19 @@ void export_env(t_pipex *data, int index_1, int index_2, int count)
     data->buf_str = NULL;
     while (data->lines[index_1]->ops[index_2][++i + 1])
     {
+        // if (!ft_strncmp(data->lines[index_1]->ops[index_2][1 + i], "_=", 2))
+            // continue;
         if (rand != (INT_MAX / data->lines[index_1]->ops[index_2][i + 1][ft_strlen(data->lines[index_1]->ops[index_2][i + 1]) - 1]) % (env_count(data) + 1))
             rand = (INT_MAX / data->lines[index_1]->ops[index_2][i + 1][ft_strlen(data->lines[index_1]->ops[index_2][i + 1]) - 1]) % (env_count(data) + 1);
         else 
             rand = ((data->lines[index_1]->ops[index_2][i + 1][0] / data->lines[index_1]->ops[index_2][i + 1][ft_strlen(data->lines[index_1]->ops[index_2][i + 1]) - 1]) - 1) % (count - 1);
-        if (already_there(data, data->lines[index_1]->ops[index_2][i + 1]) != -1 && is_it_last(data, index_1, index_2, i + 1))
+        if (ft_strncmp(data->lines[index_1]->ops[index_2][1 + i], "_=", 2) && already_there(data, data->lines[index_1]->ops[index_2][i + 1]) != -1 && is_it_last(data, index_1, index_2, i + 1))
         {
             data->buf_str = data->cur_env[already_there(data, data->lines[index_1]->ops[index_2][i + 1])];
             data->cur_env[already_there(data, data->lines[index_1]->ops[index_2][i + 1])] = ft_strdup(data, data->lines[index_1]->ops[index_2][i + 1]);
             free_str(&data->buf_str);
         }
-        else if (is_it_last(data, index_1, index_2, i + 1))
+        else if (ft_strncmp(data->lines[index_1]->ops[index_2][1 + i], "_=", 2) && is_it_last(data, index_1, index_2, i + 1))
             buf[rand] = ft_strdup(data, data->lines[index_1]->ops[index_2][i + 1]);
     }
     set_rest(data, buf);
@@ -580,7 +544,7 @@ void    update_export(t_pipex *data, int index_1, int index_2, int count)
     while (data->lines[index_1]->ops[index_2][1 + ++j])
     {
         // printf("CHECK FOR: %s\n", data->lines[index_1]->ops[index_2][1 + j]);
-        if (already_there_2(data, data->lines[index_1]->ops[index_2][1 + j]) != -1 && is_it_last(data, index_1, index_2, 1 + j))
+        if (ft_strncmp(data->lines[index_1]->ops[index_2][1 + j], "_=", 2) && already_there_2(data, data->lines[index_1]->ops[index_2][1 + j]) != -1 && is_it_last(data, index_1, index_2, 1 + j))
         {
             // printf("TRUE: \n");
             data->buf_str = data->buf_array[already_there_2(data, data->lines[index_1]->ops[index_2][1 + j])];
@@ -588,7 +552,7 @@ void    update_export(t_pipex *data, int index_1, int index_2, int count)
             data->buf_array[already_there_2(data, data->lines[index_1]->ops[index_2][1 + j])] = ft_strdup(data, data->lines[index_1]->ops[index_2][1 + j]);
             free_str(&data->buf_str);
         }
-        else if (is_it_last(data, index_1, index_2, 1 + j))
+        else if (ft_strncmp(data->lines[index_1]->ops[index_2][1 + j], "_=", 2) && is_it_last(data, index_1, index_2, 1 + j))
             data->buf_array[count++] = malloc_cpy_export(data, data->lines[index_1]->ops[index_2][1 + j], 0, -1);
             // data->buf_array[count++] = ft_strdup(data->lines[index_1]->ops[index_2][1 + j]);
     }
@@ -633,12 +597,12 @@ void    export_update(t_pipex *data, int index_1, int index_2, int i)
         if (data->lines[index_1]->ops[index_2][1 + i][j] && j == 0)
             return (write(2, "bash: export: not a valid identifier\n", 38), exit_child(data, index_1, index_2, 1));
             // return (write(2, "not a valid identifier\n", 24), data->last_exit_status = 1);
-        else if (data->lines[index_1]->ops[index_2][1 + i][j] && already_there(data, data->lines[index_1]->ops[index_2][1 + i]) == -1)
+        else if (data->lines[index_1]->ops[index_2][1 + i][j] && ft_strncmp(data->lines[index_1]->ops[index_2][1 + i], "_=", 2) && already_there(data, data->lines[index_1]->ops[index_2][1 + i]) == -1)
             count++;
-        else if (already_there_2(data, data->lines[index_1]->ops[index_2][1 + i]) == -1)
+        else if (ft_strncmp(data->lines[index_1]->ops[index_2][1 + i], "_=", 2) && already_there_2(data, data->lines[index_1]->ops[index_2][1 + i]) == -1)
             count_export++;
     }
-    // printf("COUNT: %d | count_export: %d\n", count, count_export);
+    printf("COUNT: %d | count_export: %d\n", count, count_export);
     export_env(data, index_1, index_2, count);
     update_export(data, index_1, index_2, count + count_export);
 }
@@ -679,7 +643,7 @@ int count_unset_env(t_pipex *data, int index_1, int index_2)
         while (data->cur_env[j])
         {
             key = key_this(data, data->cur_env[j]);
-            if (!ft_strncmp(data->lines[index_1]->ops[index_2][i + 1], key, bigger_one(data->lines[index_1]->ops[index_2][i + 1], key)))
+            if (ft_strncmp(data->lines[index_1]->ops[index_2][i + 1] , "_", 2) && !ft_strncmp(data->lines[index_1]->ops[index_2][i + 1], key, bigger_one(data->lines[index_1]->ops[index_2][i + 1], key)))
                 k++;
             j++;
             free_this(key);
@@ -705,7 +669,7 @@ int count_unset_export(t_pipex *data, int index_1, int index_2)
         while (data->export[j])
         {
             key = key_this(data, data->export[j]);
-            if (!ft_strncmp(data->lines[index_1]->ops[index_2][i + 1], key, bigger_one(data->lines[index_1]->ops[index_2][i + 1], key)))
+            if (ft_strncmp(data->lines[index_1]->ops[index_2][i + 1], "_", 2) && !ft_strncmp(data->lines[index_1]->ops[index_2][i + 1], key, bigger_one(data->lines[index_1]->ops[index_2][i + 1], key)))
                 k++;
             j++;
             free_str(&key);
@@ -747,7 +711,7 @@ void unset_env(t_pipex *data, int index_1, int index_2, int i)
         key = key_this(data, data->cur_env[i]);
         while (data->lines[index_1]->ops[index_2][++j + 1])
         {
-            if (!ft_strncmp(data->lines[index_1]->ops[index_2][j + 1], key, bigger_one(data->lines[index_1]->ops[index_2][j + 1], key)))
+            if (ft_strncmp(data->lines[index_1]->ops[index_2][j + 1] , "_", 2) && !ft_strncmp(data->lines[index_1]->ops[index_2][j + 1], key, bigger_one(data->lines[index_1]->ops[index_2][j + 1], key)))
                 check = 1;
         }
         free_str(&key);
@@ -777,7 +741,7 @@ void unset_export(t_pipex *data, int index_1, int index_2, int i)
         key = key_this(data, data->export[i]);
         while (data->lines[index_1]->ops[index_2][++j + 1])
         {
-            if (!ft_strncmp(data->lines[index_1]->ops[index_2][j + 1], key, bigger_one(data->lines[index_1]->ops[index_2][j + 1], key)))
+            if (ft_strncmp(data->lines[index_1]->ops[index_2][j + 1] , "_", 2) && !ft_strncmp(data->lines[index_1]->ops[index_2][j + 1], key, bigger_one(data->lines[index_1]->ops[index_2][j + 1], key)))
                 check = 1;
         }
         free_str(&key);
@@ -820,14 +784,14 @@ int only_dec(char *str)
 
 void    exit_cmnd_child(t_pipex *data, int index_1, int index_2)
 {
-    int i;
+    long i;
 
     i = 0;
     if (data->lines[index_1]->ops[index_2][1])
     {
-        if (!only_dec(data->lines[index_1]->ops[index_2][1]))
-            return (write(2, "bash: exit: numeric argument required\n", 39), errno = 2, error_code(data));
         i = ft_atoi(data->lines[index_1]->ops[index_2][1]);
+        if (!only_dec(data->lines[index_1]->ops[index_2][1]) || i > INT_MAX || i < INT_MIN)
+            return (write(2, "bash: exit: numeric argument required\n", 39), errno = 2, error_code(data));
         if (i > 255 || i < 0)
             i = i % 256;
         errno = i;
@@ -840,15 +804,15 @@ void    exit_cmnd_child(t_pipex *data, int index_1, int index_2)
 
 void    exit_cmnd(t_pipex *data, int index_1, int index_2)
 {
-    int i;
+    long i;
 
     i = 0;
     printf("exit\n");
     if (data->lines[index_1]->ops[index_2][1])
     {
-        if (!only_dec(data->lines[index_1]->ops[index_2][1]))
-            return (write(2, "bash: exit: numeric argument required\n", 39), errno = 2, error_code(data));
         i = ft_atoi(data->lines[index_1]->ops[index_2][1]);
+        if (!only_dec(data->lines[index_1]->ops[index_2][1]) || i > INT_MAX || i < INT_MIN)
+            return (write(2, "bash: exit: numeric argument required\n", 39), errno = 2, error_code(data));
         if (i > 255 || i < 0)
             i = i % 256;
         errno = i;

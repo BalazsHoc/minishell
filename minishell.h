@@ -50,14 +50,20 @@ typedef struct lines_s
 	char	***ops;
 
 	char	**paths;
+	char 	**input;
 
 	int		**red_cmnd;
 	int		**pos_in_line;
+
 	pid_t	(*pipes)[2];
+	pid_t	(*buf_pipes)[2];
+
+
 	int		*exit_codes;
-	char	*cur_line;
 
 	int		cmnd_count;
+	int		*fd_infiles;
+	int		*fd_outfiles;
 
 }	t_lines;
 
@@ -68,18 +74,16 @@ typedef struct pipex_s
 	char				**export;
 	char				**buf_array;
 
-	char				*input;
 	char				*line;
 	char				*cur_path;
 	char				*buf_str;
 
-	pid_t				buf_pipe[2];
 	int					line_count;
 	int					chars_in_line;
-	int					here;
 	int					here_2;
 	int					here_2_old;
 	int					last_exit_status;
+	int					fd_in;
 	int					fd_out;
 	int					buf_int;
 	int					count_elem;
@@ -221,10 +225,13 @@ char 	*join_this(char *s1, char *s2);
 //	exec_cmnd_utils.c
 
 char	*create_tmp(t_pipex *data, int index, char *tmp_name, int count);
-void	close_pipes(t_pipex *data, int index);
-void	close_pipe(t_pipex *data, int *fd);
-void	close_pipes_2(t_pipex *data, int index_1, int index_2);
 void	create_pipes(t_pipex *data, int index);
+void	close_pipes(t_pipex *data, int index_1, int index_2);
+void	close_pipe(t_pipex *data, int *fd);
+void	close_pipes_array(t_pipex *data, int index_1);
+void	close_everything(t_pipex *data, int index_1);
+void	close_children_pipes(t_pipex *data, int index_1, int index_2);
+
 
 int		check_here_doc(t_pipex *data, int index_1, int index_2);
 int		check_infile(t_pipex *data, int index_1, int index_2);
@@ -260,7 +267,7 @@ char		*ft_strdup(t_pipex *data, const char *s);
 size_t		ft_strlen(const char *str);
 char		*ft_strtrim(char *s1, char const *set);
 
-int			ft_atoi(const char *nptr);
+long			ft_atoi(const char *nptr);
 void		*ft_calloc(size_t nmemb, size_t size);
 size_t		ft_digit_count(long int n);
 char		*ft_itoa(int n);

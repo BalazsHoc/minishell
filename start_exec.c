@@ -175,7 +175,7 @@ int get_input_2(t_pipex *data, int index_1, int i)
         new[k] = data->line[data->here_2_old + k];
         k++;
     }
-    data->input = new;
+    data->lines[index_1]->input[i] = new;
     return (1);
     // data->buf_int = 2;
     // k = data->lines[index_1]->pos_in_line[data->lines[index_1]->cmnd_count - 1][i - 1];
@@ -304,19 +304,73 @@ int check_exec_cmnd_2(t_pipex *data, int index, int i)
     return (0);
 }
 
+
+int here_doc(t_pipex *data, int index_1, int index_2)
+{
+    int i;
+    int this;
+    char *infile;
+
+    this = 0;
+	signal_change(1);
+    infile = NULL;
+    while (data->lines[index_1]->cmnds[++index_2])
+    {
+        i = -1;
+        // printf("\n\nHERE DOOOOOC %d\n", index_2);
+        while (data->lines[index_1]->cmnds[index_2][++i])
+        {
+            if (!ft_strncmp(data->lines[index_1]->cmnds[index_2][i], "<<", 3) && !data->lines[index_1]->red_cmnd[index_2][i]
+            // if (printf("\n0000\n") && !ft_strncmp(data->lines[index_1]->cmnds[index_2][i], "<<", 3) && printf("\n0000\n")
+                // && (((!ft_strncmp(data->lines[index_1]->paths[index_2], "pathnfound", 11) || (is_valid_in(data, index_1, index_2) == 0))
+                //     && i == is_red_inline(data, index_1, index_2)) || i != is_red_inline(data, index_1, index_2)) 
+                && find_key(data, index_1 + this, index_2, i + 1) == data->here_2_old)
+            {
+                // printf("HEREDOC! %d | I: %d\n", index_2, i);
+                infile = get_input(data, index_1, index_2, i);
+                if (!infile)
+                    break ;
+                if (((!ft_strncmp(data->lines[index_1]->paths[index_2], "pathnfound", 11) || (is_valid_in(data, index_1, index_2) == 0))
+                    && i == is_red_inline(data, index_1, index_2)) || i != is_red_inline(data, index_1, index_2))
+                    free_str(&infile);
+                else 
+                    data->lines[index_1]->input[index_2] = infile;
+                infile = NULL;
+                // printf("THIS HERE: %s\n", data->lines[index_1]->input[index_2]);
+            }
+            // else if (!ft_strncmp(data->lines[index_1]->cmnds[index_2][i], "<<", 3)
+            //     && (!ft_strncmp(data->lines[index_1]->paths[index_2], "pathnfound", 11)
+            //     && index_1 == data->line_count - 1))
+            //     return (0);
+            else if (!ft_strncmp(data->lines[index_1]->cmnds[index_2][i], "<<", 3)
+                && (!ft_strncmp(data->lines[index_1]->paths[index_2], "pathnfound", 11)
+                    || i != is_red_inline(data, index_1, index_2)) && find_key(data, index_1 + this, index_2, i + 1))
+            {
+                data->here_2_old = find_key(data, index_1 + this, index_2, i + 1);
+                // printf("SET OLD: %d HEREDOC\n", data->here_2_old);
+                // printf("THIS: %d", this);
+            }
+            // if ((ft_strncmp(data->lines[index_1]->paths[index_2], "pathnfound", 11)
+            // && is_valid_in(data, index_1, index_2) && data->fd_out >= 0 && data->lines[index_1]->ops[i][0][0]))
+            //     free_str(&infile);  
+        }
+    }
+    return (signal_change(2), 1);
+}
+
 void    exec_cmnds(t_pipex *data, int index, int i)
 {
-    while (data->lines[index]->cmnds[++i] && here_doc(data, index , i))
+    while (data->lines[index]->cmnds[++i])
     {
-        data->fd_out = open_out(data, index, i);
+        data->lines[index]->fd_outfiles[i] = open_out(data, index, i);
         if (check_exec_cmnd_1(data, index, i))
         {
-            if (check_here_doc(data, index, i) && free_this(data->input))
+            if (check_here_doc(data, index, i))
             {
                 if (data->here_2_old < find_key(data, index, i, is_red_inline(data, index, i) + 1) && get_input_2(data, index, 0))
                     data->here_2_old = find_key(data, index, i, is_red_inline(data, index, i) + 1);
-                else
-                    data->input = get_input(data, index, i, is_red_inline(data, index, i));
+                // else
+                //     data->input = get_input(data, index, i, is_red_inline(data, index, i));
             }
             if (!ft_strncmp(data->lines[index]->paths[i], "minicmnds", 10))
                 exec_mini(data, index, i);
@@ -330,14 +384,15 @@ void    exec_cmnds(t_pipex *data, int index, int i)
             && write(2, "bash: command not found: ", 26) && write(2, data->lines[index]->ops[i][0], ft_strlen(data->lines[index]->ops[i][0])) && write(2, "\n", 1))
             //  data->lines[index]->ops[i][0]))
             exit_child(data, index, i, 127);
-        close_pipe(data, &data->fd_out);
+        close_pipes(data, index, i);
     }
 }
 
 void start_exec(t_pipex *data, int index, int i, int status)
 {
+    here_doc(data, index, -1);
     exec_cmnds(data, index, i);
-    close_pipes(data, index);
+    close_pipes_array(data, index);
     while (++i < data->lines[index]->cmnd_count)
     {
         if (!data->lines[index]->exit_codes[i])

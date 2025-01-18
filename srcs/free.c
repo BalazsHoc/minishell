@@ -70,7 +70,7 @@ void	free_list_int(int **arr, int cmnd_count)
 
 void	free_line(t_pipex *data, int index)
 {
-	close_pipes(data, index);
+	close_everything(data, index);
 	if (!data || !data->lines || !data->lines[index])
 		return ;
 	if (data->lines[index]->ops)
@@ -79,14 +79,35 @@ void	free_line(t_pipex *data, int index)
 		free_list_list(data->lines[index]->cmnds);
 	if (data->lines[index]->paths)
 		free_list(data->lines[index]->paths);
+	if (data->lines[index]->input)
+		free_list(data->lines[index]->input);
+
+	// FREE LIST LIST INT
 	if (data->lines[index]->red_cmnd)
 		free_list_int(data->lines[index]->red_cmnd, data->lines[index]->cmnd_count);
 	if (data->lines[index]->pos_in_line)
 		free_list_int(data->lines[index]->pos_in_line, data->lines[index]->cmnd_count);
+	
+	// FREE LIST INT
+	if (data->lines[index]->fd_infiles)
+	{
+		free(data->lines[index]->fd_infiles);
+		data->lines[index]->fd_infiles= NULL;
+	}
+	if (data->lines[index]->fd_outfiles)
+	{
+		free(data->lines[index]->fd_outfiles);
+		data->lines[index]->fd_outfiles = NULL;
+	}
 	if (data->lines[index]->pipes)
 	{
 		free(data->lines[index]->pipes);
 		data->lines[index]->pipes = NULL;
+	}
+	if (data->lines[index]->buf_pipes)
+	{
+		free(data->lines[index]->buf_pipes);
+		data->lines[index]->buf_pipes = NULL;
 	}
 	if (data->lines[index]->exit_codes)
 		free(data->lines[index]->exit_codes);
@@ -106,7 +127,6 @@ void 	free_lines(t_pipex *data)
 		if (data->lines[i])
 			free_line(data, i);
 	}
-	data->here = 0;
 	data->here_2 = 0;
 	data->here_2_old = 0;
 	free(data->lines);
@@ -123,7 +143,6 @@ void	free_struct(t_pipex *data)
 {
 	if (data)
 	{
-		close_pipe(data, &data->fd_out);
 		if (data->lines)
 			free_lines(data);
 		if (data->cur_env)
@@ -136,7 +155,6 @@ void	free_struct(t_pipex *data)
 			free(data->pid);
 			data->pid = NULL;
 		}
-		free_str(&data->input);
 		free(data);
 		data = NULL;
 	}

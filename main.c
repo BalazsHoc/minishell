@@ -18,14 +18,10 @@ void	init_data(t_pipex *data, char **env)
 	data->cur_env = env;
 	data->export = NULL;
 	data->buf_array = NULL;
-	data->input = NULL;
 	data->line = NULL;
 	data->cur_path = NULL;
 	data->pid = NULL;
-	data->buf_pipe[0] = -1;
-	data->buf_pipe[1] = -1;
 	data->line_count = 0;
-	data->here = 0;
 	data->here_2 = 0;
 	data->last_exit_status = 0;
 	data->fd_out = 0;
@@ -47,8 +43,10 @@ void	init_env(char ***env)
 	i = -1;
 	while (++i < count_env(*env))
 	{
-		new_env[i] = ft_strdup(NULL, (*env)[i]);
-		// if (!ft_strncmp(new_env[i], "OLD", 3))
+		if (ft_strncmp((*env)[i], "_=", 2))
+			new_env[i] = ft_strdup(NULL, (*env)[i]);
+		else
+			new_env[i] = ft_strdup(NULL, "_=/usr/bin/env");
 		// printf("THIS ONE: %s | %p\n", new_env[i], new_env[i]);
 		// if (!new_env[i])
 			// return (perror("malloc failed!"), free_list(new_env), error_code(NULL));

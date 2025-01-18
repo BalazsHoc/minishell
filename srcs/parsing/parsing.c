@@ -199,13 +199,13 @@ void	init_red_cmnds(t_pipex *data, int index_1)
 	while (++j < data->lines[index_1]->cmnd_count)
 	{
 		count = 0;
-		while (count < count_elem(data, index_1, j, data->here - 1))
+		while (count < count_elem(data, index_1, j, data->here_2 - 1))
 			count++;
 		data->lines[index_1]->red_cmnd[j] = malloc(sizeof(int) * (count));
 		if (!data->lines[index_1]->red_cmnd[j])
 			return (perror("malloc failed!"), error_code(data));
 		count = 0;
-		while (count < count_elem(data, index_1, j, data->here - 1))
+		while (count < count_elem(data, index_1, j, data->here_2 - 1))
 			data->lines[index_1]->red_cmnd[j][count++] = 0;
 	}
 }
@@ -234,9 +234,25 @@ void	init_pos_in_line(t_pipex *data, int index_1)
 	}
 }
 
+void init_fds(t_pipex *data, int index)
+{
+	int i;
+
+	i = -1;
+	while (++i < data->lines[index]->cmnd_count)
+		data->lines[index]->fd_infiles[i] = 0;
+	i = -1;
+	while (++i < data->lines[index]->cmnd_count)
+		data->lines[index]->fd_outfiles[i] = 0;
+}
+
 void	init_pipes_pids(t_pipex *data, int index)
 {
-	data->lines[index]->pipes = ft_calloc(sizeof(int[2]), (data->lines[index]->cmnd_count + 1));
+	data->lines[index]->fd_infiles = ft_calloc(sizeof(int), data->lines[index]->cmnd_count);
+	data->lines[index]->fd_outfiles = ft_calloc(sizeof(int), data->lines[index]->cmnd_count);
+	init_fds(data, index);
+	data->lines[index]->pipes = ft_calloc(sizeof(int[2]), (data->lines[index]->cmnd_count));
+	data->lines[index]->buf_pipes = ft_calloc(sizeof(int[2]), (data->lines[index]->cmnd_count));
 	if (!data->lines[index]->pipes)
 		return (perror("malloc failed"), error_code(data));
     create_pipes(data, index);
@@ -248,11 +264,6 @@ void	init_pipes_pids(t_pipex *data, int index)
     data->pid = ft_calloc(sizeof(pid_t), data->lines[index]->cmnd_count);
 	if (!data->pid)
 		return (perror("malloc failed"), error_code(data));
-	if (pipe(data->buf_pipe) == -1)
-	{
-		perror("pipe");
-		error_code(data);
-	}
 }
 
 int	count_nl(t_pipex *data)
@@ -347,6 +358,12 @@ void init_lines_2(t_pipex *data, int index_1, int i, int j) // this one should f
 }
 
 
+void	init_inputs(t_pipex *data, int index)
+{
+	data->lines[index]->input = ft_calloc(sizeof(char *), data->lines[index]->cmnd_count + 1);
+	data->lines[index]->input[data->lines[index]->cmnd_count] = NULL;
+}
+
 void	parsing(t_pipex *data)
 {
 	int i;
@@ -365,6 +382,7 @@ void	parsing(t_pipex *data)
 		// printf("CMND COUNT %d\n", data->lines[i]->cmnd_count);
 		init_exit_codes(data, data->lines[i]->cmnd_count, i);
 		init_red_cmnds(data, i);
+		init_inputs(data, i);
 		init_pos_in_line(data, i);
 		init_cmnds(data, i, -1);
 		init_lines_2(data, i, -1, 0);
