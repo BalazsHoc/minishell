@@ -21,10 +21,7 @@ char	*ft_strdup(t_pipex *data, const char *s)
 	j = 0;
 	while (s[j] != '\0')
 		j++;
-	ptr = ft_calloc(sizeof(char), (j + 1));
-	if (!ptr)
-		return (perror("malloc failed!"), error_code(data), NULL);
-	ptr[j] = 0;
+	ptr = ft_calloc(sizeof(char), (j + 1), data);
 	while (i < j)
 	{
 		ptr[i] = s[i];
@@ -52,7 +49,7 @@ size_t	ft_strlen(const char *str)
 	return (count);
 }
 
-char	*ft_strtrim(char *s1, char const *set)
+char	*ft_strtrim(char *s1, char const *set, t_pipex *data)
 {
 	size_t	end;
 	int		i;
@@ -65,7 +62,7 @@ char	*ft_strtrim(char *s1, char const *set)
 	end = ft_strlen(s1);
 	while (end != 0 && ft_strchr(set, s1[end]))
 		end--;
-	return (ft_substr(s1, i, end + 1));
+	return (ft_substr(s1, i, end + 1, data));
 }
 
 void	ft_bzero(void *s, size_t n)

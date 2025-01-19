@@ -63,7 +63,7 @@ static size_t	ft_digit_count(long int n)
 	return (digits);
 }
 
-char	*ft_itoa(int n)
+char	*ft_itoa(int n, t_pipex *data)
 {
 	char		*result;
 	size_t		digits;
@@ -73,10 +73,7 @@ char	*ft_itoa(int n)
 	digits = ft_digit_count(num);
 	if (n < 0)
 		num *= -1;
-	result = malloc(sizeof(char) * (digits + 1));
-	if (!result)
-		return (NULL);
-	*(result + digits) = '\0';
+	result = ft_calloc(sizeof(char), (digits + 1), data);
 	while (digits--)
 	{
 		*(result + digits) = (num % 10) + 48;

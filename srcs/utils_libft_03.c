@@ -32,17 +32,17 @@ long	ft_atoi(const char *nptr)
 	return (sign * result);
 }
 
-void	*ft_calloc(size_t nmemb, size_t size)
+void	*ft_calloc(size_t nmemb, size_t size, t_pipex *data)
 {
 	void	*buffer;
 
 	if (!nmemb || !size)
-		return (malloc(0));
+		return (NULL);
 	if (size > SIZE_MAX / nmemb)
-		return (0);
+		return (NULL);
 	buffer = (void *)malloc(size * nmemb);
 	if (!buffer)
-		return (0);
+		return (error_code(data), NULL);
 	ft_bzero(buffer, size * nmemb);
 	return (buffer);
 }
@@ -69,7 +69,7 @@ size_t	ft_digit_count(long int n)
 	return (digits);
 }
 
-char	*ft_itoa(int n)
+char	*ft_itoa(int n, t_pipex *data)
 {
 	char		*result;
 	size_t		digits;
@@ -79,10 +79,10 @@ char	*ft_itoa(int n)
 	digits = ft_digit_count(num);
 	if (n < 0)
 		num *= -1;
-	result = malloc(sizeof(char) * (digits + 1));
-	if (!result)
-		return (NULL);
-	*(result + digits) = '\0';
+	result = ft_calloc(sizeof(char), (digits + 1), data);
+	// if (!result)
+		// return (NULL);
+	// *(result + digits) = '\0';
 	while (digits--)
 	{
 		*(result + digits) = (num % 10) + 48;

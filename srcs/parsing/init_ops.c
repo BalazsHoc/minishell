@@ -91,10 +91,7 @@ void    fill_ops(t_pipex *data, int index_1, int index_2)
         if (data->lines[index_1]->cmnds[index_2][i])
         {
             // printf("I: %d S: %s\n", i, data->cmnds[index][i]);
-            data->lines[index_1]->ops[index_2][++j] = ft_calloc(sizeof(char *), (ft_strlen(data->lines[index_1]->cmnds[index_2][i]) + 1));
-            if (!data->lines[index_1]->ops[index_2][j])
-                return (printf("malloc fail!\n"), error_code(data));
-            data->lines[index_1]->ops[index_2][j][ft_strlen(data->lines[index_1]->cmnds[index_2][i])] = 0;
+            data->lines[index_1]->ops[index_2][++j] = ft_calloc(sizeof(char *), (ft_strlen(data->lines[index_1]->cmnds[index_2][i]) + 1), data);
             ft_strcpy(data->lines[index_1]->cmnds[index_2][i], data->lines[index_1]->ops[index_2][j]);
             // if (j == 0)
                 // data->ops[index][0] = ft_strtrim(data->ops[index][j], " ");

@@ -49,11 +49,11 @@ char *find_path_2(t_pipex* data, char **arr, char *cmnd)
 	i = -1;
 	new = NULL;
 	if (!slash_in_cmnd(cmnd))
-		new = ft_strjoin("/", cmnd);
+		new = ft_strjoin("/", cmnd, data);
 	while (arr[++i])
 	{
 		if (!slash_in_cmnd(cmnd))
-			full_path = ft_strjoin(arr[i], new);
+			full_path = ft_strjoin(arr[i], new, data);
 		else
 			full_path = ft_strdup(data, cmnd);
 		if (!access(full_path, X_OK))

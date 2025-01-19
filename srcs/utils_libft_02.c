@@ -44,7 +44,7 @@ int ft_strcmp_2(char *s1, char *s2)
 	return (0);
 }
 
-char	*ft_substr(char *s, unsigned int start, size_t len)
+char	*ft_substr(char *s, unsigned int start, size_t len, t_pipex *data)
 {
 	unsigned int	i;
 	char			*sub;
@@ -53,23 +53,20 @@ char	*ft_substr(char *s, unsigned int start, size_t len)
 	if (!(s))
 		return (0);
 	if ((start >= ft_strlen(s)) || (len == 0))
-		return (free_str(&s), ft_calloc(1, sizeof(char)));
+		return (free_str(&s), ft_calloc(1, sizeof(char), data));
 	if (len > (ft_strlen(s) - start))
 		len = ft_strlen(s) - start;
-	sub = (char *)malloc(sizeof(char) * (len + 1));
-	if (!sub)
-		return (free_str(&s), NULL);
+	sub = ft_calloc(sizeof(char), (len + 1), data);
 	while (i < len)
 	{
 		sub[i] = s[start];
 		i++;
 		start++;
 	}
-	sub[i] = '\0';
 	return (free_str(&s), sub);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin(char const *s1, char const *s2, t_pipex *data)
 {
 	char	*joined;
 	size_t	i;
@@ -78,10 +75,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	if (s1 == 0 && s2 == 0)
 		return (0);
 	i = ft_strlen(s1) + ft_strlen(s2);
-	joined = ft_calloc(sizeof(char), (i + 1));
-	if (!joined)
-		return (0);
-	joined[i] = 0;
+	joined = ft_calloc(sizeof(char), (i + 1), data);
 	i = 0;
 	while (s1[i])
 	{

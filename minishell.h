@@ -104,9 +104,9 @@ void	parsing(t_pipex *data);
 
 //	util_checks.c
 
-int		check_reds(t_pipex *data, int index_1);
+int		check_reds(t_pipex *data, int index_1, int i, int j);
 int		check_open(char *line);
-int		syntax_check(char *line, int i, int count);
+int		syntax_check(t_pipex *data, int i, int count);
 
 //	check_folder.c
 
@@ -220,12 +220,13 @@ char	*malloc_cpy_export(t_pipex *data, char *str, int track, int i);
 
 void	exec_mini(t_pipex *data, int index_1, int index_2);
 void	exec_cmnd(t_pipex *data, int index_1, int index_2);
-char 	*join_this(char *s1, char *s2);
+char 	*join_this(char *s1, char *s2, t_pipex *data);
 
 //	exec_cmnd_utils.c
 
 char	*create_tmp(t_pipex *data, int index, char *tmp_name, int count);
 void	create_pipes(t_pipex *data, int index);
+void	create_buf_pipe(t_pipex *data, int index_1, int index_2);
 void	close_pipes(t_pipex *data, int index_1, int index_2);
 void	close_pipe(t_pipex *data, int *fd);
 void	close_pipes_array(t_pipex *data, int index_1);
@@ -265,21 +266,20 @@ char	*malloc_str(size_t size, t_pipex *data);
 char		*ft_strchr(const char *s, int c);
 char		*ft_strdup(t_pipex *data, const char *s);
 size_t		ft_strlen(const char *str);
-char		*ft_strtrim(char *s1, char const *set);
+char		*ft_strtrim(char *s1, char const *set, t_pipex *data);
 
-long			ft_atoi(const char *nptr);
-void		*ft_calloc(size_t nmemb, size_t size);
+long		ft_atoi(const char *nptr);
+void		*ft_calloc(size_t nmemb, size_t size, t_pipex *data);
 size_t		ft_digit_count(long int n);
-char		*ft_itoa(int n);
+char		*ft_itoa(int n, t_pipex *data);
 void		*ft_memcpy(void *dest, const void *src, size_t n);
 int			ft_strncmp(const char *s1, const char *s2, size_t n);
 int			ft_strcmp_2(char *s1, char *s2);
-char		*ft_substr(char *s, unsigned int start, size_t len);
-char		*ft_strjoin(char const *s1, char const *s2);
+char		*ft_substr(char *s, unsigned int start, size_t len, t_pipex *data);
+char		*ft_strjoin(char const *s1, char const *s2, t_pipex *data);
 
 int			ft_strncmp(const char *s1, const char *s2, size_t n);
 int			ft_strcmp_2(char *s1, char *s2);
-char		*ft_substr(char *s, unsigned int start, size_t len);
 char		**ft_split(const char *s1, char c);
 
 void		ft_bzero(void *s, size_t n);

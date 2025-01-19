@@ -166,10 +166,7 @@ int get_input_2(t_pipex *data, int index_1, int i)
     // while (data->lines[index_1]->cmnds[data->lines[index_1]->cmnd_count - 1][i])
     //     i++;
     (void)index_1;
-    new = ft_calloc(sizeof(char), (((data->here_2 - (j + 1) - data->here_2_old) + 1) + 1));
-    if (!new)
-        return (perror("malloc failed!"), error_code(data), 0);
-    new[(data->here_2 - (j + 1) - data->here_2_old) + 1] = 0;
+    new = ft_calloc(sizeof(char), (((data->here_2 - (j + 1) - data->here_2_old) + 1) + 1), data);
     while (k < (data->here_2 - (j + 1) - data->here_2_old) + 1)
     {
         new[k] = data->line[data->here_2_old + k];
@@ -296,11 +293,34 @@ int check_exec_cmnd_1(t_pipex *data, int index, int i)
     return (0);
 }
 
+int is_path(t_pipex *data)
+{
+	int i;
+
+	i = -1;
+	while (data->cur_env[++i])
+	{
+		if (!ft_strncmp(data->cur_env[i], "PATH=", 5))
+            return (1);
+	}
+    return (0);
+}
+
 int check_exec_cmnd_2(t_pipex *data, int index, int i)
 {
-    if (!is_valid_in(data, index, i) && !data->lines[index]->exit_codes[i]
-        && printf("bash: %s: No such file or directory\n", data->lines[index]->cmnds[i][first_invalid_in(data, index, i)]))
+
+    if (!is_valid_in(data, index, i) && !data->lines[index]->exit_codes[i])
+    {
+        printf("bash: %s: No such file or directory\n", data->lines[index]->cmnds[i][first_invalid_in(data, index, i)]);
+        exit_child(data, index, i, 1);
         return (1);
+    }
+    else if (!is_path(data) && !ft_strncmp(data->lines[index]->paths[i], "pathnfound", 11))
+    {
+        printf("bash: %s: No such file or directory\n", data->lines[index]->ops[i][0]);
+        exit_child(data, index, i, 127);
+        return (1);
+    }
     return (0);
 }
 
@@ -378,7 +398,7 @@ void    exec_cmnds(t_pipex *data, int index, int i)
                 exec_cmnd(data, index, i);
         }
         else if (check_exec_cmnd_2(data, index, i))
-            exit_child(data, index, i, 1);
+            continue;
         else if (!ft_strncmp(data->lines[index]->paths[i], "pathnfound", 11)
             && data->lines[index]->ops[i][0] && !data->lines[index]->exit_codes[i] 
             && write(2, "bash: command not found: ", 26) && write(2, data->lines[index]->ops[i][0], ft_strlen(data->lines[index]->ops[i][0])) && write(2, "\n", 1))

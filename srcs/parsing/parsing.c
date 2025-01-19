@@ -47,14 +47,7 @@ void	print_that_shit(t_pipex *data, int index_1)
 
 void	init_exit_codes(t_pipex *data, int cmnd_count, int index)
 {
-	int count;
-
-	count = cmnd_count;
-	data->lines[index]->exit_codes = malloc(sizeof(int) * (cmnd_count));
-	if (!data->lines[index]->exit_codes)
-		return (perror("malloc failed"), error_code(data));
-	while (--count >= 0)
-		data->lines[index]->exit_codes[count] = 0;
+	data->lines[index]->exit_codes = ft_calloc(sizeof(int), (cmnd_count), data);
 }
 
 void	init_ops(t_pipex *data, int index_1)
@@ -63,10 +56,7 @@ void	init_ops(t_pipex *data, int index_1)
 	int j;
 
     i = -1;
-    data->lines[index_1]->ops = ft_calloc(sizeof(char **), (data->lines[index_1]->cmnd_count + 1));
-    if (!data->lines[index_1]->ops)
-        return (perror("malloc fail!\n"), error_code(data));
-    data->lines[index_1]->ops[data->lines[index_1]->cmnd_count] = 0;
+    data->lines[index_1]->ops = ft_calloc(sizeof(char **), (data->lines[index_1]->cmnd_count + 1), data);
     while (data->lines[index_1]->cmnds[++i])
     {
 		j = count_ops(data, index_1, i);
@@ -74,9 +64,9 @@ void	init_ops(t_pipex *data, int index_1)
 		{
 			// if (echo_exit_code(data->cmnds[i]))
 			// 	j = 3;
-			data->lines[index_1]->ops[i] = ft_calloc(sizeof(char *), (j + 1));
-			if (!data->lines[index_1]->ops[i])
-				return (perror("malloc fail!\n"), error_code(data));
+			data->lines[index_1]->ops[i] = ft_calloc(sizeof(char *), (j + 1), data);
+			// if (!data->lines[index_1]->ops[i])
+				// return (perror("malloc fail!\n"), error_code(data));
 			data->lines[index_1]->ops[i][j] = 0;
 			// if (echo_exit_code(data->cmnds[i]))
 			// 	fill_echo_exit(data, i);
@@ -89,46 +79,67 @@ void	init_ops(t_pipex *data, int index_1)
 
 void	init_cmnds(t_pipex *data, int index_1, int i)
 {
-	data->lines[index_1]->cmnds = malloc(sizeof(char **) * (data->lines[index_1]->cmnd_count + 1));
-	if (!data->lines[index_1]->cmnds)
-		return (perror("malloc fail!\n"), error_code(data));
+	data->lines[index_1]->cmnds = ft_calloc(sizeof(char **), (data->lines[index_1]->cmnd_count + 1), data);
+	// if (!data->lines[index_1]->cmnds)
+		// return (perror("malloc fail!\n"), error_code(data));
 	data->lines[index_1]->cmnds[data->lines[index_1]->cmnd_count] = NULL;
 	while (++i < data->lines[index_1]->cmnd_count)
 	{
 		if (!count_elem(data, index_1, i, data->here_2 - 1) && dollar_in(data, 0, 0) != -1)
 		{
 			// printf("MALLOC FOR NOT FOUND DOLLAR IN\n");
-			data->lines[index_1]->cmnds[i] = ft_calloc(sizeof(char *), (1 + 1));
-			if (!data->lines[index_1]->cmnds[i])
-				return (perror("malloc fail!\n"), error_code(data));
-			data->lines[index_1]->cmnds[i][1] = NULL;
+			data->lines[index_1]->cmnds[i] = ft_calloc(sizeof(char *), (1 + 1), data);
+			// if (!data->lines[index_1]->cmnds[i])
+				// return (perror("malloc fail!\n"), error_code(data));
+			// data->lines[index_1]->cmnds[i][1] = NULL;
 			data->lines[index_1]->cmnds[i][0] = malloc_str(1, data);
-			data->lines[index_1]->cmnds[i][0][0] = 0;
+			// data->lines[index_1]->cmnds[i][0][0] = 0;
 		}
 		else
 		{
-			data->lines[index_1]->cmnds[i] = ft_calloc(sizeof(char *), (count_elem(data, index_1, i, data->here_2 - 1) + 1));
-			if (!data->lines[index_1]->cmnds[i])
-				return (perror("malloc fail!\n"), error_code(data));
-			data->lines[index_1]->cmnds[i][count_elem(data, index_1, i, data->here_2 - 1)] = NULL;
+			data->lines[index_1]->cmnds[i] = ft_calloc(sizeof(char *), (count_elem(data, index_1, i, data->here_2 - 1) + 1), data);
+			// if (!data->lines[index_1]->cmnds[i])
+				// return (perror("malloc fail!\n"), error_code(data));
+			// data->lines[index_1]->cmnds[i][count_elem(data, index_1, i, data->here_2 - 1)] = NULL;
 			fill_cmnds(data, index_1, i, data->here_2 - 1);
 		}
 	}
 }
+int one_of_those_2(t_pipex *data, int index_1, int index_2, int i)
+{
+	if (data->lines[index_1]->ops[index_2][0][i + 1] && !one_of_those_2(data, index_1, index_2, i + 1))
+		return (0);
+	else if (!data->lines[index_1]->ops[index_2][0][i] || data->lines[index_1]->ops[index_2][0][i] == '.' || data->lines[index_1]->ops[index_2][0][i] == '/')
+		return (1);
+	else 
+		return (0);
+}
+
+int	one_of_those(t_pipex *data, int index_1, int index_2)
+{
+	if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "/", 2) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], ".", 2)
+		|| (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "/usr", 4) && one_of_those_2(data, index_1, index_2, 4))
+		|| (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "/bin", 4) && one_of_those_2(data, index_1, index_2, 4))
+		|| (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "/sbin", 5) && one_of_those_2(data, index_1, index_2, 5))
+		|| (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "/snap", 5) && one_of_those_2(data, index_1, index_2, 5)))
+		return (1);
+	return (0);
+}
 
 void	init_paths(t_pipex *data, int index_1, int index_2)
 {
-	data->lines[index_1]->paths = malloc(sizeof(char *) * (data->lines[index_1]->cmnd_count + 1));
-	if (!data->lines[index_1]->paths)
-		return (perror("malloc fail!\n"), error_code(data));
-	data->lines[index_1]->paths[data->lines[index_1]->cmnd_count] = NULL;
+	data->lines[index_1]->paths = ft_calloc(sizeof(char *), (data->lines[index_1]->cmnd_count + 1), data);
+	// if (!data->lines[index_1]->paths)
+		// return (perror("malloc fail!\n"), error_code(data));
+	// data->lines[index_1]->paths[data->lines[index_1]->cmnd_count] = NULL;
 	while (++index_2 < data->lines[index_1]->cmnd_count)
 	{
 		if (is_mini(data, index_1, index_2))
 			data->lines[index_1]->paths[index_2] = ft_strdup(data, "minicmnds");
 		else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "echo", 5))
 			data->lines[index_1]->paths[index_2] = ft_strdup(data, "/usr/bin/echo");
-		else if (data->lines[index_1]->ops[index_2] && data->lines[index_1]->ops[index_2][0])
+		else if (data->lines[index_1]->ops[index_2] && data->lines[index_1]->ops[index_2][0] 
+			&& !one_of_those(data, index_1, index_2))
 		{
 			data->lines[index_1]->paths[index_2] = find_path(data, data->lines[index_1]->ops[index_2][0]);
 			if (!data->lines[index_1]->paths[index_2])
@@ -136,8 +147,8 @@ void	init_paths(t_pipex *data, int index_1, int index_2)
 		}
 		else
 			data->lines[index_1]->paths[index_2] = ft_strdup(data, "pathnfound");
-		if (!data->lines[index_1]->paths[index_2])
-			return (perror("malloc fail!\n"), error_code(data));
+		// if (!data->lines[index_1]->paths[index_2])
+			// return (perror("malloc fail!\n"), error_code(data));
 	}
 }
 
@@ -146,15 +157,15 @@ void	init_lines(t_pipex *data)
 	int i;
 
 	i = -1;
-	data->lines = ft_calloc(sizeof(t_lines *), (data->line_count + 1));
-	if (!data->lines)
-		return (perror("malloc failed!"), error_code(data));
-	data->lines[data->line_count] = NULL;
+	data->lines = ft_calloc(sizeof(t_lines *), (data->line_count + 1), data);
+	// if (!data->lines)
+		// return (perror("malloc failed!"), error_code(data));
+	// data->lines[data->line_count] = NULL;
 	while (++i < data->line_count)
 	{
-		data->lines[i] = ft_calloc(sizeof(t_lines), 1);
-		if (!data->lines[i])
-			return (perror("malloc failed!"), error_code(data));
+		data->lines[i] = ft_calloc(sizeof(t_lines), 1, data);
+		// if (!data->lines[i])
+			// return (perror("malloc failed!"), error_code(data));
 		data->lines[i]->cmnds = NULL;
 		data->lines[i]->ops = NULL;
 		data->lines[i]->paths = NULL;
@@ -192,21 +203,21 @@ void	init_red_cmnds(t_pipex *data, int index_1)
 	int count;
 
 	j = -1;
-	data->lines[index_1]->red_cmnd = malloc(sizeof(int *) * (data->lines[index_1]->cmnd_count + 1));
-	if (!data->lines[index_1]->red_cmnd)
-		return (perror("malloc failed!"), error_code(data));
-	data->lines[index_1]->red_cmnd[data->lines[index_1]->cmnd_count] = 0;
+	data->lines[index_1]->red_cmnd = ft_calloc(sizeof(int *), (data->lines[index_1]->cmnd_count + 1), data);
+	// if (!data->lines[index_1]->red_cmnd)
+		// return (perror("malloc failed!"), error_code(data));
+	// data->lines[index_1]->red_cmnd[data->lines[index_1]->cmnd_count] = 0;
 	while (++j < data->lines[index_1]->cmnd_count)
 	{
 		count = 0;
 		while (count < count_elem(data, index_1, j, data->here_2 - 1))
 			count++;
-		data->lines[index_1]->red_cmnd[j] = malloc(sizeof(int) * (count));
-		if (!data->lines[index_1]->red_cmnd[j])
-			return (perror("malloc failed!"), error_code(data));
-		count = 0;
-		while (count < count_elem(data, index_1, j, data->here_2 - 1))
-			data->lines[index_1]->red_cmnd[j][count++] = 0;
+		data->lines[index_1]->red_cmnd[j] = ft_calloc(sizeof(int), (count), data);
+		// if (!data->lines[index_1]->red_cmnd[j])
+			// return (perror("malloc failed!"), error_code(data));
+		// count = 0;
+		// while (count < count_elem(data, index_1, j, data->here_2 - 1))
+			// data->lines[index_1]->red_cmnd[j][count++] = 0;
 	}
 }
 
@@ -216,21 +227,21 @@ void	init_pos_in_line(t_pipex *data, int index_1)
 	int count;
 
 	j = -1;
-	data->lines[index_1]->pos_in_line = malloc(sizeof(int *) * (data->lines[index_1]->cmnd_count + 1));
-	if (!data->lines[index_1]->pos_in_line)
-		return (perror("malloc failed!"), error_code(data));
-	data->lines[index_1]->pos_in_line[data->lines[index_1]->cmnd_count] = 0;
+	data->lines[index_1]->pos_in_line = ft_calloc(sizeof(int *), (data->lines[index_1]->cmnd_count + 1), data);
+	// if (!data->lines[index_1]->pos_in_line)
+		// return (perror("malloc failed!"), error_code(data));
+	// data->lines[index_1]->pos_in_line[data->lines[index_1]->cmnd_count] = 0;
 	while (++j < data->lines[index_1]->cmnd_count)
 	{
 		count = 0;
 		while (count < count_elem(data, index_1, j, data->here_2 - 1))
 			count++;
-		data->lines[index_1]->pos_in_line[j] = malloc(sizeof(int) * (count));
-		if (!data->lines[index_1]->pos_in_line[j])
-			return (perror("malloc failed!"), error_code(data));
-		count = 0;
-		while (count < count_elem(data, index_1, j, data->here_2 - 1))
-			data->lines[index_1]->pos_in_line[j][count++] = 0;
+		data->lines[index_1]->pos_in_line[j] = ft_calloc(sizeof(int), (count), data);
+		// if (!data->lines[index_1]->pos_in_line[j])
+			// return (perror("malloc failed!"), error_code(data));
+		// count = 0;
+		// while (count < count_elem(data, index_1, j, data->here_2 - 1))
+			// data->lines[index_1]->pos_in_line[j][count++] = 0;
 	}
 }
 
@@ -248,22 +259,22 @@ void init_fds(t_pipex *data, int index)
 
 void	init_pipes_pids(t_pipex *data, int index)
 {
-	data->lines[index]->fd_infiles = ft_calloc(sizeof(int), data->lines[index]->cmnd_count);
-	data->lines[index]->fd_outfiles = ft_calloc(sizeof(int), data->lines[index]->cmnd_count);
+	data->lines[index]->fd_infiles = ft_calloc(sizeof(int), data->lines[index]->cmnd_count, data);
+	data->lines[index]->fd_outfiles = ft_calloc(sizeof(int), data->lines[index]->cmnd_count, data);
 	init_fds(data, index);
-	data->lines[index]->pipes = ft_calloc(sizeof(int[2]), (data->lines[index]->cmnd_count));
-	data->lines[index]->buf_pipes = ft_calloc(sizeof(int[2]), (data->lines[index]->cmnd_count));
-	if (!data->lines[index]->pipes)
-		return (perror("malloc failed"), error_code(data));
+	data->lines[index]->pipes = ft_calloc(sizeof(int[2]), (data->lines[index]->cmnd_count), data);
+	data->lines[index]->buf_pipes = ft_calloc(sizeof(int[2]), (data->lines[index]->cmnd_count), data);
+	// if (!data->lines[index]->pipes)
+		// return (perror("malloc failed"), error_code(data));
     create_pipes(data, index);
 	if (data->pid)
 	{
 		free(data->pid);
 		data->pid = NULL;
 	}
-    data->pid = ft_calloc(sizeof(pid_t), data->lines[index]->cmnd_count);
-	if (!data->pid)
-		return (perror("malloc failed"), error_code(data));
+    data->pid = ft_calloc(sizeof(pid_t), data->lines[index]->cmnd_count, data);
+	// if (!data->pid)
+		// return (perror("malloc failed"), error_code(data));
 }
 
 int	count_nl(t_pipex *data)
@@ -291,10 +302,10 @@ void	init_lines_2_continue(t_pipex *data, int i)
 	if (i == data->buf_int)
 		data->buf_int = 0;
 	// printf("I: %d data->here_2: %d \n", i, (data->buf_int));
-    new = ft_calloc(sizeof(char), (i + 1));
-    if (!new)
-        return (perror("malloc failed!"), error_code(data));
-    new[i] = 0;
+    new = ft_calloc(sizeof(char), (i + 1), data);
+    // if (!new)
+        // return (perror("malloc failed!"), error_code(data));
+    // new[i] = 0;
 	j = -1;
     while (++j < i)
 	{
@@ -360,8 +371,8 @@ void init_lines_2(t_pipex *data, int index_1, int i, int j) // this one should f
 
 void	init_inputs(t_pipex *data, int index)
 {
-	data->lines[index]->input = ft_calloc(sizeof(char *), data->lines[index]->cmnd_count + 1);
-	data->lines[index]->input[data->lines[index]->cmnd_count] = NULL;
+	data->lines[index]->input = ft_calloc(sizeof(char *), data->lines[index]->cmnd_count + 1, data);
+	// data->lines[index]->input[data->lines[index]->cmnd_count] = NULL;
 }
 
 void	parsing(t_pipex *data)
@@ -371,10 +382,10 @@ void	parsing(t_pipex *data)
 	i = -1;
 	set_line_count(data);
 	init_lines(data);
-	if (!syntax_check(data->line, -1, 0))
-		return (perror("bash: syntax error near unexpected token `|'"), data->last_exit_status = 1, free_lines(data));
+	if (!syntax_check(data, -1, 0))
+		return (write(2, "bash: syntax error near unexpected token `|'\n", 46), data->last_exit_status = 2, add_history(data->line), free_lines(data));
 	if (check_open(data->line))
-		return (printf("bash: syntax error: open quotes \n"), data->last_exit_status = 1, free_lines(data));
+		return (write(2, "bash: syntax error: open quotes \n", 34), data->last_exit_status = 2, add_history(data->line), free_lines(data));
 	while (data->lines[++i] && data->here_2_old < data->chars_in_line)
 	{
 		signal_change(2);
@@ -387,7 +398,7 @@ void	parsing(t_pipex *data)
 		init_cmnds(data, i, -1);
 		init_lines_2(data, i, -1, 0);
 		init_pipes_pids(data, i);
-		if (!check_reds(data, i))
+		if (!check_reds(data, i, -1, -1))
 			return (free_lines(data));
 		init_ops(data, i);
 		init_paths(data, i, -1);

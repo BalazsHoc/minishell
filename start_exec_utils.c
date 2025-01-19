@@ -16,7 +16,7 @@ char *get_input(t_pipex *data, int index_1, int index_2, int index_3)
 			break ;
 		if (buf[0] != '\0')
 		{
-			input = join_this(input, buf);
+			input = join_this(input, buf, data);
 			free_str(&buf);
 		}
 		buf = readline("> ");
@@ -76,28 +76,25 @@ void print_list(char **arr)
         printf("%s\n", arr[i++]);
 }
 
-char    *trim_last(char *old)
-{
-    int i;
-    int check;
-    char *new;
+// char    *trim_last(char *old, t_pipex *data)
+// {
+//     int i;
+//     int check;
+//     char *new;
 
-    i = -1;
-    while (old[++i])
-    {
-        if (old[i] == '/')
-            check = i;
-    }
-    new = malloc(sizeof(char) * (check + 1));
-    if (!new)
-        return (NULL);
-    new[check] = 0;
-    i = -1;
-    while (++i < check)
-        new[i] = old[i];
-    free(old);
-    return (new);
-}
+//     i = -1;
+//     while (old[++i])
+//     {
+//         if (old[i] == '/')
+//             check = i;
+//     }
+//     new = ft_calloc(sizeof(char), (check + 1), data);
+//     i = -1;
+//     while (++i < check)
+//         new[i] = old[i];
+//     free(old);
+//     return (new);
+// }
 
 int bigger_one(char *s1, char *s2)
 {
@@ -129,14 +126,12 @@ void    update_env(t_pipex *data, int index_1, int index_2)
         if (!ft_strncmp(data->cur_env[i], "OLDPWD=", 7))
         {
             buf = data->cur_env[i];
-            data->cur_env[i] = ft_strjoin("OLDPWD=", data->cur_path);
+            data->cur_env[i] = ft_strjoin("OLDPWD=", data->cur_path, data);
             // printf("OLD: %s\n", getenv("OLDPWD"));
             free(buf);
         }
     }
-    buf = ft_calloc(sizeof(char), (BUF_SIZE_ENV * 100) + 1);
-    if (!buf)
-        return (printf("malloc fail!\n"), error_code(data));
+    buf = ft_calloc(sizeof(char), (BUF_SIZE_ENV * 100) + 1, data);
     getcwd(buf, BUF_SIZE_ENV * 100);
     i = -1;
     // printf("BUF: %s\n", buf);
@@ -151,11 +146,11 @@ void    update_env(t_pipex *data, int index_1, int index_2)
             {
                 free(buf);
                 if (data->cur_path[bigger_one(data->cur_path, data->cur_path) - 1] != '/')
-                    buf = ft_strjoin("/", data->lines[index_1]->ops[index_2][1]);
+                    buf = ft_strjoin("/", data->lines[index_1]->ops[index_2][1], data);
                 else
-                    buf = ft_strjoin(NULL, data->lines[index_1]->ops[index_2][1]);
-                data->cur_path = ft_strjoin(data->cur_path, buf);
-                data->cur_env[i] = ft_strjoin("PWD=", data->cur_path);
+                    buf = ft_strjoin(NULL, data->lines[index_1]->ops[index_2][1], data);
+                data->cur_path = ft_strjoin(data->cur_path, buf, data);
+                data->cur_env[i] = ft_strjoin("PWD=", data->cur_path, data);
                 free(data->cur_path);
                 data->cur_path = data->cur_env[i] + 4;
                 // printf("CUR: %s\n", data->cur_path);
@@ -163,7 +158,7 @@ void    update_env(t_pipex *data, int index_1, int index_2)
             else
             {
                 free_str(&data->cur_env[i]);
-                data->cur_env[i] = ft_strjoin("PWD=", buf);
+                data->cur_env[i] = ft_strjoin("PWD=", buf, data);
             }
             // printf("THIS IS NEW PWD: %s\n", data->cur_env[i]);
             free(buf);
@@ -268,14 +263,14 @@ void update_env_2(t_pipex *data, int index_1, int index_2)
     while (data->buf_str[j] && data->buf_str[j] != '=')
         j++;
     // printf("%s\n", data->buf_str + j);
-    buf_1 = ft_strjoin("PWD", data->buf_str + j);
+    buf_1 = ft_strjoin("PWD", data->buf_str + j, data);
     // printf("BUF 1: %p\n", buf_1);
     data->buf_str = get_pwd(data);
     j = 0;
     while (data->buf_str && data->buf_str[j] && data->buf_str[j] != '=')
         j++;
     if (data->buf_str)
-        buf_2 = ft_strjoin("OLDPWD", data->buf_str + j);
+        buf_2 = ft_strjoin("OLDPWD", data->buf_str + j, data);
     // printf("BUF 2: %s\n", buf_2);
     data->buf_str = NULL;
     update_env_2_continue(data, buf_1, buf_2);
@@ -312,9 +307,7 @@ int is_valid_cwd(t_pipex *data)
 {
     char *buf;
 
-    buf = ft_calloc(sizeof(char), (BUF_SIZE_ENV * 100) + 1);
-    if (!buf)
-        return (perror("malloc failed!"), error_code(data), -1);
+    buf = ft_calloc(sizeof(char), (BUF_SIZE_ENV * 100) + 1, data);
     getcwd(buf, BUF_SIZE_ENV * 100);
     if (!buf)
         return (perror("getcwd() failed!"), error_code(data), -1);
@@ -348,10 +341,7 @@ char **malloc_export_env(t_pipex *data, int count)
     i = 0;
     while (data->cur_env[i])
         i++;
-    arr = ft_calloc(sizeof(char *), (i + count + 1));
-    if (!arr)
-        return (perror("malloc failed!"), error_code(data), NULL);
-    arr[i + count] = NULL;
+    arr = ft_calloc(sizeof(char *), (i + count + 1), data);
     return (arr);
 }
 
@@ -492,11 +482,7 @@ char *malloc_cpy_export(t_pipex *data, char *str, int track, int i)
     if (!track)
         return (ft_strdup(data, str));
     else if (track == 1)
-    // printf("STR: %s | COUNT: %d\n", str, count);
-        new = ft_calloc(sizeof(char), (count + 2 + 1));
-    if (!new)   
-        return (error_code(data), NULL);
-    new[count + 2] = 0;
+        new = ft_calloc(sizeof(char), (count + 2 + 1), data);
     i = -1;
     while (str[++i] && (i == 0 || (str[i - 1] != '=')))
         new[i] = str[i];
@@ -518,10 +504,7 @@ char **malloc_arr(t_pipex *data, int size)
 {
     char **arr;
 
-    arr = ft_calloc(sizeof(char *), (size + 1));
-    if (!arr)
-        return (perror("malloc failed"), error_code(data), NULL);
-    arr[size] = NULL;
+    arr = ft_calloc(sizeof(char *), (size + 1), data);
     return (arr);
 }
 
@@ -535,8 +518,9 @@ void    update_export(t_pipex *data, int index_1, int index_2, int count)
     data->buf_str = NULL;
     while (data->export[i])
         i++;
+    // printf("COUNT: %d | I: %d\n", count , i);
     data->buf_array = malloc_arr(data, count + i);
-    count = i;
+    count = i;  
     while (--i >= 0)
         data->buf_array[i] = ft_strdup(data, data->export[i]); 
     j = -1;
@@ -602,7 +586,7 @@ void    export_update(t_pipex *data, int index_1, int index_2, int i)
         else if (ft_strncmp(data->lines[index_1]->ops[index_2][1 + i], "_=", 2) && already_there_2(data, data->lines[index_1]->ops[index_2][1 + i]) == -1)
             count_export++;
     }
-    printf("COUNT: %d | count_export: %d\n", count, count_export);
+    // printf("COUNT: %d | count_export: %d\n", count, count_export);
     export_env(data, index_1, index_2, count);
     update_export(data, index_1, index_2, count + count_export);
 }
@@ -615,10 +599,7 @@ char *key_this(t_pipex *data, char *s)
     i = 0;
     while (s[i] && s[i] != '=')
         i++;
-    key = malloc(sizeof(char) * (i + 1));
-    if (!key)
-        return (printf("malloc fail!\n"), error_code(data), NULL);
-    key[i] = 0;
+    key = ft_calloc(sizeof(char), (i + 1), data);
     i = 0;
     while (s[i] && s[i] != '=')
     {
@@ -682,17 +663,11 @@ int count_unset_export(t_pipex *data, int index_1, int index_2)
 
 char **malloc_unset(t_pipex *data, int count, int index_1, int index_2)
 {
-    char **buf;
-
     if (!data->lines[index_1]->ops[index_2][1])
         return (NULL);
     if (count == -1)
         return (NULL);
-    buf = malloc(sizeof(char *) * (count + 1));
-    if (!buf)
-        return (printf("malloc fail!\n"), error_code(data), NULL);
-    buf[count] = NULL;
-    return (buf);
+    return (ft_calloc(sizeof(char *), (count + 1), data));
 }
 
 void unset_env(t_pipex *data, int index_1, int index_2, int i)

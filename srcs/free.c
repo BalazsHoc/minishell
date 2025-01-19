@@ -124,6 +124,9 @@ void 	free_lines(t_pipex *data)
 		return ;
 	while (++i < data->line_count)
 	{
+		if (i == data->line_count - 1 &&  data->lines[i]->exit_codes 
+			&& data->lines[i]->exit_codes[data->lines[i]->cmnd_count - 1])
+			data->last_exit_status = data->lines[i]->exit_codes[data->lines[i]->cmnd_count - 1];
 		if (data->lines[i])
 			free_line(data, i);
 	}

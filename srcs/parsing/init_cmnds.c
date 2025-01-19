@@ -148,10 +148,7 @@ char *extract_key(t_pipex *data, int j, int open, int check)
 	int k;
 	char *key;
 
-	key = malloc(sizeof(char) * (count_key(data->line, j, open) + 1));
-	if (!key)
-		return (error_code(data), NULL);
-	key[count_key(data->line, j, open)] = 0;
+	key = ft_calloc(sizeof(char), (count_key(data->line, j, open) + 1), data);
 	k = 0;
 	while (data->line[j])
 	{
@@ -180,10 +177,7 @@ char *fill_key(t_pipex *data, char *str)
 		return (NULL);
 	// printf("FILL STR: %s\n", str);
 	// printf("THIS:1 %d | THIS:2 %ld\n", ft_strlen_2(str), ft_strlen(str));
-	new = malloc(sizeof(char) * (ft_strlen(str) + 1));
-	if (!new)
-		return (error_code(data), NULL);
-	new[ft_strlen(str)] = 0;
+	new = ft_calloc(sizeof(char), (ft_strlen(str) + 1), data);
 	i = -1;
 	while (str[++i])
 		new[i] = str[i];
@@ -248,7 +242,7 @@ char *get_pid(t_pipex *data)
 		exit(EXIT_SUCCESS);
 	if (wait(NULL) == -1)
 		return (perror("wait() failed!"), error_code(data), NULL);
-	return (ft_itoa(pid));
+	return (ft_itoa(pid, data));
 }
 
 
@@ -278,7 +272,7 @@ int	count_expansion(t_pipex *data, int i, int open)
 		else if (open != 1 && data->line[i] == '$' && data->line[i + 1] == '?')
 		{
 			i += 2;
-			elem = ft_itoa(data->last_exit_status);
+			elem = ft_itoa(data->last_exit_status, data);
 		}
 		if (elem)
 		{
@@ -315,10 +309,7 @@ char	*expand_it_1(t_pipex *data, int i, int open)
 	char *new;
 
 	elem = NULL;
-	new = malloc(sizeof(char) * (count_expansion(data, i, open) + 1));
-	if (!new)
-		return (printf("malloc fail\n"), free_str(&elem), error_code(data), NULL);
-	new[count_expansion(data, i, open)] = 0;
+	new = ft_calloc(sizeof(char), (count_expansion(data, i, open) + 1), data);
 	j = 0;
 	while (data->line[i])
 	{
@@ -328,7 +319,7 @@ char	*expand_it_1(t_pipex *data, int i, int open)
 		if (open != 1 && data->line[i] == '$' && (data->line[i + 1] == '?'))
 		{
 			if (errno != 130)
-				elem = ft_itoa(data->last_exit_status);
+				elem = ft_itoa(data->last_exit_status, data);
 			else
 				elem = ft_strdup(data, "130");
 			data->buf_int = open;
@@ -376,9 +367,7 @@ char *malloc_str(size_t size, t_pipex *data)
 {
 	char *new;
 
-	new = ft_calloc(sizeof(char), (size + 1));
-	if (!new)
-		return (perror("malloc failed!"), error_code(data), NULL);
+	new = ft_calloc(sizeof(char), (size + 1), data);
 	new[size] = 0;
 	return (new);
 }
@@ -431,10 +420,7 @@ char *fill_normal(t_pipex *data, int index, int open)
 	char_count = count_chars(data, index, open);
 	// empty_space = check_for_empty(data, index + char_count);
 	// printf("EMPTY SPACE %d\n", empty_space);
-	new = malloc(sizeof(char) * (char_count + 1));
-	if (!new)
-		return (perror("malloc fail\n"), error_code(data), NULL);
-	new[char_count] = 0;
+	new = ft_calloc(sizeof(char), (char_count + 1), data); 
 	data->buf_int = open;
 	ft_strncpy_2(new, data->line + index, char_count, data);
 	// printf("NEW: %s\n", new);
@@ -491,7 +477,7 @@ int		is_delim_back(char *line, int i)
 	// printf("IS DELIM BACK??\n");
 	if (i < 0 || !line[i])
 		return (1);
-	// printf("LNE: %s\n", line + i);
+	// printf("DELIM BACK: %s\n", line + i);
 	while (i >= 0 && is_quote(line[i]))
 	{
 		if ((open == 1 && is_quote_two(line[i])) || (open == 2 && is_quote_one(line[i])))
@@ -504,7 +490,8 @@ int		is_delim_back(char *line, int i)
 			open = 0;
 		i--;
 	}
-	if (i < 0 || is_space(line[i]) || (is_red_1(line[i]) && line[i + 1] && !is_red_1(line[i + 1])) || is_red_clean(line, i) || is_real_pipe(line, i))
+	// if (i < 0 || is_space(line[i]) || (is_red_in(line, i) && !is_red_in(line, i + 1)) || (is_red_out(line, i) && !is_red_out(line, i + 1) || is_red_clean(line, i) || is_real_pipe(line, i))
+	if (i < 0 || is_space(line[i]) || is_red_1(line[i]) || is_real_pipe(line, i))
 		return (1);
 	// printf("NO DELIM\n");
 	return (0);
@@ -562,20 +549,14 @@ void	fill_for_empty(t_pipex *data, int index_1, int index_2, int index_3)
 	// printf("FILL FOR EMPTY!\n");
 	if (index_3 == 0)
 	{
-		str = malloc(sizeof(char) * (3));
+		str = ft_calloc(sizeof(char), (3), data);
 		if (!str)
 			return (perror("malloc fail\n"), error_code(data));
 		str[0] = 39;
 		str[1] = 39;
-		str[2] = 0;
 	}
 	else 
-	{
-		str = malloc(sizeof(char) * (1));
-		if (!str)
-			return (perror("malloc fail\n"), error_code(data));
-		str[0] = 0;
-	}
+		str = ft_calloc(sizeof(char), (1), data);
 	data->lines[index_1]->cmnds[index_2][index_3] = str;
 	// printf("NEW: %s\n", str);
 }
@@ -625,7 +606,7 @@ void	fill_cmnds(t_pipex *data, int index_1, int i, int j)
 					|| (((j > 1 && is_delim_back(data->line, j - 2)) || j < 2)
 						&& ((open == 1 && is_quote_one(data->line[j - 1]) && !is_quote_one(data->line[j])) || (open == 2 && is_quote_two(data->line[j - 1]) && !is_quote_two(data->line[j]))))
 				|| (!open && !is_real_pipe(data->line, j) && data->line[j] != '|' && !is_quote(data->line[j]) && !is_space(data->line[j]) && is_delim_back(data->line, j - 1) && !is_red_1(data->line[j]))
-				|| (((is_red_in(data->line, j - 1) && is_red_out(data->line, j)) || (is_red_out(data->line, j - 1) && is_red_in(data->line, j))))
+				// || (((is_red_in(data->line, j - 1) && is_red_out(data->line, j)) || (is_red_out(data->line, j - 1) && is_red_in(data->line, j))))
 				|| (is_red_1(data->line[j - 1]) && !is_red_1(data->line[j]) && !is_space(data->line[j]) && data->line[j] != '|' && !open)
 				|| (!open && (is_real_pipe(data->line, j - 1)
 					|| (j > 1 && data->line[j - 1] == '|' && data->line[j - 2] == '>')) && !is_space(data->line[j])))))

@@ -12,11 +12,12 @@
 
 #include "minishell.h"
 
-void	init_data(t_pipex *data, char **env)
+void	init_data(t_pipex *data)
 {
 	data->lines = NULL;
-	data->cur_env = env;
+	data->cur_env = NULL;
 	data->export = NULL;
+	data->cur_env = NULL;
 	data->buf_array = NULL;
 	data->line = NULL;
 	data->cur_path = NULL;
@@ -29,33 +30,20 @@ void	init_data(t_pipex *data, char **env)
 	data->count_elem = 0;
 }
 
-void	init_env(char ***env)
+void	init_env(t_pipex *data, char **env)
 {
-	// char *buf;
-	char **new_env;
     int i;
 	
 	i = 0;
-	new_env = malloc(sizeof(char *) * (count_env(*env) + 1));
-	if (!new_env)
-			return (perror("malloc failed!"), error_code(NULL));
-	new_env[count_env(*env)] = NULL;
+	data->cur_env = ft_calloc(sizeof(char *), (count_env(env) + 1), data);
 	i = -1;
-	while (++i < count_env(*env))
+	while (++i < count_env(env))
 	{
-		if (ft_strncmp((*env)[i], "_=", 2))
-			new_env[i] = ft_strdup(NULL, (*env)[i]);
+		if (ft_strncmp(env[i], "_=", 2))
+			data->cur_env[i] = ft_strdup(NULL, env[i]);
 		else
-			new_env[i] = ft_strdup(NULL, "_=/usr/bin/env");
-		// printf("THIS ONE: %s | %p\n", new_env[i], new_env[i]);
-		// if (!new_env[i])
-			// return (perror("malloc failed!"), free_list(new_env), error_code(NULL));
-		// new_env[i] = malloc(sizeof(char) * (ft_strlen((*env)[i]) + 1));
-		// ft_memcpy(new_env[i], (*env)[i], ft_strlen((*env)[i]));
-		// new_env[i][ft_strlen((*env)[i])] = 0;
-		// env[i] = buf;
+			data->cur_env[i] = ft_strdup(NULL, "_=/usr/bin/env");
 	}
-	*env = new_env;
 }
 
 void	init_export(t_pipex *data)
@@ -71,9 +59,7 @@ void	init_export(t_pipex *data)
 		if (ft_strncmp(data->cur_env[i], "_=", 2))
 			count++;
 	}
-	data->export = ft_calloc(sizeof(char *), (count + 1));
-	if (!data->export)
-		return (perror("malloc failed"), error_code(data));
+	data->export = ft_calloc(sizeof(char *), (count + 1), data);
 	data->export[count] = 0;
 	i = -1;
 	count = 0;
@@ -91,11 +77,9 @@ int	main(int argc, char **argv, char **env)
 	// terminal_settings();
 	if (argc != 1 && argv)
 		return (printf("No argument is accepted\n"), 1);
-	init_env(&env);
-	data = ft_calloc(sizeof(t_pipex), 1);
-	if (!data)
-		return (perror("malloc failed!"), free_list(env), errno);
-	init_data(data, env);
+	data = ft_calloc(sizeof(t_pipex), 1, NULL);
+	init_data(data);
+	init_env(data, env);
 	init_export(data);
 	data->fd_out = 0;
 	data->last_exit_status = 0;
@@ -112,7 +96,7 @@ int	main(int argc, char **argv, char **env)
 		} 
 		if (data->line[0] != '\0')
 		{
-			data->line = ft_strtrim(data->line, " \n\t\v\f\r\b");
+			data->line = ft_strtrim(data->line, " \n\t\v\f\r\b", data);
 			// add_history(data->line);
 			parsing(data);
 		}
