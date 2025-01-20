@@ -206,8 +206,9 @@ int	count_chars(t_pipex *data, int i, int open)
 		// else if ((!open || (is_delim_back(data->line, i - 1) && count > 0)) && (!data->line[i] || is_space(data->line[i]) || data->line[i] == '\n'
 		else if (handle_open(data, i, &open) && (!open && (!data->line[i] || is_space(data->line[i]) || data->line[i] == '\n'
 			|| is_real_pipe(data->line, i)
-
-			|| (count > 0 && i > 0 && is_red_clean(data->line, i - count) && ((is_red_in(data->line, i - count) && is_red_out(data->line, i)) || (is_red_out(data->line, i - count) && is_red_in(data->line, i)) || count == 2))
+			|| (count > 0 && i > 0 && is_red_1(data->line[i - 1]) && !is_red_1(data->line[i]))
+			|| (count > 0 && i > 0 && is_red_clean(data->line, i - count) && ((is_red_in(data->line, i - count)
+				&& is_red_out(data->line, i)) || (is_red_out(data->line, i - count) && is_red_in(data->line, i)) || count == 2))
 			// || (count > 0 && i > 0 && (is_red_clean(data->line, i - 1) && !is_red_clean(data->line, i) && printf("TRUE MAN\n")))
 			// || (count == 1 && i > 0 && is_red_clean(data->line, i - 1) && !is_red_clean(data->line, i))
 			// || (count == 2 && i > 1 && is_red_clean(data->line, i - 2) && !is_red_clean(data->line, i - 1))

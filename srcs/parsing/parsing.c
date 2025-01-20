@@ -396,13 +396,13 @@ void	parsing(t_pipex *data)
 		init_inputs(data, i);
 		init_pos_in_line(data, i);
 		init_cmnds(data, i, -1);
+		// print_that_shit(data, i);
 		init_lines_2(data, i, -1, 0);
 		init_pipes_pids(data, i);
 		if (!check_reds(data, i, -1, -1))
 			return (free_lines(data));
 		init_ops(data, i);
 		init_paths(data, i, -1);
-		// print_that_shit(data, i);
 		check_folder(data, i);
 		set_cur_path(data);
 		start_exec(data, i, -1, 0);
