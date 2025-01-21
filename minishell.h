@@ -189,6 +189,7 @@ void	start_exec(t_pipex *data, int index, int i, int status);
 int		is_red_inline(t_pipex *data, int index_1, int index_2);
 int		is_in_inline(t_pipex *data, int index_1, int index_2);
 int 	is_valid_in(t_pipex *data, int index_1, int index_2);
+int		check_exec_cmnd_1(t_pipex *data, int index, int i);
 
 
 int		last_one(char **arr);
@@ -268,7 +269,7 @@ char		*ft_strdup(t_pipex *data, const char *s);
 size_t		ft_strlen(const char *str);
 char		*ft_strtrim(char *s1, char const *set, t_pipex *data);
 
-long		ft_atoi(const char *nptr);
+long long		ft_atoi(const char *nptr);
 void		*ft_calloc(size_t nmemb, size_t size, t_pipex *data);
 size_t		ft_digit_count(long int n);
 char		*ft_itoa(int n, t_pipex *data);

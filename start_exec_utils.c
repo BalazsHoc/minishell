@@ -10,10 +10,8 @@ char *get_input(t_pipex *data, int index_1, int index_2, int index_3)
 	key = data->lines[index_1]->cmnds[index_2][index_3 + 1];
 	input = NULL;
 	buf = readline("> ");
-	while (buf && !g_signal && !ft_strcmp_2(buf, key))
+	while (buf && !g_signal && (!ft_strcmp_2(buf, key)))
 	{
-		if (!buf)
-			break ;
 		if (buf[0] != '\0')
 		{
 			input = join_this(input, buf, data);
@@ -22,6 +20,8 @@ char *get_input(t_pipex *data, int index_1, int index_2, int index_3)
 		buf = readline("> ");
 	}
 	// printf("%d\n", g_signal);
+    if (!input)
+        return (free_str(&buf), ft_strdup(data, ""));
     return (input);
 }
 
@@ -151,7 +151,7 @@ void    update_env(t_pipex *data, int index_1, int index_2)
                     buf = ft_strjoin(NULL, data->lines[index_1]->ops[index_2][1], data);
                 data->cur_path = ft_strjoin(data->cur_path, buf, data);
                 data->cur_env[i] = ft_strjoin("PWD=", data->cur_path, data);
-                free(data->cur_path);
+                // free_str(&data->cur_path);
                 data->cur_path = data->cur_env[i] + 4;
                 // printf("CUR: %s\n", data->cur_path);
             }
@@ -380,16 +380,20 @@ int already_there_2(t_pipex *data, char *str)
 {
     int i;
     int j;
+    int check;
 
     j = 0;
     i = -1;
     while (str[j] && str[j] != '=')
         j++;
+        
     // printf("ALRDY COUNT TILL =: %d\n", j);
     while (data->export[++i])
     {
-        if (!ft_strncmp(str, data->export[i], j + 1)
-            && data->export[i][j] == '=')
+        check = 0;
+        while (data->export[i][check])
+            check++;
+        if (!ft_strncmp(str, data->export[i], j + 1) || (str[j] == '=' && !ft_strncmp(str, data->export[i], j - 1) && j <= check && data->export[i][j] == 0))
             return (i);
             // return (printf("ALRDY THERE %s\n", str), i);
     }
@@ -412,8 +416,7 @@ int is_it_last(t_pipex *data, int index_1, int index_2, int i)
     while (data->lines[index_1]->ops[index_2][++j])
     {
         // printf("CHECK LAST\n");
-        if (!ft_strncmp(data->lines[index_1]->ops[index_2][j], data->lines[index_1]->ops[index_2][i], count + 1)
-            && data->lines[index_1]->ops[index_2][j][count] == '=')
+        if (!ft_strncmp(data->lines[index_1]->ops[index_2][j], data->lines[index_1]->ops[index_2][i], count + 1))
             check = j;
     }
     if (check == i)
@@ -421,6 +424,18 @@ int is_it_last(t_pipex *data, int index_1, int index_2, int i)
         // return (printf("ITS LAST %s\n", data->lines[index_1]->ops[index_2][i]), 1);
     return (0);
     // return (printf("ITS NOT LAST %s\n", data->lines[index_1]->ops[index_2][i]), 0);
+}
+
+int has_equal(char *str)
+{
+    int i;
+
+    i = 0;
+    while (str[i] && str[i] != '=')
+        i++;
+    if (str[i] == '=')
+        return (1);
+    return (0);
 }
 
 void export_env(t_pipex *data, int index_1, int index_2, int count)
@@ -433,10 +448,11 @@ void export_env(t_pipex *data, int index_1, int index_2, int count)
     rand = 0;
     i = -1;
     data->buf_str = NULL;
-    while (data->lines[index_1]->ops[index_2][++i + 1])
+    while (data->lines[index_1]->ops[index_2][++i + 1] && count--)
     {
         // if (!ft_strncmp(data->lines[index_1]->ops[index_2][1 + i], "_=", 2))
-            // continue;
+        if (!has_equal(data->lines[index_1]->ops[index_2][i + 1]))
+            continue;
         if (rand != (INT_MAX / data->lines[index_1]->ops[index_2][i + 1][ft_strlen(data->lines[index_1]->ops[index_2][i + 1]) - 1]) % (env_count(data) + 1))
             rand = (INT_MAX / data->lines[index_1]->ops[index_2][i + 1][ft_strlen(data->lines[index_1]->ops[index_2][i + 1]) - 1]) % (env_count(data) + 1);
         else 
@@ -536,8 +552,9 @@ void    update_export(t_pipex *data, int index_1, int index_2, int count)
             data->buf_array[already_there_2(data, data->lines[index_1]->ops[index_2][1 + j])] = ft_strdup(data, data->lines[index_1]->ops[index_2][1 + j]);
             free_str(&data->buf_str);
         }
-        else if (ft_strncmp(data->lines[index_1]->ops[index_2][1 + j], "_=", 2) && is_it_last(data, index_1, index_2, 1 + j))
+        else if ((ft_strlen(data->lines[index_1]->ops[index_2][1 + j]) || ft_strncmp(data->lines[index_1]->ops[index_2][1 + j], "_=", 2)) && is_it_last(data, index_1, index_2, 1 + j))
             data->buf_array[count++] = malloc_cpy_export(data, data->lines[index_1]->ops[index_2][1 + j], 0, -1);
+        // printf("NEW: %s\n", data->buf_array[count - 1]);
             // data->buf_array[count++] = ft_strdup(data->lines[index_1]->ops[index_2][1 + j]);
     }
     free_list(data->export);
@@ -574,13 +591,15 @@ void    export_update(t_pipex *data, int index_1, int index_2, int i)
             if (j == 0 && !((data->lines[index_1]->ops[index_2][1 + i][j] >= 65 && data->lines[index_1]->ops[index_2][1 + i][j] <= 90)
                 || (data->lines[index_1]->ops[index_2][1 + i][j] >= 97 && data->lines[index_1]->ops[index_2][1 + i][j] <= 122)
                     || data->lines[index_1]->ops[index_2][1 + i][j] == '_'))
-                return (write(2, "bash: export: not a valid identifier\n", 38), exit_child(data, index_1, index_2, 1));
+                return (write(2, "bash: export: `", 16), write(2, data->lines[index_1]->ops[index_2][1], ft_strlen(data->lines[index_1]->ops[index_2][1])),
+                    write(2, "': not a valid identifier\n", 27), exit_child(data, index_1, index_2, 1));
             else if (no_identifier(data->lines[index_1]->ops[index_2][1 + i][j]))
-                return (write(2, "bash: export: not a valid identifier\n", 38), exit_child(data, index_1, index_2, 1));
+                return (write(2, "bash: export: `", 16), write(2, data->lines[index_1]->ops[index_2][1], ft_strlen(data->lines[index_1]->ops[index_2][1])),
+                    write(2, "': not a valid identifier\n", 27), exit_child(data, index_1, index_2, 1));
         }
         if (data->lines[index_1]->ops[index_2][1 + i][j] && j == 0)
-            return (write(2, "bash: export: not a valid identifier\n", 38), exit_child(data, index_1, index_2, 1));
-            // return (write(2, "not a valid identifier\n", 24), data->last_exit_status = 1);
+                return (write(2, "bash: export: `", 16), write(2, data->lines[index_1]->ops[index_2][1], ft_strlen(data->lines[index_1]->ops[index_2][1])),
+                    write(2, "': not a valid identifier\n", 27), exit_child(data, index_1, index_2, 1));
         else if (data->lines[index_1]->ops[index_2][1 + i][j] && ft_strncmp(data->lines[index_1]->ops[index_2][1 + i], "_=", 2) && already_there(data, data->lines[index_1]->ops[index_2][1 + i]) == -1)
             count++;
         else if (ft_strncmp(data->lines[index_1]->ops[index_2][1 + i], "_=", 2) && already_there_2(data, data->lines[index_1]->ops[index_2][1 + i]) == -1)
@@ -741,6 +760,7 @@ void unset_cmnd(t_pipex *data, int index_1, int index_2, int i)
 int only_dec(char *str)
 {
     int i;
+    int check;
 
     i = 0;
 	if (str[0] == '\0')
@@ -750,22 +770,91 @@ int only_dec(char *str)
 		i++;
 	if (str[i] == '-' || str[i] == '+')
 		i++;
+    check = i;
 	while (str[i] >= '0' && str[i] <= '9')
 		i++;
-    if (!str[i])
+    if (!str[i] && check < i)
         return (1);
     return (0);
 }
 
+int is_overflow_continue(char *str, int sign)
+{
+    unsigned long long result;
+    int i;
+
+    i = 0;
+    result = 0;
+    while (str[i] >= '0' && str[i] <= '9')
+    {
+        if ((result > 100000000000000000 && str[i + 1])
+            || (result > 922337203685477590)
+            || (result == 922337203685477580 && (str[i] == '8' || str[i] == '9') && sign == 1)
+            ||  (result == 922337203685477580 && str[i] == '9' && sign == -1))
+            return (1);
+        result = result * (unsigned long long)10 + (unsigned long long)(str[i] - '0');
+        i++;
+    }
+    // if ((sign == 1 && result >= LLONG_MAX) || (sign == -1 && result > (unsigned long long)LLONG_MAX))
+        // return (1);
+    return (0);
+}
+
+int is_overflow(t_pipex *data, int index_1, int index_2)
+{
+    int i;
+    int sign;
+    char *nptr;
+
+    i = 0;
+    sign = 1;
+    nptr = data->lines[index_1]->ops[index_2][1];
+    while (nptr[i] == ' ' || nptr[i] == '\f' || nptr[i] == '\n'
+		|| nptr[i] == '\r' || nptr[i] == '\t' || nptr[i] == '\v')
+        i++;
+    if (nptr[i] == '-' || nptr[i] == '+')
+    {
+        if (nptr[i] == '-')
+            sign *= -1;
+		i++;
+    }
+    while (nptr[i] == '0')
+        i++;
+    if (ft_strlen(nptr + i) > 19)
+        return (1);
+    return (is_overflow_continue(nptr + i, sign));
+}
+
+void    exit_cmnd(t_pipex *data, int index_1, int index_2)
+{
+    long long i;
+
+    i = 0;
+    printf("exit\n");
+    if (data->lines[index_1]->ops[index_2][1])
+    {
+        if (is_overflow(data, index_1, index_2) || !only_dec(data->lines[index_1]->ops[index_2][1]))
+            return (write(2, "bash: exit: ", 13), write(2, data->lines[index_1]->ops[index_2][1], ft_strlen(data->lines[index_1]->ops[index_2][1])), write(2, ": numeric argument required\n", 29), errno = 2, error_code(data));
+        i = ft_atoi(data->lines[index_1]->ops[index_2][1]);
+        if (i > 255 || i < 0)
+            i = i % 256;
+        errno = i;
+    }
+    if (data->lines[index_1]->ops[index_2][1] && data->lines[index_1]->ops[index_2][0] && data->lines[index_1]->ops[index_2][2])
+       return (write(2, "bash: exit: too many arguments\n", 32), errno = 1, exit_child(data, index_1, index_2, 1));
+    else
+        error_code(data);
+}
+
 void    exit_cmnd_child(t_pipex *data, int index_1, int index_2)
 {
-    long i;
+    long long i;
 
     i = 0;
     if (data->lines[index_1]->ops[index_2][1])
     {
         i = ft_atoi(data->lines[index_1]->ops[index_2][1]);
-        if (!only_dec(data->lines[index_1]->ops[index_2][1]) || i > INT_MAX || i < INT_MIN)
+        if (is_overflow(data, index_1, index_2) || !only_dec(data->lines[index_1]->ops[index_2][1]))
             return (write(2, "bash: exit: numeric argument required\n", 39), errno = 2, error_code(data));
         if (i > 255 || i < 0)
             i = i % 256;
@@ -775,27 +864,6 @@ void    exit_cmnd_child(t_pipex *data, int index_1, int index_2)
        return (write(2, "bash: exit: too many arguments\n", 32), errno = 1, error_code(data));
     error_code(data);
         // return (write(2, "too many arguments\n", 20), data->last_exit_status = 1);
-}
-
-void    exit_cmnd(t_pipex *data, int index_1, int index_2)
-{
-    long i;
-
-    i = 0;
-    printf("exit\n");
-    if (data->lines[index_1]->ops[index_2][1])
-    {
-        i = ft_atoi(data->lines[index_1]->ops[index_2][1]);
-        if (!only_dec(data->lines[index_1]->ops[index_2][1]) || i > INT_MAX || i < INT_MIN)
-            return (write(2, "bash: exit: numeric argument required\n", 39), errno = 2, error_code(data));
-        if (i > 255 || i < 0)
-            i = i % 256;
-        errno = i;
-    }
-    if (data->lines[index_1]->ops[index_2][1] && data->lines[index_1]->ops[index_2][0] && data->lines[index_1]->ops[index_2][2])
-       return (write(2, "bash: exit: too many arguments\n", 32), errno = 1, exit_child(data, index_1, index_2, 1));
-    else
-        error_code(data);
 }
 
 void mini_parent(t_pipex *data, int index_1, int index_2)

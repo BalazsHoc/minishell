@@ -14,7 +14,7 @@ char *join_this(char *s1, char *s2, t_pipex *data)
         i++;
     while (s2 && s2[j])
         j++;
-    if (i + j == 0)
+    if (i + j == 0)  
         return (NULL);
     new = ft_calloc(sizeof(char), (i + j + 1 + 1), data);
     new[i + j] = '\n';
@@ -135,28 +135,31 @@ int check_infile(t_pipex *data, int index_1, int index_2)
 
 void    handle_child(t_pipex *data, int index_1, int index_2)
 {
-    // printf("CHILD: I: %d | cmnd_count: %d\n", index_2, data->lines[index_1]->cmnd_count);
+    // printf("CHILD: I: %d | cmnd_count: %d | FD: %d \n", index_2, data->lines[index_1]->cmnd_count, data->lines[index_1]->fd_outfiles[index_2]);
     data->fd_in = 0;
     data->fd_out= 0;
     if (check_infile(data, index_1, index_2))
         data->lines[index_1]->fd_infiles[index_2] = open_this_read(data, data->lines[index_1]->cmnds[index_2][is_red_inline(data, index_1, index_2) + 1]);
-    if (data->lines[index_1]->fd_infiles[index_2])
+    if (data->lines[index_1]->fd_infiles[index_2] != -1)
         data->fd_in = dup2(data->lines[index_1]->fd_infiles[index_2], STDIN_FILENO);
     // IF NORMAL
-    else if (!data->lines[index_1]->fd_infiles[index_2] && !check_here_doc(data, index_1, index_2 + 1) && !data->lines[index_1]->input[index_2] && index_2 > 0)
+    else if (index_2 > 0 && data->lines[index_1]->pipes[index_2][1] != -1 && data->lines[index_1]->fd_infiles[index_2] == -1
+        && !check_here_doc(data, index_1, index_2))
         data->fd_in = dup2(data->lines[index_1]->pipes[index_2][0], STDIN_FILENO);
     // IF HEREDOC
-    else if (!data->lines[index_1]->fd_infiles[index_2] && check_here_doc(data, index_1, index_2))
+    else if (data->lines[index_1]->buf_pipes[index_2][1] != -1 && data->lines[index_1]->fd_infiles[index_2] == -1 
+        && check_here_doc(data, index_1, index_2))
         data->fd_in = dup2(data->lines[index_1]->buf_pipes[index_2][0], STDIN_FILENO);
     if (data->fd_in == -1)
-        return (perror("error dup2"), error_code(data));
-    
-    if (!data->lines[index_1]->fd_outfiles[index_2] && index_2 < data->lines[index_1]->cmnd_count - 1)
+        return (perror("in dup2"), close_children_pipes(data, index_1, index_2), error_code(data));
+    if (index_2 < data->lines[index_1]->cmnd_count - 1
+        && data->lines[index_1]->pipes[index_2 + 1][1] != -1
+        && data->lines[index_1]->fd_outfiles[index_2] == -1)
         data->fd_out = dup2(data->lines[index_1]->pipes[index_2 + 1][1], STDOUT_FILENO);
-    else if (data->lines[index_1]->fd_outfiles[index_2])
+    else if (data->lines[index_1]->fd_outfiles[index_2] != -1)
         data->fd_out = dup2(data->lines[index_1]->fd_outfiles[index_2], STDOUT_FILENO);
     if (data->fd_out == -1)
-        return (perror("error dup2"), error_code(data));
+        return (perror("out dup2"), close_children_pipes(data, index_1, index_2), error_code(data));
     close_children_pipes(data, index_1, index_2);
     if (execve(data->lines[index_1]->paths[index_2], data->lines[index_1]->ops[index_2], NULL) == -1)
         perror("execve"), error_code(data);
@@ -164,31 +167,31 @@ void    handle_child(t_pipex *data, int index_1, int index_2)
 
 void    handle_mini_child(t_pipex *data, int index_1, int index_2)
 {
-    data->fd_out = dup(STDOUT_FILENO);
-    data->fd_in = dup(STDIN_FILENO);
+    data->fd_in = 0;
+    data->fd_out= 0;
     if (check_infile(data, index_1, index_2))
         data->lines[index_1]->fd_infiles[index_2] = open_this_read(data, data->lines[index_1]->cmnds[index_2][is_red_inline(data, index_1, index_2) + 1]);
-    if (data->lines[index_1]->fd_infiles[index_2])
+    if (data->lines[index_1]->fd_infiles[index_2] != -1)
         data->fd_in = dup2(data->lines[index_1]->fd_infiles[index_2], STDIN_FILENO);
-    else if (!data->lines[index_1]->fd_infiles[index_2] 
-        && !check_here_doc(data, index_1, index_2 + 1) && !check_here_doc(data, index_1, index_2) && (!data->lines[index_1]->input[index_2] && index_2 > 0))
+    else if (data->lines[index_1]->pipes[index_2][1] != -1 && data->lines[index_1]->fd_infiles[index_2] == -1
+        && !check_here_doc(data, index_1, index_2) && index_2 > 0)
         data->fd_in = dup2(data->lines[index_1]->pipes[index_2][0], STDIN_FILENO);
-    else if (!data->lines[index_1]->fd_infiles[index_2] && (data->lines[index_1]->input[index_2]))
+    else if (data->lines[index_1]->buf_pipes[index_2][1] != -1 && data->lines[index_1]->fd_infiles[index_2] == -1
+        && check_here_doc(data, index_1, index_2))
         data->fd_in = dup2(data->lines[index_1]->buf_pipes[index_2][0], STDIN_FILENO);
     if (data->fd_in == -1)
         return (perror("error dup2"), error_code(data));
-    if (!data->lines[index_1]->fd_outfiles[index_2] && index_2 < data->lines[index_1]->cmnd_count - 1)
+    if (index_2 < data->lines[index_1]->cmnd_count - 1
+        && data->lines[index_1]->fd_outfiles[index_2] == -1
+        && data->lines[index_1]->pipes[index_2 + 1][1] != -1)
         data->fd_out = dup2(data->lines[index_1]->pipes[index_2 + 1][1], STDOUT_FILENO);
-    else if (data->lines[index_1]->fd_outfiles[index_2])
+    else if (data->lines[index_1]->fd_outfiles[index_2] != -1)
         data->fd_out = dup2(data->lines[index_1]->fd_outfiles[index_2], STDOUT_FILENO);
     if (data->fd_out == -1)
         return (perror("error dup2"), error_code(data));
-    close_children_pipes(data, index_1, index_2);
     mini_child(data, index_1, index_2);
-    // if (dup2(data->fd_in, STDIN_FILENO) == -1)
-    //     return (perror("dup2"), error_code(data));
-    // if (dup2(data->fd_out, STDOUT_FILENO) == -1)
-    //     return (perror("dup2"), error_code(data));
+    close_pipe(data, &data->fd_out);
+    close_children_pipes(data, index_1, index_2);
     error_code(data);
 }
 
@@ -203,9 +206,10 @@ void exec_cmnd(t_pipex *data, int index_1, int index_2)
 	else if (!data->pid[index_2])
         handle_child(data, index_1, index_2);
     else if (data->pid[index_2] && data->lines[index_1]->input[index_2] && data->lines[index_1]->pipes[index_2][1])
+    {
         write(data->lines[index_1]->buf_pipes[index_2][1], data->lines[index_1]->input[index_2], ft_strlen(data->lines[index_1]->input[index_2]));
-    else if (check_here_doc(data, index_1, index_2))
-        write(data->lines[index_1]->buf_pipes[index_2][1], "", 1);
+        free_str(&data->lines[index_1]->input[index_2]);
+    }
     close_pipe(data, &data->lines[index_1]->pipes[index_2][1]);
     
     // close_pipe(data, &data->lines[index_1]->buf_pipes[index_2][0]);
@@ -215,6 +219,8 @@ void exec_mini(t_pipex *data, int index_1, int index_2)
 {
     if (data->lines[index_1]->cmnds[1])
     {
+        if (check_here_doc(data, index_1, index_2) && data->lines[index_1]->pipes[index_2][1])
+            create_buf_pipe(data, index_1, index_2);
         data->pid[index_2] = fork();
         if (data->pid[index_2] < 0)
             return (perror("fork"), error_code(data));

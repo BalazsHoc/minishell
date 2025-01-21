@@ -32,13 +32,13 @@ void	print_that_shit(t_pipex *data, int index_1)
 				printf("FLAG");
 			printf("\n");
 		}
-		j = -1;
-		if (data->lines[index_1]->ops && data->lines[index_1]->ops[i])
-		{
-			while (data->lines[index_1]->ops[i][++j])
-				printf("OP:   %d:%d | |%s|\n", i, j, data->lines[index_1]->ops[i][j]);
-		}
-		printf("PATH: |%s|\n", data->lines[index_1]->paths[i]);
+		// j = -1;
+		// if (data->lines[index_1]->ops && data->lines[index_1]->ops[i])
+		// {
+		// 	while (data->lines[index_1]->ops[i][++j])
+		// 		printf("OP:   %d:%d | |%s|\n", i, j, data->lines[index_1]->ops[i][j]);
+		// }
+		// printf("PATH: |%s|\n", data->lines[index_1]->paths[i]);
 	}
 	// i = -1;
 	// while (data->mini_env[++i])
@@ -251,19 +251,23 @@ void init_fds(t_pipex *data, int index)
 
 	i = -1;
 	while (++i < data->lines[index]->cmnd_count)
-		data->lines[index]->fd_infiles[i] = 0;
-	i = -1;
-	while (++i < data->lines[index]->cmnd_count)
-		data->lines[index]->fd_outfiles[i] = 0;
+	{
+		data->lines[index]->fd_infiles[i] = -1;
+		data->lines[index]->fd_outfiles[i] = -1;
+		data->lines[index]->pipes[i][1] = -1;
+		data->lines[index]->pipes[i][0] = -1; 
+		data->lines[index]->buf_pipes[i][0] = -1; 
+		data->lines[index]->buf_pipes[i][1] = -1; 
+	}
 }
 
 void	init_pipes_pids(t_pipex *data, int index)
 {
 	data->lines[index]->fd_infiles = ft_calloc(sizeof(int), data->lines[index]->cmnd_count, data);
 	data->lines[index]->fd_outfiles = ft_calloc(sizeof(int), data->lines[index]->cmnd_count, data);
-	init_fds(data, index);
 	data->lines[index]->pipes = ft_calloc(sizeof(int[2]), (data->lines[index]->cmnd_count), data);
 	data->lines[index]->buf_pipes = ft_calloc(sizeof(int[2]), (data->lines[index]->cmnd_count), data);
+	init_fds(data, index);
 	// if (!data->lines[index]->pipes)
 		// return (perror("malloc failed"), error_code(data));
     create_pipes(data, index);
@@ -396,9 +400,9 @@ void	parsing(t_pipex *data)
 		init_inputs(data, i);
 		init_pos_in_line(data, i);
 		init_cmnds(data, i, -1);
-		// print_that_shit(data, i);
 		init_lines_2(data, i, -1, 0);
 		init_pipes_pids(data, i);
+		// print_that_shit(data, i);
 		if (!check_reds(data, i, -1, -1))
 			return (free_lines(data));
 		init_ops(data, i);

@@ -460,7 +460,9 @@ int dollar_in(t_pipex *data, int j, int open)
 			|| (data->line[j + 1] && data->line[j + 2] && (is_space(data->line[j + 2]) || data->line[j + 2] == '\n') && is_quote(data->line[j + 1]))))
 			break;
 		// printf("DOLLAR 4: |%s| OPEN: %d\n", data->line + j, open);
-		if (open != 1 && data->line[j] == '$' && data->line[j + 1] && (is_char(data->line[j + 1]) || data->line[j + 1] == '?' || data->line[j + 1] == '$') && (!is_space(data->line[j + 1]) && !(open == 2 && is_quote_two(data->line[j + 1]))))
+		if (open != 1 && data->line[j] == '$' && data->line[j + 1] &&
+			(is_char(data->line[j + 1]) || data->line[j + 1] == '?' || data->line[j + 1] == '$') && (!is_space(data->line[j + 1])
+				&& !(open == 2 && is_quote_two(data->line[j + 1]))))
 			return (j);
 			// return (printf("FOUND DOLLAR IN %d\n", j), j);
 		j++;
@@ -608,8 +610,7 @@ void	fill_cmnds(t_pipex *data, int index_1, int i, int j)
 				|| (!open && !is_real_pipe(data->line, j) && data->line[j] != '|' && !is_quote(data->line[j]) && !is_space(data->line[j]) && is_delim_back(data->line, j - 1) && !is_red_1(data->line[j]))
 				// || (((is_red_in(data->line, j - 1) && is_red_out(data->line, j)) || (is_red_out(data->line, j - 1) && is_red_in(data->line, j))))
 				|| (is_red_1(data->line[j - 1]) && !is_red_1(data->line[j]) && !is_space(data->line[j]) && data->line[j] != '|' && !open)
-				|| (!open && (is_real_pipe(data->line, j - 1)
-					|| (j > 1 && data->line[j - 1] == '|' && data->line[j - 2] == '>')) && !is_space(data->line[j])))))
+				|| (!open && is_real_pipe(data->line, j - 1) && !is_space(data->line[j])))))
 			&& ((dollar_in(data, j, open) >= 0 && count_expansion(data, j, open))
 				|| dollar_in(data, j, open) == -1))
 				// && (!open || ((open == 1 && is_quote_one(line[j - 1])) || (open == 2 && is_quote_two(line[j - 1])))))
@@ -648,7 +649,7 @@ void	fill_cmnds(t_pipex *data, int index_1, int i, int j)
 		// printf("I1: %d\n", i);
 		if (!data->line[j + 1] )
 			break;
-		if (!open && data->line[j] == '|' && (is_real_pipe(data->line, j) && j > 0 && data->line[j - 1] != '>'))
+		if (!open && is_real_pipe(data->line, j))
 			k++;
 		// printf("I2: %d\n", i);
 	}

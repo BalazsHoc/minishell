@@ -60,20 +60,19 @@ int is_valid_in(t_pipex *data, int index_1, int index_2)
 
     i = -1;
     fd = -1;
-    check = -1;
+    check = 0;
     while (data->lines[index_1]->cmnds[index_2][++i])
     {
         if (!ft_strncmp(data->lines[index_1]->cmnds[index_2][i], "<", 2) && !data->lines[index_1]->red_cmnd[index_2][i] && data->lines[index_1]->cmnds[index_2][i + 1]
             && data->lines[index_1]->red_cmnd[index_2][i] == 0)
         {
-            close_pipe(data, &fd);
             fd = open(data->lines[index_1]->cmnds[index_2][i + 1], O_RDONLY);
             if (fd == -1)
-                return (0);
+                return (-1);
             check = i + 1;
+            close_pipe(data, &fd);
         }
     }
-    close_pipe(data, &fd);
     return (check);
 }
 
@@ -128,9 +127,9 @@ int open_out(t_pipex *data, int index_1, int index_2)
     int fd;
 
     i = -1;
-    fd = 0;
-    if (!is_valid_in(data, index_1, index_2) && first_invalid_in(data, index_1, index_2) < first_invalid_out(data, index_1, index_2))
-        return (1);
+    fd = -1;
+    if (is_valid_in(data, index_1, index_2) == -1 && first_invalid_in(data, index_1, index_2) < first_invalid_out(data, index_1, index_2))
+        return (-1);
     while (data->lines[index_1]->cmnds[index_2][++i])
     {
         if ((!ft_strncmp(data->lines[index_1]->cmnds[index_2][i], ">>", 3)
@@ -288,7 +287,7 @@ int check_exec_cmnd_1(t_pipex *data, int index, int i)
 {
     if (ft_strncmp(data->lines[index]->paths[i], "pathnfound", 11)
             // && (is_valid_in(data, index, i) - 1 == is_red_inline(data, index, i) ) && data->fd_out >= 0 && data->lines[index]->ops[i][0][0])
-            && is_valid_in(data, index, i) && data->fd_out >= 0 && data->lines[index]->ops[i][0][0])
+            && is_valid_in(data, index, i) >= 0 && data->fd_out >= 0 && data->lines[index]->ops[i][0][0] && data->lines[index]->pipes[i][1] != -1 && data->lines[index]->pipes[i][0] != -1)
         return (1);
     return (0);
 }
@@ -309,7 +308,7 @@ int is_path(t_pipex *data)
 int check_exec_cmnd_2(t_pipex *data, int index, int i)
 {
 
-    if (!is_valid_in(data, index, i) && !data->lines[index]->exit_codes[i])
+    if (is_valid_in(data, index, i) == -1 && !data->lines[index]->exit_codes[i])
     {
         printf("bash: %s: No such file or directory\n", data->lines[index]->cmnds[i][first_invalid_in(data, index, i)]);
         exit_child(data, index, i, 1);
@@ -350,13 +349,12 @@ int here_doc(t_pipex *data, int index_1, int index_2)
                 infile = get_input(data, index_1, index_2, i);
                 if (!infile)
                     break ;
-                if (((!ft_strncmp(data->lines[index_1]->paths[index_2], "pathnfound", 11) || (is_valid_in(data, index_1, index_2) == 0))
+                if (((!ft_strncmp(data->lines[index_1]->paths[index_2], "pathnfound", 11) || (is_valid_in(data, index_1, index_2) == -1))
                     && i == is_red_inline(data, index_1, index_2)) || i != is_red_inline(data, index_1, index_2))
                     free_str(&infile);
                 else 
                     data->lines[index_1]->input[index_2] = infile;
                 infile = NULL;
-                // printf("THIS HERE: %s\n", data->lines[index_1]->input[index_2]);
             }
             // else if (!ft_strncmp(data->lines[index_1]->cmnds[index_2][i], "<<", 3)
             //     && (!ft_strncmp(data->lines[index_1]->paths[index_2], "pathnfound", 11)
@@ -401,7 +399,7 @@ void    exec_cmnds(t_pipex *data, int index, int i)
             continue;
         else if (!ft_strncmp(data->lines[index]->paths[i], "pathnfound", 11)
             && data->lines[index]->ops[i][0] && !data->lines[index]->exit_codes[i] 
-            && write(2, "bash: command not found: ", 26) && write(2, data->lines[index]->ops[i][0], ft_strlen(data->lines[index]->ops[i][0])) && write(2, "\n", 1))
+            && write(2, data->lines[index]->ops[i][0], ft_strlen(data->lines[index]->ops[i][0])) && write(2, ": command not found\n", 21))
             //  data->lines[index]->ops[i][0]))
             exit_child(data, index, i, 127);
         close_pipes(data, index, i);

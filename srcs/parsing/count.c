@@ -128,8 +128,7 @@ int	count_elem(t_pipex *data, int index_1, int i, int j)
 					|| (!open && data->line[j] != '|' && !is_real_pipe(data->line, j) && !is_quote(data->line[j]) && !is_space(data->line[j]) && is_delim_back(data->line, j - 1) && !is_red_1(data->line[j]))
 					// || ((is_red_in(data->line, j - 1) && is_red_out(data->line, j)) || (is_red_out(data->line, j - 1) && is_red_in(data->line, j)))
 					|| (is_red_1(data->line[j - 1]) && !is_red_1(data->line[j]) && !is_space(data->line[j]) && data->line[j] != '|' && !open)
-					|| (!open && (is_real_pipe(data->line, j - 1)
-						|| (data->line[j - 1] == '|' && data->line[j - 2] == '>')) && !is_space(data->line[j]))))))
+					|| (!open && is_real_pipe(data->line, j - 1) && !is_space(data->line[j]))))))
 					data->count_elem++;
 		}
 		else if (!open && is_real_pipe(data->line, j) && data->line[j] == '|' && --i != INT_MIN)

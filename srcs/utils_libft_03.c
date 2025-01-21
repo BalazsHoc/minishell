@@ -1,10 +1,10 @@
 #include "../minishell.h"
 
-long	ft_atoi(const char *nptr)
+long long	ft_atoi(const char *nptr)
 {
 	int		i;
 	int		sign;
-	long	result;
+	long long	result;
 
 	i = 0;
 	sign = 1;
@@ -20,10 +20,6 @@ long	ft_atoi(const char *nptr)
 			sign *= -1;
 		i++;
 	}
-	while (nptr[i] == '0')
-		i++;
-	if (ft_strlen(nptr + i) >= 11)
-		return ((long)INT_MAX + 1);
 	while (nptr[i] >= '0' && nptr[i] <= '9')
 	{
 		result = result * 10 + (nptr[i] - '0');
