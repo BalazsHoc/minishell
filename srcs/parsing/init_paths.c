@@ -19,10 +19,22 @@ void set_cur_path(t_pipex *data)
 
 int is_mini(t_pipex *data, int index_1, int index_2)
 {
-	if (data->lines[index_1]->ops[index_2] && data->lines[index_1]->ops[index_2][0] && (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "env", 4) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "export", 7)
+	if (data->lines[index_1]->ops[index_2] && data->lines[index_1]->ops[index_2][0] 
+		&& (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "env", 4) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "export", 7)
+		|| !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/bin/env", 9) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/usr/bin/env", 13)
 		|| !ft_strncmp(data->lines[index_1]->ops[index_2][0], "cd", 3) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "unset", 6)
 		|| !ft_strncmp(data->lines[index_1]->ops[index_2][0], "pwd", 4) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "exit", 5)
+		|| !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/usr/bin/pwd", 13) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/bin/pwd", 9)
 		|| (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "ls", 3) && !is_valid_cwd(data))))
+		return (1);
+	return (0);
+}
+
+int is_mini_2(t_pipex *data, int index_1, int index_2)
+{
+	if (data->lines[index_1]->ops[index_2] && data->lines[index_1]->ops[index_2][0] 
+		&& (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "/bin/env/", 10) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/usr/bin/env/", 14)
+		|| !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/usr/bin/pwd/", 14) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/bin/pwd/", 10)))
 		return (1);
 	return (0);
 }

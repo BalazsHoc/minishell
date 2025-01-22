@@ -32,13 +32,13 @@ void	print_that_shit(t_pipex *data, int index_1)
 				printf("FLAG");
 			printf("\n");
 		}
-		// j = -1;
-		// if (data->lines[index_1]->ops && data->lines[index_1]->ops[i])
-		// {
-		// 	while (data->lines[index_1]->ops[i][++j])
-		// 		printf("OP:   %d:%d | |%s|\n", i, j, data->lines[index_1]->ops[i][j]);
-		// }
-		// printf("PATH: |%s|\n", data->lines[index_1]->paths[i]);
+		j = -1;
+		if (data->lines[index_1]->ops && data->lines[index_1]->ops[i])
+		{
+			while (data->lines[index_1]->ops[i][++j])
+				printf("OP:   %d:%d | |%s|\n", i, j, data->lines[index_1]->ops[i][j]);
+		}
+		printf("PATH: |%s|\n", data->lines[index_1]->paths[i]);
 	}
 	// i = -1;
 	// while (data->mini_env[++i])
@@ -122,6 +122,17 @@ int	one_of_those(t_pipex *data, int index_1, int index_2)
 		|| (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "/bin", 4) && one_of_those_2(data, index_1, index_2, 4))
 		|| (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "/sbin", 5) && one_of_those_2(data, index_1, index_2, 5))
 		|| (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "/snap", 5) && one_of_those_2(data, index_1, index_2, 5)))
+		return (printf("ONE OF THOSE\n"), 1);
+	return (0);
+}
+
+int	one_of_those_3(t_pipex *data, int index_1, int index_2)
+{
+	if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "/", 2) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], ".", 2)
+		|| (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "/usr", 4))
+		|| (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "/bin", 4))
+		|| (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "/sbin", 5))
+		|| (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "/snap", 5)))
 		return (1);
 	return (0);
 }
@@ -402,11 +413,11 @@ void	parsing(t_pipex *data)
 		init_cmnds(data, i, -1);
 		init_lines_2(data, i, -1, 0);
 		init_pipes_pids(data, i);
-		// print_that_shit(data, i);
 		if (!check_reds(data, i, -1, -1))
 			return (free_lines(data));
 		init_ops(data, i);
 		init_paths(data, i, -1);
+		// print_that_shit(data, i);
 		check_folder(data, i);
 		set_cur_path(data);
 		start_exec(data, i, -1, 0);

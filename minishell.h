@@ -151,6 +151,7 @@ void 	set_cur_path(t_pipex *data);
 char	*find_path(t_pipex*data, char *cmnd);
 
 int		is_mini(t_pipex *data, int index_1, int index_2);
+int		is_mini_2(t_pipex *data, int index_1, int index_2);
 
 //	count.c
 
@@ -182,6 +183,10 @@ int		is_red_in(char *str, int index);
 int		is_red_out(char *str, int index);
 
 
+int		one_of_those(t_pipex *data, int index_1, int index_2);
+int		one_of_those_3(t_pipex *data, int index_1, int index_2);
+
+
 // start_exec.c
 
 char	*get_input(t_pipex *data, int index_1, int index_2, int index_3);
@@ -190,6 +195,9 @@ int		is_red_inline(t_pipex *data, int index_1, int index_2);
 int		is_in_inline(t_pipex *data, int index_1, int index_2);
 int 	is_valid_in(t_pipex *data, int index_1, int index_2);
 int		check_exec_cmnd_1(t_pipex *data, int index, int i);
+
+
+int		check_cmnd_as_dir(t_pipex *data, int index, int i);
 
 
 int		last_one(char **arr);
@@ -267,6 +275,7 @@ char	*malloc_str(size_t size, t_pipex *data);
 
 char		*ft_strchr(const char *s, int c);
 char		*ft_strdup(t_pipex *data, const char *s);
+char		*ft_strdup_2(t_pipex *data, const char *s);
 size_t		ft_strlen(const char *str);
 char		*ft_strtrim(char *s1, char const *set, t_pipex *data);
 

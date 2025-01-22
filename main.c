@@ -91,10 +91,7 @@ int	main(int argc, char **argv, char **env)
 		g_signal = 0;
 		data->line = readline("minishell$ ");
 		if (!data->line)
-		{
-			printf("exit\n");
-			error_code(data);
-		} 
+			return (printf("exit\n"), errno = data->last_exit_status, error_code(data), 0);
 		if (data->line[0] != '\0')
 		{
 			data->line = ft_strtrim(data->line, " \n\t\v\f\r\b", data);

@@ -19,14 +19,14 @@ void    check_folder(t_pipex *data, int index)
         }
         while (data->lines[index]->ops[i][0][++j]) 
         {
-            if (data->lines[index]->ops[i][0][j] == '/')
+            if (data->lines[index]->ops[i][0][j] == '/' && !check_cmnd_as_dir(data, index, i))
             {
                 ptr = opendir(data->lines[index]->ops[i][0]);
                 if (ptr)
                     return (printf("bash: %s: Is a directory\n", data->lines[index]->ops[i][0]), closedir(ptr), exit_child(data, index, i, 126));
                 else if (errno == EACCES)
                     return (printf("bash: %s: Permission denied\n", data->lines[index]->ops[i][0]), exit_child(data, index, i, 126)); 
-                else if (errno == ENOTDIR)
+                else
                     return (printf("bash: %s: No such file or directory\n", data->lines[index]->ops[i][0]), exit_child(data, index, i, 127));
             }
         }

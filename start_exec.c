@@ -304,22 +304,43 @@ int is_path(t_pipex *data)
 	}
     return (0);
 }
+int check_cmnd_as_dir(t_pipex *data, int index, int i)
+{
+    char *buf_1;
+    char *buf_2;
+    int j;
+
+    j = 0;
+    buf_1 = NULL;
+    buf_2 = NULL;
+    while (data->lines[index]->ops[i][0][j])
+        j++;
+    if (is_mini_2(data, index, i))
+        return (1);
+    else if (data->lines[index]->ops[i][0][j - 1] == '/' && one_of_those_3(data, index, i))
+    {
+        buf_1 = ft_strdup_2(data, data->lines[index]->ops[i][0]);
+        buf_2 = find_path(data, buf_1);
+        if (buf_2)
+            return (free_str(&buf_1), free_str(&buf_2), 1);
+        return (free_str(&buf_1), free_str(&buf_2), 0);
+    }
+    return (0);
+}
 
 int check_exec_cmnd_2(t_pipex *data, int index, int i)
 {
-
     if (is_valid_in(data, index, i) == -1 && !data->lines[index]->exit_codes[i])
-    {
-        printf("bash: %s: No such file or directory\n", data->lines[index]->cmnds[i][first_invalid_in(data, index, i)]);
-        exit_child(data, index, i, 1);
-        return (1);
-    }
+        return (write(2, "bash: ", 6),
+            write(2, data->lines[index]->cmnds[i][first_invalid_in(data, index, i)],
+                ft_strlen(data->lines[index]->cmnds[i][first_invalid_in(data, index, i)])), write(2, ": No such file or directory\n", 29), exit_child(data, index, i, 1), 1);
+    else if(check_cmnd_as_dir(data, index, i))
+        return (write(2, "bash: ", 6),
+            write(2, data->lines[index]->ops[i][0], ft_strlen(data->lines[index]->ops[i][0])), write(2, ": Not a directory\n", 19), exit_child(data, index, i, 126), 1);
     else if (!is_path(data) && !ft_strncmp(data->lines[index]->paths[i], "pathnfound", 11))
-    {
-        printf("bash: %s: No such file or directory\n", data->lines[index]->ops[i][0]);
-        exit_child(data, index, i, 127);
-        return (1);
-    }
+        return (write(2, "bash: ", 6),
+            write(2, data->lines[index]->ops[i][0],
+                ft_strlen(data->lines[index]->ops[i][0])), write(2, ": No such file or directory\n", 29), exit_child(data, index, i, 127), 1);
     return (0);
 }
 

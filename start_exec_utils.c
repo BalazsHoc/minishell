@@ -845,7 +845,7 @@ void    exit_cmnd(t_pipex *data, int index_1, int index_2)
     if (data->lines[index_1]->ops[index_2][1] && data->lines[index_1]->ops[index_2][0] && data->lines[index_1]->ops[index_2][2])
        return (write(2, "bash: exit: too many arguments\n", 32), errno = 1, exit_child(data, index_1, index_2, 1));
     else
-        error_code(data);
+        return (errno = data->last_exit_status, error_code(data));
 }
 
 void    exit_cmnd_child(t_pipex *data, int index_1, int index_2)
@@ -857,15 +857,14 @@ void    exit_cmnd_child(t_pipex *data, int index_1, int index_2)
     {
         i = ft_atoi(data->lines[index_1]->ops[index_2][1]);
         if (is_overflow(data, index_1, index_2) || !only_dec(data->lines[index_1]->ops[index_2][1]))
-            return (write(2, "bash: exit: numeric argument required\n", 39), errno = 2, error_code(data));
+            return (write(2, "bash: exit: ", 13), write(2, data->lines[index_1]->ops[index_2][1], ft_strlen(data->lines[index_1]->ops[index_2][1])), write(2, ": numeric argument required\n", 29), errno = 2, error_code(data));
         if (i > 255 || i < 0)
             i = i % 256;
         errno = i;
     }
     if (data->lines[index_1]->ops[index_2][2])
        return (write(2, "bash: exit: too many arguments\n", 32), errno = 1, error_code(data));
-    error_code(data);
-        // return (write(2, "too many arguments\n", 20), data->last_exit_status = 1);
+    return (errno = data->last_exit_status, error_code(data));
 }
 
 void mini_parent(t_pipex *data, int index_1, int index_2)
@@ -876,11 +875,11 @@ void mini_parent(t_pipex *data, int index_1, int index_2)
         export_update(data, index_1, index_2, -1);
     else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "export", 7) && !data->lines[index_1]->ops[index_2][1])
         export_display(data);
-    else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "env", 4) && !data->lines[index_1]->ops[index_2][1])
+    else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "env", 4) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/bin/env", 9) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/usr/bin/env", 13))
         print_list(data->cur_env);
     else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "unset", 6))
         unset_cmnd(data, index_1, index_2, -1);
-    else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "pwd", 4))
+    else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "pwd", 4) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/bin/pwd", 9) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/usr/bin/pwd", 13))
         printf("%s\n", data->cur_path);
     else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "exit", 5))
         exit_cmnd(data, index_1, index_2);
@@ -896,11 +895,11 @@ void mini_child(t_pipex *data, int index_1, int index_2)
         export_update(data, index_1, index_2, -1);
     else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "export", 7) && !data->lines[index_1]->ops[index_2][1])
         export_display(data);
-    else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "env", 4) && !data->lines[index_1]->ops[index_2][1])
+    else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "env", 4) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/bin/env", 9) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/usr/bin/env", 13))
         print_list(data->cur_env);
     else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "unset", 6))
         unset_cmnd(data, index_1, index_2, -1);
-    else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "pwd", 4))
+    else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "pwd", 4) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/bin/pwd", 9) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/usr/bin/pwd", 13))
         printf("%s\n", data->cur_path);
     else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "exit", 5))
         exit_cmnd_child(data, index_1, index_2);

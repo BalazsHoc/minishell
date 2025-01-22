@@ -30,6 +30,25 @@ char	*ft_strdup(t_pipex *data, const char *s)
 	return (ptr);
 }
 
+char	*ft_strdup_2(t_pipex *data, const char *s)
+{
+	size_t	i;
+	size_t	j;
+	char	*ptr;
+
+	i = 0;
+	j = 0;
+	while (s[j] != '\0' && s[j] != '/')
+		j++;
+	ptr = ft_calloc(sizeof(char), (j + 1), data);
+	while (i < j)
+	{
+		ptr[i] = s[i];
+		i++;
+	}
+	return (ptr);
+}
+
 size_t	ft_strlen(const char *str)
 {
 	size_t	i;
