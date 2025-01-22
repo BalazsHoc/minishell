@@ -643,7 +643,8 @@ int count_unset_env(t_pipex *data, int index_1, int index_2)
         while (data->cur_env[j])
         {
             key = key_this(data, data->cur_env[j]);
-            if (ft_strncmp(data->lines[index_1]->ops[index_2][i + 1] , "_", 2) && !ft_strncmp(data->lines[index_1]->ops[index_2][i + 1], key, bigger_one(data->lines[index_1]->ops[index_2][i + 1], key)))
+            if (ft_strncmp(data->lines[index_1]->ops[index_2][i + 1] , "_", 2)
+                && !ft_strncmp(data->lines[index_1]->ops[index_2][i + 1], key, bigger_one(data->lines[index_1]->ops[index_2][i + 1], key)))
                 k++;
             j++;
             free_this(key);
@@ -728,14 +729,15 @@ void unset_export(t_pipex *data, int index_1, int index_2, int i)
     data->buf_array = malloc_unset(data, count_unset_export(data, index_1, index_2), index_1, index_2);
     if (!data->buf_array)
         return ;
-    while (data->cur_env[++i])
+    while (data->export[++i])
     {
         j = -1;
         check = 0;
         key = key_this(data, data->export[i]);
         while (data->lines[index_1]->ops[index_2][++j + 1])
         {
-            if (ft_strncmp(data->lines[index_1]->ops[index_2][j + 1] , "_", 2) && !ft_strncmp(data->lines[index_1]->ops[index_2][j + 1], key, bigger_one(data->lines[index_1]->ops[index_2][j + 1], key)))
+            if (ft_strncmp(data->lines[index_1]->ops[index_2][j + 1] , "_", 2)
+                && !ft_strncmp(data->lines[index_1]->ops[index_2][j + 1], key, bigger_one(data->lines[index_1]->ops[index_2][j + 1], key)))
                 check = 1;
         }
         free_str(&key);

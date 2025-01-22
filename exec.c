@@ -191,6 +191,9 @@ void    handle_mini_child(t_pipex *data, int index_1, int index_2)
         return (perror("error dup2"), error_code(data));
     mini_child(data, index_1, index_2);
     close_pipe(data, &data->fd_out);
+    close_children_pipe(data, &data->fd_in);
+    // close_children_pipe(data, &data->lines[index_1]->pipes[index_2][0]);
+    // close_pipe(data, &data->fd_in);
     close_children_pipes(data, index_1, index_2);
     error_code(data);
 }

@@ -114,7 +114,8 @@ void close_children_pipes(t_pipex *data, int index_1, int index_2)
 {
     close_pipes_array(data, index_1);
     close_pipes(data, index_1, index_2);
-    // close_pipe(data, &data->fd_out);
+    // close_children_pipe(data, &data->fd_out);
+    // close_children_pipe(data, &data->fd_in);
     close_pipe(data, &data->fd_in);
     // if (check_here_doc(data, index_1, index_2) && printf("CLOSE BUF PIPES\n"))
     //     close_buf_pipes(data, index_1, index_2);
@@ -147,10 +148,22 @@ void close_pipes_array(t_pipex *data, int index_1)
 }
 
 
+void close_children_pipe(t_pipex *data, int *fd)
+{
+    // printf("CLOSE THIS: %d\n", *fd);
+    // if (*fd >= 0 && printf("CLOSE CHILD: %d\n", *fd) && close(*fd) == -1)
+    if (*fd >= 0 && close(*fd) == -1)
+    {
+        perror("close");
+        error_code(data);
+    }
+    *fd = -1;
+}
+
 void close_pipe(t_pipex *data, int *fd)
 {
     // printf("CLOSE THIS: %d\n", *fd);
-    // if (*fd > 2 && printf("CLOSE: %d\n", *fd) && close(*fd) == -1)
+    // if (*fd > 0 && printf("CLOSE PARENT: %d\n", *fd) && close(*fd) == -1)
     if (*fd > 0 && close(*fd) == -1)
     {
         perror("close");

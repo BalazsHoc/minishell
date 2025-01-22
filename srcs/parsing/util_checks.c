@@ -81,11 +81,11 @@ int syntax_check(t_pipex *data, int i, int count)
 	while (data->line[++i])
 	{
 		handle_open(data, i, &open);
-		if (!open && (i == 0 && data->line[0] == '|' && (!data->line[i + 1] || data->line[i + 1] != '|')))
+		if (!open && i == 0 && data->line[0] == '|')
 			return (0);
-		else if (!open && (!is_real_pipe(data->line, i) && data->line[i] != '|' && ++word))
+		else if (!open && !is_real_pipe(data->line, i) && !is_space(data->line[i]) && ++word)
 			count = 0;
-		else if (!open)
+		else if (!open && is_real_pipe(data->line, i))
 			count++;
 		if (count >= 2)
 			return (0);

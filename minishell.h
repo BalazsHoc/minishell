@@ -233,6 +233,7 @@ void	close_pipe(t_pipex *data, int *fd);
 void	close_pipes_array(t_pipex *data, int index_1);
 void	close_everything(t_pipex *data, int index_1);
 void	close_children_pipes(t_pipex *data, int index_1, int index_2);
+void	close_children_pipe(t_pipex *data, int *fd);
 
 
 int		check_here_doc(t_pipex *data, int index_1, int index_2);
