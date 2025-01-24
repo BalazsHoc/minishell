@@ -855,15 +855,17 @@ void    exit_cmnd(t_pipex *data, int index_1, int index_2)
         i = ft_atoi(data->lines[index_1]->ops[index_2][1]);
         if (i > 255 || i < 0)
             i = i % 256;
+        // printf("I: %lld\n", i); 
         errno = i;
     }
     // printf("LAST EXIT STATUS: %d\n", data->last_exit_status);
-    if (data->lines[index_1]->ops[index_2][1] && data->lines[index_1]->ops[index_2][0] && data->lines[index_1]->ops[index_2][2] && data->last_exit_status == 0)
+    if (data->lines[index_1]->ops[index_2][1]
+        && data->lines[index_1]->ops[index_2][0] && data->lines[index_1]->ops[index_2][2] && data->last_exit_status == 0)
        return (write(2, "bash: exit: too many arguments\n", 32), errno = 1, exit_child(data, index_1, index_2, 1));
     else if (data->lines[index_1]->ops[index_2][1] && data->lines[index_1]->ops[index_2][0] && data->lines[index_1]->ops[index_2][2])
        return (write(2, "bash: exit: too many arguments\n", 32), exit_child(data, index_1, index_2, data->last_exit_status));
     else
-        return (errno = data->last_exit_status, error_code(data));
+        return (data->last_exit_status = errno, error_code(data));
 }
 
 void    exit_cmnd_child(t_pipex *data, int index_1, int index_2)
@@ -882,7 +884,7 @@ void    exit_cmnd_child(t_pipex *data, int index_1, int index_2)
     }
     if (data->lines[index_1]->ops[index_2][2])
        return (write(2, "bash: exit: too many arguments\n", 32), errno = 1, error_code(data));
-    return (errno = data->last_exit_status, error_code(data));
+    return (data->last_exit_status = errno, error_code(data));
 }
 
 void print_update_env(t_pipex *data, int index_1, int index_2)
