@@ -313,11 +313,11 @@ int check_cmnd_as_dir(t_pipex *data, int index, int i)
     j = 0;
     buf_1 = NULL;
     buf_2 = NULL;
-    while (data->lines[index]->ops[i][0][j])
+    while (data->lines[index]->ops[i][0] && data->lines[index]->ops[i][0][j])
         j++;
     if (is_mini_2(data, index, i))
         return (1);
-    else if (data->lines[index]->ops[i][0][j - 1] == '/' && one_of_those_3(data, index, i))
+    else if (j > 1 && data->lines[index]->ops[i][0][j - 1] == '/' && one_of_those_3(data->lines[index]->ops[i][0]))
     {
         buf_1 = ft_strdup_2(data, data->lines[index]->ops[i][0]);
         buf_2 = find_path(data, buf_1);
@@ -427,9 +427,149 @@ void    exec_cmnds(t_pipex *data, int index, int i)
     }
 }
 
+int check_key(t_pipex *data, char *cur)
+{
+    int i;
+    int j;
+
+    i = -1;
+    while (data->cur_env[++i])
+    {
+        j = 0;
+        // printf("CHECK: %s\n", data->cur_env[i]);
+        while (data->cur_env[i][j] && data->cur_env[i][j] != '=')
+            j++;
+        // printf("J: %d\n", j);
+        if (!ft_strncmp(data->cur_env[i], cur, j))
+            return (j);
+            // return (ft_strdup(data, data->cur_env[i] + j));
+    }
+    return (0);
+}
+
+char *get_val(t_pipex *data, char *cur)
+{
+    int i;
+    int j;
+
+    i = -1;
+    // printf("CUR: %s\n", cur);
+    while (data->cur_env[++i])
+    {
+        j = 0;
+        while (data->cur_env[i][j] && data->cur_env[i][j] != '=')
+            j++;
+        if (!ft_strncmp(data->cur_env[i], cur, j))
+            return (ft_strdup(data, data->cur_env[i] + j + 1));
+            // return (NULL);
+    }
+    return (NULL);
+}
+
+char *ft_strnjoin_start(t_pipex *data, char *s1, char *s2, int size)
+{
+	char	*joined;
+	int	i;
+	int_least64_t	j;
+
+	if (s1 == 0 && s2 == 0)
+		return (0);
+	i = size + ft_strlen(s2);
+	joined = ft_calloc(sizeof(char), (i + 1), data);
+	i = 0;
+	while (s1[i] && i < size)
+	{
+		joined[i] = s1[i];
+		i++;
+	}
+	j = 0;
+	while (s2[j])
+	{
+		joined[i + j] = s2[j];
+		j++;
+	}
+	return (joined);
+}
+
+// char *ft_strnjoin_end(t_pipex *data, char *s1, char *s2, int size)
+// {
+// 	char	*joined;
+// 	size_t	i;
+// 	size_t	j;
+
+// 	if (s1 == 0 && s2 == 0)
+// 		return (0);
+// 	i = ft_strlen(s1) + ft_strlen(s2);
+// 	joined = ft_calloc(sizeof(char), (i + 1), data);
+// 	i = 0;
+// 	while (s1[i])
+// 	{
+// 		joined[i] = s1[i];
+// 		i++;
+// 	}
+// 	j = 0;
+// 	while (s2[j])
+// 	{
+// 		joined[i + j] = s2[j];
+// 		j++;
+// 	}
+// 	return (joined);
+// }
+
+char *cut_out_key(t_pipex *data, char *cur, int where, int size)
+{
+    char *buf_1;
+    char *buf_2;
+    char *val;
+
+    val = get_val(data, cur + where + 1);
+    // printf("VAL: %s\n", val);
+    // return (NULL);
+    buf_1 = ft_strnjoin_start(data, cur, val, where);
+    // printf("BUF 1: %s\n", buf_1);
+    // printf("where %d | size %d\n", where, size);
+    buf_2 = ft_strjoin(buf_1, cur + where + size + 1, data);
+    // printf("BUF 2: %s\n", buf_2);
+    free_str(&cur);
+    free_str(&val);
+    free_str(&buf_1);
+    return (buf_2);
+}
+
+void    update_input(t_pipex *data, int index_1, int index_2)
+{
+    int i;
+    char *buf;
+
+    buf = data->lines[index_1]->input[index_2];
+    i = -1;
+    while (buf[++i])
+    {
+        if (buf[i] == '$')
+        {
+            buf = cut_out_key(data, buf, i, check_key(data, buf + i + 1));
+            // i += check_key(data, buf + i);
+        }
+    }
+    data->lines[index_1]->input[index_2] = buf;
+}
+
+void handle_expansion_here_doc(t_pipex *data, int index_1)
+{
+    int i;
+
+    i = -1;
+    while (++i < data->lines[index_1]->cmnd_count)
+    {
+        if (data->lines[index_1]->input[i])
+            update_input(data, index_1, i);
+    }
+}
+
 void start_exec(t_pipex *data, int index, int i, int status)
 {
     here_doc(data, index, -1);
+    handle_expansion_here_doc(data, index);
     exec_cmnds(data, index, i);
     close_pipes_array(data, index);
     while (++i < data->lines[index]->cmnd_count)

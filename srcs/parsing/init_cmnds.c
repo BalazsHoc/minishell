@@ -74,7 +74,7 @@ int ft_strlen_2(char *s)
 
 int is_char(char c)
 {
-	if ((c >= 65 && c <= 90) || (c >= 97 && c <= 122) || c =='_')
+	if ((c >= 65 && c <= 90) || (c >= 97 && c <= 122) || c =='_' || (c >= 48 && c <= 57))
 		return (1);
 	return (0);
 }
@@ -150,9 +150,10 @@ char *extract_key(t_pipex *data, int j, int open, int check)
 
 	key = ft_calloc(sizeof(char), (count_key(data->line, j, open) + 1), data);
 	k = 0;
+	// printf("EXTRACT KEY %s\n",data->line + j);
 	while (data->line[j])
 	{
-		// printf("OPEN: %d at %s\n", open, line + j);
+		// printf("OPEN: %d at %s\n", open, data->line + j);
 		if (check && open == 2 && (!data->line[j] || !is_char(data->line[j])))
 			break;
 		if (check && !open && (!data->line[j] || !is_char(data->line[j])))
@@ -189,6 +190,7 @@ char *find_elem(t_pipex *data, int i, int open)
 	char	*elem;
 	char	*key;
 	int		j;
+	int		k;
 
 	j = -1;
 	key = extract_key(data, i, open, 0);
@@ -196,9 +198,15 @@ char *find_elem(t_pipex *data, int i, int open)
 	elem = NULL;
 	while (data->cur_env[++j])
 	{
+		k = 0;
+		while (data->cur_env[j][k] && data->cur_env[j][k] != '=')
+			k++;
 		// printf("ELEM: %s | %ld\n", data->cur_env[j], ft_strlen(key));
-		if (!ft_strncmp(key, data->cur_env[j], ft_strlen(key)) && data->cur_env[j][ft_strlen(key)] == '=')
-			elem = fill_key(data, data->cur_env[j] + (count_key(data->line, i, open) + 1));
+		if (!ft_strncmp(key, data->cur_env[j], k) && data->cur_env[j][k] == '=')
+		{
+			elem = ft_strdup(data, data->cur_env[j] + k + 1);
+			break;
+		}
 	}
 	free_str(&key);
 	key = NULL;
@@ -264,9 +272,12 @@ int	count_expansion(t_pipex *data, int i, int open)
 		}
 		else if (open != 1 && data->line[i] == '$' && data->line[i + 1] && (data->line[i + 1] != '?' && data->line[i + 1] != '$'))
 		{
-			elem = find_elem(data, i, open);
+			elem = get_val(data, data->line + i + 1);
 			count_elem_spaces(data, elem);
-			i += count_chars_2(data, i);
+			if (check_key(data, data->line + i + 1))
+				i += check_key(data, data->line + i + 1) + 1;
+			else
+				i += count_chars_2(data, i);
 			// printf("ELEM2  : %s\n", elem);
 		}
 		else if (open != 1 && data->line[i] == '$' && data->line[i + 1] == '?')
@@ -328,10 +339,15 @@ char	*expand_it_1(t_pipex *data, int i, int open)
 		}
 		else if (open != 1 && data->line[i] == '$' && data->line[i + 1] != '?')
 		{
-			elem = find_elem(data, i, open);
+			// elem = find_elem(data, i, open);
+			elem = get_val(data, data->line + i + 1);
+			if (check_key(data, data->line + i + 1))
+				i += check_key(data, data->line + i + 1) + 1;
+			else
+				i += count_chars_2(data, i);
 			data->buf_int = open;
 			ft_strncpy(new + j, elem, ft_strlen_2(elem));
-			i += count_chars_2(data, i);
+			// i += count_chars_2(data, i);
 		}
 		if (elem)
 		{

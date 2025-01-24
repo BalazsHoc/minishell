@@ -75,7 +75,6 @@ typedef struct pipex_s
 	char				**buf_array;
 
 	char				*line;
-	char				*cur_path;
 	char				*buf_str;
 
 	int					line_count;
@@ -130,7 +129,6 @@ int 	is_char(char c);
 
 
 
-char 	*get_pwd(t_pipex *data);
 
 
 //	init_ops.c
@@ -184,7 +182,7 @@ int		is_red_out(char *str, int index);
 
 
 int		one_of_those(t_pipex *data, int index_1, int index_2);
-int		one_of_those_3(t_pipex *data, int index_1, int index_2);
+int		one_of_those_3(char *str);
 
 
 // start_exec.c
@@ -196,6 +194,11 @@ int		is_in_inline(t_pipex *data, int index_1, int index_2);
 int 	is_valid_in(t_pipex *data, int index_1, int index_2);
 int		check_exec_cmnd_1(t_pipex *data, int index, int i);
 
+
+char	*get_val(t_pipex *data, char *cur);
+int		check_key(t_pipex *data, char *cur);
+char	*get_pwd(t_pipex *data);
+char	*get_path(t_pipex *data);
 
 int		check_cmnd_as_dir(t_pipex *data, int index, int i);
 

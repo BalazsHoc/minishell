@@ -1,26 +1,26 @@
 #include "../../minishell.h"
 
-void set_cur_path(t_pipex *data)
-{
-	int i;
-	int check;
+// void set_cur_path(t_pipex *data)
+// {
+// 	int i;
+// 	int check;
 
-	check = 0;
-	i = -1;
-	while (data->cur_env[++i])
-	{
-		if (!check && !ft_strncmp(data->cur_env[i], "PWD=", 4))
-		{
-			data->cur_path = data->cur_env[i] + 4;
-			check = 1;
-		}
-	}
-}
+// 	check = 0;
+// 	i = -1;
+// 	while (data->cur_env[++i])
+// 	{
+// 		if (!check && !ft_strncmp(data->cur_env[i], "PWD=", 4))
+// 		{
+// 			data->cur_path = data->cur_env[i] + 4;
+// 			check = 1;
+// 		}
+// 	}
+// }
 
 int is_mini(t_pipex *data, int index_1, int index_2)
 {
 	if (data->lines[index_1]->ops[index_2] && data->lines[index_1]->ops[index_2][0] 
-		&& (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "env", 4) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "export", 7)
+		&& ((!ft_strncmp(data->lines[index_1]->ops[index_2][0], "env", 4) && get_path(data)) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "export", 7)
 		|| !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/bin/env", 9) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/usr/bin/env", 13)
 		|| !ft_strncmp(data->lines[index_1]->ops[index_2][0], "cd", 3) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "unset", 6)
 		|| !ft_strncmp(data->lines[index_1]->ops[index_2][0], "pwd", 4) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "exit", 5)
@@ -64,6 +64,7 @@ char *find_path_2(t_pipex* data, char **arr, char *cmnd)
 		new = ft_strjoin("/", cmnd, data);
 	while (arr[++i])
 	{
+		// printf("THIS: %s\n", arr[i]);
 		if (!slash_in_cmnd(cmnd))
 			full_path = ft_strjoin(arr[i], new, data);
 		else
@@ -72,8 +73,8 @@ char *find_path_2(t_pipex* data, char **arr, char *cmnd)
 			return (free_list((void *)arr), free_str(&new), full_path);
 		free_str(&full_path);
 	}
-	if (ft_strncmp(data->cur_path, arr[0], ft_strlen(data->cur_path)))
-		return (free_str(&new), free_str(&arr[0]), arr[0] = ft_strdup(data, data->cur_path), find_path_2(data, arr, cmnd));
+	if (ft_strncmp(get_pwd(data) + 4, arr[0], ft_strlen(get_pwd(data) + 4)))
+		return (free_str(&new), free_str(&arr[0]), arr[0] = ft_strdup(data, get_pwd(data) + 4), find_path_2(data, arr, cmnd));
 	return (free_list((void *)arr), free_str(&new), NULL);
 }
 
@@ -85,7 +86,7 @@ char *find_path(t_pipex *data, char *cmnd)
 
 	i = 0;
 	path = NULL;
-	if (!cmnd || !data->cur_env || !data->cur_env[0])
+	if (!cmnd || !data->cur_env || !data->cur_env[0] || (!one_of_those_3(cmnd) && slash_in_cmnd(cmnd)))
 		return (NULL);
 	while (data->cur_env[i] && i < 100)
 	{
@@ -96,10 +97,11 @@ char *find_path(t_pipex *data, char *cmnd)
 		}
 		i++;
 	}
-	if (!path || !*path)
+	if ((!path || !*path) && printf("NOT HERE\n"))
 		path = cmnd;
 	arr = ft_split(path, ':');
 	if (!arr || !*arr)
 		return (NULL);
 	return (find_path_2(data, arr, cmnd));
 }
+

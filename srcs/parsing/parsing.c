@@ -122,17 +122,16 @@ int	one_of_those(t_pipex *data, int index_1, int index_2)
 		|| (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "/bin", 4) && one_of_those_2(data, index_1, index_2, 4))
 		|| (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "/sbin", 5) && one_of_those_2(data, index_1, index_2, 5))
 		|| (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "/snap", 5) && one_of_those_2(data, index_1, index_2, 5)))
-		return (printf("ONE OF THOSE\n"), 1);
+		return (1);
 	return (0);
 }
 
-int	one_of_those_3(t_pipex *data, int index_1, int index_2)
+int	one_of_those_3(char *str)
 {
-	if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "/", 2) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], ".", 2)
-		|| (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "/usr", 4))
-		|| (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "/bin", 4))
-		|| (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "/sbin", 5))
-		|| (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "/snap", 5)))
+	if (!ft_strncmp(str, "/usr", 4)
+		|| (!ft_strncmp(str, "/snap", 5))
+		|| (!ft_strncmp(str, "/bin", 4))
+		|| (!ft_strncmp(str, "/sbin", 5)))
 		return (1);
 	return (0);
 }
@@ -419,7 +418,7 @@ void	parsing(t_pipex *data)
 		init_paths(data, i, -1);
 		// print_that_shit(data, i);
 		check_folder(data, i);
-		set_cur_path(data);
+		// set_cur_path(data);
 		start_exec(data, i, -1, 0);
 	}
 	free_lines(data);

@@ -116,9 +116,11 @@ void    update_env(t_pipex *data, int index_1, int index_2)
 {
     int i;
     char *buf;
+    char *cur_pwd;
 
     i = -1;
     buf = NULL;
+    cur_pwd = get_pwd(data);
     // if (!ft_strncmp(data->ops[index][1], ".", 2))
     //     return ;
     while (data->cur_env[++i] && i < 100)
@@ -126,7 +128,7 @@ void    update_env(t_pipex *data, int index_1, int index_2)
         if (!ft_strncmp(data->cur_env[i], "OLDPWD=", 7))
         {
             buf = data->cur_env[i];
-            data->cur_env[i] = ft_strjoin("OLDPWD=", data->cur_path, data);
+            data->cur_env[i] = ft_strjoin("OLDPWD=", cur_pwd + 4, data);
             // printf("OLD: %s\n", getenv("OLDPWD"));
             free(buf);
         }
@@ -145,14 +147,14 @@ void    update_env(t_pipex *data, int index_1, int index_2)
                 // || !ft_strncmp(buf, data->cur_path, bigger_one(buf, data->cur_path))))
             {
                 free(buf);
-                if (data->cur_path[bigger_one(data->cur_path, data->cur_path) - 1] != '/')
+                if (cur_pwd[ft_strlen(cur_pwd) - 1] != '/')
                     buf = ft_strjoin("/", data->lines[index_1]->ops[index_2][1], data);
                 else
                     buf = ft_strjoin(NULL, data->lines[index_1]->ops[index_2][1], data);
-                data->cur_path = ft_strjoin(data->cur_path, buf, data);
-                data->cur_env[i] = ft_strjoin("PWD=", data->cur_path, data);
-                // free_str(&data->cur_path);
-                data->cur_path = data->cur_env[i] + 4;
+                cur_pwd = ft_strjoin(cur_pwd + 4, buf, data);
+                data->cur_env[i] = ft_strjoin("PWD=", cur_pwd, data);
+                // data->cur_path = data->cur_env[i] + 4;
+                free_str(&cur_pwd);
                 // printf("CUR: %s\n", data->cur_path);
             }
             else
@@ -190,6 +192,19 @@ char *get_old(t_pipex *data, int index_1, int index_2)
             return (data->cur_env[i]);
     }
     return (write(2, "bash: cd: OLDPWD not set\n", 26), exit_child(data, index_1, index_2, 1), NULL);
+}
+
+char *get_path(t_pipex *data)
+{
+    int i;
+
+    i = -1;
+    while (data->cur_env[++i])
+    {
+        if (!ft_strncmp(data->cur_env[i], "PATH=", 5))
+            return (data->cur_env[i]);
+    }
+    return (0);
 }
 
 char *get_pwd(t_pipex *data)
@@ -448,7 +463,7 @@ void export_env(t_pipex *data, int index_1, int index_2, int count)
     rand = 0;
     i = -1;
     data->buf_str = NULL;
-    while (data->lines[index_1]->ops[index_2][++i + 1] && count--)
+    while (data->lines[index_1]->ops[index_2][++i + 1])
     {
         // if (!ft_strncmp(data->lines[index_1]->ops[index_2][1 + i], "_=", 2))
         if (!has_equal(data->lines[index_1]->ops[index_2][i + 1]))
@@ -712,8 +727,8 @@ void unset_env(t_pipex *data, int index_1, int index_2, int i)
         free_str(&key);
         if (!check)
             data->buf_array[data->buf_int++] = data->cur_env[i];
-        else
-            free(data->cur_env[i]);
+        else if (printf("FREE THIS ONE: %s | %p\n", data->cur_env[i], data->cur_env[i]))
+            free_str(&data->cur_env[i]);
     }
     free(data->cur_env);
     data->cur_env = data->buf_array;
@@ -842,8 +857,11 @@ void    exit_cmnd(t_pipex *data, int index_1, int index_2)
             i = i % 256;
         errno = i;
     }
-    if (data->lines[index_1]->ops[index_2][1] && data->lines[index_1]->ops[index_2][0] && data->lines[index_1]->ops[index_2][2])
+    // printf("LAST EXIT STATUS: %d\n", data->last_exit_status);
+    if (data->lines[index_1]->ops[index_2][1] && data->lines[index_1]->ops[index_2][0] && data->lines[index_1]->ops[index_2][2] && data->last_exit_status == 0)
        return (write(2, "bash: exit: too many arguments\n", 32), errno = 1, exit_child(data, index_1, index_2, 1));
+    else if (data->lines[index_1]->ops[index_2][1] && data->lines[index_1]->ops[index_2][0] && data->lines[index_1]->ops[index_2][2])
+       return (write(2, "bash: exit: too many arguments\n", 32), exit_child(data, index_1, index_2, data->last_exit_status));
     else
         return (errno = data->last_exit_status, error_code(data));
 }
@@ -867,6 +885,33 @@ void    exit_cmnd_child(t_pipex *data, int index_1, int index_2)
     return (errno = data->last_exit_status, error_code(data));
 }
 
+void print_update_env(t_pipex *data, int index_1, int index_2)
+{
+    int i;
+    char *buf_1;
+    char *buf_2;
+
+    i = -1;
+    buf_1 = NULL;
+    buf_2 = NULL;
+    while (data->cur_env[++i])
+    {
+        if (!ft_strncmp(data->cur_env[i], "_=", 2))
+        {
+            buf_1 = data->cur_env[i];
+            if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "env", 4))
+                buf_2 = ft_strdup(data, "/usr/bin/env");
+            else 
+                buf_2 = ft_strdup(data, data->lines[index_1]->ops[index_2][0]);
+            data->cur_env[i] = ft_strjoin("_=", buf_2, data);
+            free_str(&buf_1);
+            free_str(&buf_2);
+            break;
+        }
+    }
+    print_list(data->cur_env);
+}
+
 void mini_parent(t_pipex *data, int index_1, int index_2)
 {
     if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "cd", 3))
@@ -876,11 +921,11 @@ void mini_parent(t_pipex *data, int index_1, int index_2)
     else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "export", 7) && !data->lines[index_1]->ops[index_2][1])
         export_display(data);
     else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "env", 4) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/bin/env", 9) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/usr/bin/env", 13))
-        print_list(data->cur_env);
+        print_update_env(data, index_1, index_2);
     else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "unset", 6))
         unset_cmnd(data, index_1, index_2, -1);
     else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "pwd", 4) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/bin/pwd", 9) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/usr/bin/pwd", 13))
-        printf("%s\n", data->cur_path);
+        printf("%s\n", get_pwd(data) + 5);
     else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "exit", 5))
         exit_cmnd(data, index_1, index_2);
     else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "ls", 3) && !is_valid_cwd(data))
@@ -896,11 +941,11 @@ void mini_child(t_pipex *data, int index_1, int index_2)
     else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "export", 7) && !data->lines[index_1]->ops[index_2][1])
         export_display(data);
     else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "env", 4) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/bin/env", 9) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/usr/bin/env", 13))
-        print_list(data->cur_env);
+        print_update_env(data, index_1, index_2);
     else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "unset", 6))
         unset_cmnd(data, index_1, index_2, -1);
     else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "pwd", 4) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/bin/pwd", 9) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/usr/bin/pwd", 13))
-        printf("%s\n", data->cur_path);
+        printf("%s\n", get_pwd(data) + 5);
     else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "exit", 5))
         exit_cmnd_child(data, index_1, index_2);
     else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "ls", 3) && !is_valid_cwd(data))

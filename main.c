@@ -20,7 +20,6 @@ void	init_data(t_pipex *data)
 	data->cur_env = NULL;
 	data->buf_array = NULL;
 	data->line = NULL;
-	data->cur_path = NULL;
 	data->pid = NULL;
 	data->line_count = 0;
 	data->here_2 = 0;
@@ -40,10 +39,12 @@ void	init_env(t_pipex *data, char **env)
 	i = -1;
 	while (++i < count_env(env))
 	{
-		if (ft_strncmp(env[i], "_=", 2))
-			data->cur_env[i] = ft_strdup(NULL, env[i]);
-		else
+		if (!ft_strncmp(env[i], "_=", 2))
 			data->cur_env[i] = ft_strdup(NULL, "_=/usr/bin/env");
+		else if (!ft_strncmp(env[i], "SHLVL=", 6))
+			data->cur_env[i] = ft_strdup(NULL, "SHLVL=1");
+		else
+			data->cur_env[i] = ft_strdup(NULL, env[i]);
 	}
 }
 
