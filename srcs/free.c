@@ -12,8 +12,6 @@
 
 #include "../minishell.h"
 
-//only the if statements has been changed in free* functions
-
 void	free_list_ptr(char ***list)
 {
 	int i;
@@ -40,33 +38,6 @@ void	free_list_int(int **arr, int cmnd_count)
 	free(arr);
 	arr = NULL;
 }
-
-// void	free_list_list_int(int **arr, int cmnd_count)
-// {
-// 	int i;
-// 	int j;
-
-// 	i = -1;
-// 	while (++i < cmnd_count)
-// 	{
-// 		if (arr[i])
-// 		{
-// 			j = -1;
-// 			while (arr[i][++j])
-// 			{
-// 				if (arr[i][j])
-// 				{
-// 					free(arr[i][j]);
-// 					arr[i][j] = NULL;
-// 				}
-// 			}
-// 			free(arr[i]);
-// 			arr[i] = NULL;
-// 		}
-// 	}
-// 	free(arr);
-// 	arr = NULL;
-// }
 
 void	free_line(t_pipex *data, int index)
 {

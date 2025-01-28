@@ -65,10 +65,11 @@ char *find_path_2(t_pipex* data, char **arr, char *cmnd)
 	while (arr[++i])
 	{
 		// printf("THIS: %s\n", arr[i]);
-		if (!slash_in_cmnd(cmnd))
+		if (!slash_in_cmnd(cmnd) && ft_strncmp(arr[i], cmnd, ft_strlen(cmnd)))
 			full_path = ft_strjoin(arr[i], new, data);
 		else
 			full_path = ft_strdup(data, cmnd);
+		// printf("THIS2: %s\n", full_path);
 		if (!access(full_path, X_OK))
 			return (free_list((void *)arr), free_str(&new), full_path);
 		free_str(&full_path);
@@ -86,9 +87,11 @@ char *find_path(t_pipex *data, char *cmnd)
 
 	i = 0;
 	path = NULL;
-	if (!cmnd || !data->cur_env || !data->cur_env[0] || (!one_of_those_3(cmnd) && slash_in_cmnd(cmnd)))
+	// printf("HERE: %s\n", cmnd);
+	// if (!cmnd || (!one_of_those_3(cmnd) && slash_in_cmnd(cmnd) && !is_executable(cmnd)))
+	if (!cmnd || (!one_of_those_3(cmnd) && slash_in_cmnd(cmnd)))
 		return (NULL);
-	while (data->cur_env[i] && i < 100)
+	while (data->cur_env && data->cur_env[i] && i < 100)
 	{
 		if (!ft_strncmp("PATH=", (const char *)data->cur_env[i], 5))
 		{
@@ -97,9 +100,10 @@ char *find_path(t_pipex *data, char *cmnd)
 		}
 		i++;
 	}
-	if ((!path || !*path) && printf("NOT HERE\n"))
+	if ((!path || !*path))
 		path = cmnd;
 	arr = ft_split(path, ':');
+	// printf("HERE2: %s\n", arr[0]);
 	if (!arr || !*arr)
 		return (NULL);
 	return (find_path_2(data, arr, cmnd));

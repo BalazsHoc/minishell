@@ -28,8 +28,8 @@ void	print_that_shit(t_pipex *data, int index_1)
 		{
 			if (data->lines[index_1]->cmnds[i][j])
 				printf("ELEM: %d:%d | |%s| ", i, j, data->lines[index_1]->cmnds[i][j]);
-			if (data->lines[index_1]->red_cmnd[i][j])
-				printf("FLAG");
+			// if (data->lines[index_1]->red_cmnd[i][j])
+			// 	printf("FLAG");
 			printf("\n");
 		}
 		j = -1;
@@ -136,6 +136,49 @@ int	one_of_those_3(char *str)
 	return (0);
 }
 
+int is_executable(t_pipex *data, int index_1, int index_2)
+{
+	char *str;
+
+	str = data->lines[index_1]->ops[index_2][0];
+	if (!str)
+		return (0);
+	if (str[0] == '.' && (!str[1] || str[1] == '/' || str[1] == '.'))
+		return (1);
+	if (!ft_strncmp(str, "/", 2))
+		return (1);
+	return (0);
+}
+int check_executable(t_pipex *data, int index_1, int index_2)
+{
+	char *str;
+
+	str = data->lines[index_1]->ops[index_2][0];
+	if (!str)
+		return (0);
+	if (str[0] == '.' && !str[1])
+	{
+		write(2, "bash: .: filename argument required\n", 37);
+		return (exit_child(data, index_1, index_2, 2), 0);
+	}
+	if (!ft_strncmp(str, "..", 3))
+		return (0);
+	if (!ft_strncmp(str, "/", 2))
+		return (0);
+	if (access(str, X_OK))
+	{
+		if (errno == EACCES)
+		{
+			write(2, "bash: ", 7);
+			write(2, str, ft_strlen(str));
+			write(2, ": Permission denied\n", 21);
+			exit_child(data, index_1, index_2, 126);
+		}
+		return (0);
+	}
+	return (1);
+}
+
 void	init_paths(t_pipex *data, int index_1, int index_2)
 {
 	data->lines[index_1]->paths = ft_calloc(sizeof(char *), (data->lines[index_1]->cmnd_count + 1), data);
@@ -148,13 +191,19 @@ void	init_paths(t_pipex *data, int index_1, int index_2)
 			data->lines[index_1]->paths[index_2] = ft_strdup(data, "minicmnds");
 		else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "echo", 5))
 			data->lines[index_1]->paths[index_2] = ft_strdup(data, "/usr/bin/echo");
+		// else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "gcc", 4))
+		// 	data->lines[index_1]->paths[index_2] = ft_strdup(data, "/usr/libexec/gcc/aarch64-linux-gnu/13/cc1");
+		// else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "tmp", 3))
+		// 	data->lines[index_1]->paths[index_2] = ft_strdup(data, data->lines[index_1]->ops[index_2][0]);
 		else if (data->lines[index_1]->ops[index_2] && data->lines[index_1]->ops[index_2][0] 
-			&& !one_of_those(data, index_1, index_2))
+			&& !one_of_those(data, index_1, index_2) && !is_executable(data, index_1, index_2) && get_path(data))
 		{
 			data->lines[index_1]->paths[index_2] = find_path(data, data->lines[index_1]->ops[index_2][0]);
 			if (!data->lines[index_1]->paths[index_2])
 				data->lines[index_1]->paths[index_2] = ft_strdup(data, "pathnfound");
 		}
+		else if (check_executable(data, index_1, index_2))
+			data->lines[index_1]->paths[index_2] = ft_strdup(data, data->lines[index_1]->ops[index_2][0]);
 		else
 			data->lines[index_1]->paths[index_2] = ft_strdup(data, "pathnfound");
 		// if (!data->lines[index_1]->paths[index_2])

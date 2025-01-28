@@ -84,7 +84,7 @@ int	count_elem(t_pipex *data, int index_1, int i, int j)
 		// 	index_1--;
 		if (k != 0)
 			handle_open(data, j ,&open);
-		// printf("LINE: 1 |%s| COUNT: %d OPEN: %d  | J: %d | K: %d\n", data->line + j, data->count_elem, open, j, k);
+		// printf("____LINE: 1 |%s| COUNT: %d OPEN: %d  | J: %d | K: %d\n", data->line + j, data->count_elem, open, j, k);
 		if (k == 0)
 		{
 			if (data->line[j] == '|' && is_real_pipe(data->line, j) && !open)
@@ -121,11 +121,11 @@ int	count_elem(t_pipex *data, int index_1, int i, int j)
 				// || (is_space(data->line[j - 1]) && !is_space(data->line[j]) && !open)
 				// || (((j > 1 && (is_space(data->line[j - 2]) || is_real_pipe(data->line, j - 2) || is_red_clean(data->line, j - 2) || (open == 1))) || j < 2) 
 					(is_red_clean(data->line, j) && !open)
-					|| (!open && j > 1 && is_delim_back(data->line, j - 1) && !is_delim_back(data->line, j))
+					|| (!open && j > 1 && is_delim_back(data->line, j - 1, 0) && !is_delim_back(data->line, j, 0))
 					// || (open && j > 1 && is_space(data->line[j - 1]) && !is_space(data->line[j]) && dollar_in(data->line, j, open))
-					|| (((j >= 2 && is_delim_back(data->line, j - 2) && is_quote(data->line[j - 1])) || (j < 2)) // --> maybe without the is_quote()
+					|| (((j >= 2 && is_delim_back(data->line, j - 2, 0) && is_quote(data->line[j - 1])) || (j < 2)) // --> maybe without the is_quote()
 						&& ((open == 1 && is_quote_one(data->line[j - 1]) && !is_quote_one(data->line[j])) || (open == 2 && is_quote_two(data->line[j - 1]) && !is_quote_two(data->line[j]))))
-					|| (!open && data->line[j] != '|' && !is_real_pipe(data->line, j) && !is_quote(data->line[j]) && !is_space(data->line[j]) && is_delim_back(data->line, j - 1) && !is_red_1(data->line[j]))
+					|| (!open && data->line[j] != '|' && !is_real_pipe(data->line, j) && !is_quote(data->line[j]) && !is_space(data->line[j]) && is_delim_back(data->line, j - 1, 0) && !is_red_1(data->line[j]))
 					// || ((is_red_in(data->line, j - 1) && is_red_out(data->line, j)) || (is_red_out(data->line, j - 1) && is_red_in(data->line, j)))
 					|| (is_red_1(data->line[j - 1]) && !is_red_1(data->line[j]) && !is_space(data->line[j]) && data->line[j] != '|' && !open)
 					|| (!open && is_real_pipe(data->line, j - 1) && !is_space(data->line[j]))))))
@@ -197,26 +197,30 @@ int	count_chars(t_pipex *data, int i, int open)
 			break;
 		else if (count > 0 && is_quote_two(data->line[i]) && open == 2 && ((data->line[i + 1] && is_delim_front(data->line, i + 1)) || !data->line[i + 1]))
 			break;
-		else if (i > 0 && !open && is_quote(data->line[i]) && is_delim_back(data->line, i - 1))
+		else if (i > 0 && !open && is_quote(data->line[i]) && is_delim_back(data->line, i - 1, 0))
 			break;
 		// else if (count > 0 && open && is_delim_back(data->line, i))
 		// 	break;
 		// printf("LINE COUNT_CHARS    2: |%s| | OPEN: %d | COUNT: %d\n", data->line + i, open,count);
 		// else if ((!open || (is_delim_back(data->line, i - 1) && count > 0)) && (!data->line[i] || is_space(data->line[i]) || data->line[i] == '\n'
-		else if (handle_open(data, i, &open) && (!open && (!data->line[i] || is_space(data->line[i]) || data->line[i] == '\n'
-			|| is_real_pipe(data->line, i)
+		else if (handle_open(data, i, &open) && (!open && count > 0 && (is_delim_front(data->line, i)
+		// else if (handle_open(data, i, &open) && ((!open && (!data->line[i] || is_space(data->line[i]) || data->line[i] == '\n'
+			// || is_real_pipe(data->line, i) 
 			|| (count > 0 && is_red_clean(data->line, i))
 			|| (count > 0 && i > 0 && is_red_1(data->line[i - 1]) && !is_red_1(data->line[i]))
 			|| (count > 0 && i > 0 && is_red_clean(data->line, i - count) && ((is_red_in(data->line, i - count)
-				&& is_red_out(data->line, i)) || (is_red_out(data->line, i - count) && is_red_in(data->line, i)) || count == 2))
+				&& is_red_out(data->line, i)) || (is_red_out(data->line, i - count) && is_red_in(data->line, i)) || count == 2)))))
 			// || (count > 0 && i > 0 && (is_red_clean(data->line, i - 1) && !is_red_clean(data->line, i) && printf("TRUE MAN\n")))
 			// || (count == 1 && i > 0 && is_red_clean(data->line, i - 1) && !is_red_clean(data->line, i))
 			// || (count == 2 && i > 1 && is_red_clean(data->line, i - 2) && !is_red_clean(data->line, i - 1))
 			// || (i > 0 && is_red_clean(data->line, i - 1) && count == 1)
 			// || (i > 1 && is_red_clean(data->line, i - 2) && count == 2)
-			|| (data->line[i + 1] && (is_space(data->line[i]) && is_quote(data->line[i + 1])))
-			|| (data->line[i + 1] && (!data->line[i + 2] || is_space(data->line[i + 2]) || data->line[i + 2] == '\n') && is_quote(data->line[i + 1])))))
+			// 	|| (data->line[i + 1] && (!data->line[i + 2] || is_space(data->line[i + 2]) || data->line[i + 2] == '\n') && is_quote(data->line[i + 1]))))
+			// || (data->line[i + 1] && is_space(data->line[i]) && is_quote(data->line[i + 1]))) && open)
+			// || (open && ((data->line[i + 1] && is_space(data->line[i]) && is_quote(data->line[i + 1]))
+			// 	|| (data->line[i + 1] && (!data->line[i + 2] || is_space(data->line[i + 2]) || data->line[i + 2] == '\n') && is_quote(data->line[i + 1]))))))
 			break;
+		// printf("LINE COUNT_CHARS    2: |%s| | OPEN: %d | COUNT: %d\n", data->line + i, open,count);
 		if (data->line[i] && ((!is_quote(data->line[i])) || ((open == 1 && is_quote_two(data->line[i]))
 			|| (open == 2 && is_quote_one(data->line[i])))))
 			count++;

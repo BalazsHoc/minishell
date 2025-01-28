@@ -212,6 +212,8 @@ char *get_pwd(t_pipex *data)
     int i;
 
     i = -1;
+    if (!data->cur_env)
+        return (0);
     while (data->cur_env[++i])
     {
         if (!ft_strncmp(data->cur_env[i], "PWD=", 4))
@@ -727,7 +729,7 @@ void unset_env(t_pipex *data, int index_1, int index_2, int i)
         free_str(&key);
         if (!check)
             data->buf_array[data->buf_int++] = data->cur_env[i];
-        else if (printf("FREE THIS ONE: %s | %p\n", data->cur_env[i], data->cur_env[i]))
+        else
             free_str(&data->cur_env[i]);
     }
     free(data->cur_env);
@@ -914,6 +916,13 @@ void print_update_env(t_pipex *data, int index_1, int index_2)
     print_list(data->cur_env);
 }
 
+void print_pwd(t_pipex *data)
+{
+    if (!get_pwd(data))
+        return;
+    printf("%s\n", get_pwd(data) + 4);
+}
+
 void mini_parent(t_pipex *data, int index_1, int index_2)
 {
     if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "cd", 3))
@@ -927,7 +936,7 @@ void mini_parent(t_pipex *data, int index_1, int index_2)
     else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "unset", 6))
         unset_cmnd(data, index_1, index_2, -1);
     else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "pwd", 4) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/bin/pwd", 9) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/usr/bin/pwd", 13))
-        printf("%s\n", get_pwd(data) + 5);
+        print_pwd(data);
     else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "exit", 5))
         exit_cmnd(data, index_1, index_2);
     else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "ls", 3) && !is_valid_cwd(data))
@@ -947,7 +956,7 @@ void mini_child(t_pipex *data, int index_1, int index_2)
     else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "unset", 6))
         unset_cmnd(data, index_1, index_2, -1);
     else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "pwd", 4) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/bin/pwd", 9) || !ft_strncmp(data->lines[index_1]->ops[index_2][0], "/usr/bin/pwd", 13))
-        printf("%s\n", get_pwd(data) + 5);
+        printf("%s\n", get_pwd(data) + 4);
     else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "exit", 5))
         exit_cmnd_child(data, index_1, index_2);
     else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "ls", 3) && !is_valid_cwd(data))

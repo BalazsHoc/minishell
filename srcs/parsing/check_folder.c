@@ -11,7 +11,7 @@ void    check_folder(t_pipex *data, int index)
     while (data->lines[index]->cmnds[++i])
     {
         j = -1;
-        while (!data->lines[index]->ops[i][0] || ft_strncmp(data->lines[index]->paths[i], "pathnfound", 11))
+        while (!data->lines[index]->ops[i][0] || ft_strncmp(data->lines[index]->paths[i], "pathnfound", 11) || data->lines[index]->exit_codes[i] )
         {
             i++;
             if (!data->lines[index]->cmnds[i])
@@ -19,7 +19,7 @@ void    check_folder(t_pipex *data, int index)
         }
         while (data->lines[index]->ops[i][0][++j]) 
         {
-            if (data->lines[index]->ops[i][0][j] == '/' && !check_cmnd_as_dir(data, index, i))
+            if (data->lines[index]->ops[i][0][j] == '/' && (!check_cmnd_as_dir(data, index, i) || one_of_those(data, index, i)))
             {
                 ptr = opendir(data->lines[index]->ops[i][0]);
                 if (ptr)

@@ -157,7 +157,7 @@ int get_input_2(t_pipex *data, int index_1, int i)
     // printf("START GET INPUT 2\n");
     k = 0;
     j = 2;
-    while (data->line[data->here_2 - j] && !is_delim_back(data->line, data->here_2 - j))
+    while (data->line[data->here_2 - j] && !is_delim_back(data->line, data->here_2 - j, 0))
         j++;
     // printf("J: %d\n", j);
     // printf("data_here_2: %d | data_here_2_old: %d | J: %d\n", data->here_2, data->here_2_old, (data->here_2 - (j + 1) - data->here_2_old) + 1);
@@ -321,6 +321,7 @@ int check_cmnd_as_dir(t_pipex *data, int index, int i)
     {
         buf_1 = ft_strdup_2(data, data->lines[index]->ops[i][0]);
         buf_2 = find_path(data, buf_1);
+        // printf("BUF_2: %s\n", buf_2);
         if (buf_2)
             return (free_str(&buf_1), free_str(&buf_2), 1);
         return (free_str(&buf_1), free_str(&buf_2), 0);
@@ -330,14 +331,17 @@ int check_cmnd_as_dir(t_pipex *data, int index, int i)
 
 int check_exec_cmnd_2(t_pipex *data, int index, int i)
 {
+    char *path;
+
+    path = get_path(data);
     if (is_valid_in(data, index, i) == -1 && !data->lines[index]->exit_codes[i])
         return (write(2, "bash: ", 6),
             write(2, data->lines[index]->cmnds[i][first_invalid_in(data, index, i)],
                 ft_strlen(data->lines[index]->cmnds[i][first_invalid_in(data, index, i)])), write(2, ": No such file or directory\n", 29), exit_child(data, index, i, 1), 1);
-    else if(check_cmnd_as_dir(data, index, i))
+    else if(check_cmnd_as_dir(data, index, i) && !one_of_those(data, index, i) && one_of_those_3(data->lines[index]->ops[i][0]) && !data->lines[index]->exit_codes[i])
         return (write(2, "bash: ", 6),
             write(2, data->lines[index]->ops[i][0], ft_strlen(data->lines[index]->ops[i][0])), write(2, ": Not a directory\n", 19), exit_child(data, index, i, 126), 1);
-    else if (!is_path(data) && !ft_strncmp(data->lines[index]->paths[i], "pathnfound", 11))
+    else if (((path && !(path[5])) || !path) && !ft_strncmp(data->lines[index]->paths[i], "pathnfound", 11) && !data->lines[index]->exit_codes[i])
         return (write(2, "bash: ", 6),
             write(2, data->lines[index]->ops[i][0],
                 ft_strlen(data->lines[index]->ops[i][0])), write(2, ": No such file or directory\n", 29), exit_child(data, index, i, 127), 1);
@@ -427,41 +431,57 @@ void    exec_cmnds(t_pipex *data, int index, int i)
     }
 }
 
+int bigger_one_2(int i, int j)
+{
+    if (i > j)
+        return (i);
+    return (j);
+}
+
 int check_key(t_pipex *data, char *cur)
 {
     int i;
     int j;
+    int k;
 
     i = -1;
+    // printf("CHECK: %s\n", cur);
+    k = 0;
+    while (cur[k] && is_char(cur[k]))
+        k++;
+    // printf("K: %d\n", k);
     while (data->cur_env[++i])
     {
         j = 0;
-        // printf("CHECK: %s\n", data->cur_env[i]);
         while (data->cur_env[i][j] && data->cur_env[i][j] != '=')
             j++;
         // printf("J: %d\n", j);
-        if (!ft_strncmp(data->cur_env[i], cur, j))
+        if (!ft_strncmp(data->cur_env[i], cur, bigger_one_2(j, k)))
             return (j);
-            // return (ft_strdup(data, data->cur_env[i] + j));
+            // return (printf("FOUND: WITH J: %d\n", j), j);
     }
-    return (0);
+    return (k);
 }
 
 char *get_val(t_pipex *data, char *cur)
 {
     int i;
     int j;
+    int k;
 
     i = -1;
     // printf("CUR: %s\n", cur);
+    k = 0;
+    while (cur[k] && is_char(cur[k]))
+        k++;
+    // printf("K: %d\n", k);
     while (data->cur_env[++i])
     {
         j = 0;
         while (data->cur_env[i][j] && data->cur_env[i][j] != '=')
             j++;
-        if (!ft_strncmp(data->cur_env[i], cur, j))
+        if (!ft_strncmp(data->cur_env[i], cur, bigger_one_2(j, k)))
             return (ft_strdup(data, data->cur_env[i] + j + 1));
-            // return (NULL);
     }
     return (NULL);
 }
@@ -474,6 +494,7 @@ char *ft_strnjoin_start(t_pipex *data, char *s1, char *s2, int size)
 
 	if (s1 == 0 && s2 == 0)
 		return (0);
+    // printf("FT_START JOIN: %s with %s | SIZE: %d\n", s1, s2, size);
 	i = size + ft_strlen(s2);
 	joined = ft_calloc(sizeof(char), (i + 1), data);
 	i = 0;
@@ -483,7 +504,7 @@ char *ft_strnjoin_start(t_pipex *data, char *s1, char *s2, int size)
 		i++;
 	}
 	j = 0;
-	while (s2[j])
+	while (s2 && s2[j])
 	{
 		joined[i + j] = s2[j];
 		j++;
@@ -522,13 +543,17 @@ char *cut_out_key(t_pipex *data, char *cur, int where, int size)
     char *buf_2;
     char *val;
 
+    // printf("where %d | size %d\n", where, size);
     val = get_val(data, cur + where + 1);
     // printf("VAL: %s\n", val);
     // return (NULL);
     buf_1 = ft_strnjoin_start(data, cur, val, where);
+    // else
+    //     buf_1 = ft_strnjoin_start(data, cur, val, )
     // printf("BUF 1: %s\n", buf_1);
-    // printf("where %d | size %d\n", where, size);
+    // if (!val)
     buf_2 = ft_strjoin(buf_1, cur + where + size + 1, data);
+        
     // printf("BUF 2: %s\n", buf_2);
     free_str(&cur);
     free_str(&val);
@@ -545,6 +570,7 @@ void    update_input(t_pipex *data, int index_1, int index_2)
     i = -1;
     while (buf[++i])
     {
+        // printf("BUF_CUR: %s\n", buf + i);
         if (buf[i] == '$')
         {
             buf = cut_out_key(data, buf, i, check_key(data, buf + i + 1));
@@ -561,7 +587,7 @@ void handle_expansion_here_doc(t_pipex *data, int index_1)
     i = -1;
     while (++i < data->lines[index_1]->cmnd_count)
     {
-        if (data->lines[index_1]->input[i])
+        if (data->lines[index_1]->input[i] && !data->lines[index_1]->red_cmnd[i][is_red_inline(data, index_1, i) + 1])
             update_input(data, index_1, i);
     }
 }

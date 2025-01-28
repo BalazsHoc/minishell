@@ -83,7 +83,7 @@ char	*ft_strjoin(char const *s1, char const *s2, t_pipex *data)
 		i++;
 	}
 	j = 0;
-	while (s2[j])
+	while (s2 && s2[j])
 	{
 		joined[i + j] = s2[j];
 		j++;
