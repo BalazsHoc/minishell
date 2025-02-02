@@ -89,6 +89,10 @@ char	*get_input(t_pipex *data, int index_1, int index_2, int index_3)
 		}
 		buf = readline("> ");
 	}
+	if (g_signal)
+		return (free_str(&buf), free_str(&input), NULL);
+	if (!buf)
+		return (printf("bash: warning: here-document delimited by end-of-file (wanted `%s')\n", key), input);
 	if (!input)
 		return (free_str(&buf), ft_strdup(data, ""));
 	return (input);

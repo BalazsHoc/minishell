@@ -71,7 +71,7 @@ void	handle_mini_child(t_pipex *d, int i_1, int i_2)
 
 void	exec_cmnd(t_pipex *data, int index_1, int index_2)
 {
-	signal_change(2);
+	signal_change(NULL, 2);
 	if (check_here_doc(data, index_1, index_2)
 		&& data->l[index_1]->pipes[index_2][1])
 		create_buf_pipe(data, index_1, index_2);

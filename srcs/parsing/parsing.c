@@ -153,7 +153,7 @@ void	parsing(t_pipex *data)
 			free_lines(data));
 	while (data->l[++i] && data->here_2_old < data->chars_in_line)
 	{
-		signal_change(2);
+		signal_change(NULL, 2);
 		init_line(data, i);
 		if (!check_reds(data, i, -1, -1))
 			return (free_lines(data));

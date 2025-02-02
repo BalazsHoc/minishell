@@ -85,9 +85,9 @@ int	main(int argc, char **argv, char **env)
 	g_signal = 0;
 	while (1)
 	{
-		signal_change(0);
-		g_signal = 0;
+		signal_change(NULL, 0);
 		data->line = readline("minishell$ ");
+		signal_change(data, 0);
 		if (!data->line)
 			return (printf("exit\n"), errno = data->last_exit_status,
 				error_code(data), 0);

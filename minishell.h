@@ -92,8 +92,6 @@ typedef struct pipex_s
 
 	pid_t				*pid;
 
-	struct sigaction main_sa;
-
 }	t_pipex;
 
 extern int g_signal;
@@ -525,7 +523,7 @@ void		terminal_settings(void);
 
 //	signal_handling_2.c
 
-void		signal_change(int flag);
+void		signal_change(t_pipex *data, int flag);
 
 
 

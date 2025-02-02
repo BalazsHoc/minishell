@@ -21,7 +21,7 @@ RL_FLAGS		= -lreadline -lncurses
 
 #	SRCS && OBJS
 
-SRCS			= main.c srcs/signal_handling_1.c srcs/signal_handling_2.c
+SRCS			= main.c srcs/signal_handling_1.c
 OBJ				= $(SRCS:.c=.o)
 
 

@@ -34,7 +34,7 @@ int	here_doc(t_pipex *data, int index_1, int index_2, int i)
 {
 	char	*infile;
 
-	signal_change(1);
+	signal_change(NULL, 1);
 	infile = NULL;
 	while (data->l[index_1]->cmnds[++index_2])
 	{
@@ -56,5 +56,5 @@ int	here_doc(t_pipex *data, int index_1, int index_2, int i)
 				data->here_2_old = find_key(data, index_1, index_2, i + 1);
 		}
 	}
-	return (signal_change(2), 1);
+	return (signal_change(NULL, 2), 1);
 }
