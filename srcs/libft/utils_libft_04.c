@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils_libft_04.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bhocsak <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/02 14:49:45 by bhocsak           #+#    #+#             */
+/*   Updated: 2025/02/02 14:49:47 by bhocsak          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../minishell.h"
 
 static int	is_det(char c, char det)
@@ -27,7 +39,7 @@ static int	ft_count_words(const char *s1, char det)
 
 static char	**ft_malloc_cpy(char **new, const char *s, char det, int wordcount)
 {
-	int	count;
+	int		count;
 	int		i;
 	size_t	j;
 

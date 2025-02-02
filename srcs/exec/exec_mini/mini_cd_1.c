@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   mini_cd_1.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bhocsak <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/02 14:32:08 by bhocsak           #+#    #+#             */
+/*   Updated: 2025/02/02 14:32:09 by bhocsak          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../../minishell.h"
 
 char	*get_pwd(t_pipex *data)
@@ -98,7 +110,7 @@ void	cd_cmnd(char **argv, t_pipex *data, int index_1, int index_2)
 		return (update_env(data, index_1, index_2));
 	if (!ft_strncmp(argv[1], "-", 2))
 		return (update_env_2(data, index_1, index_2));
-	if ((!argv[1] || !strncmp(argv[1], "~", 2)))
+	if ((!argv[1] || !ft_strncmp(argv[1], "~", 2)))
 	{
 		if (chdir(home_dir) == -1)
 			print_cd_err(errno, argv[1]);

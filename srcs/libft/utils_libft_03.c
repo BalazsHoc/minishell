@@ -1,9 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils_libft_03.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bhocsak <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/02 14:49:35 by bhocsak           #+#    #+#             */
+/*   Updated: 2025/02/02 14:49:37 by bhocsak          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../minishell.h"
 
 long long	ft_atoi(const char *nptr)
 {
-	int		i;
-	int		sign;
+	int			i;
+	int			sign;
 	long long	result;
 
 	i = 0;
@@ -43,7 +55,6 @@ void	*ft_calloc(size_t nmemb, size_t size, t_pipex *data)
 	return (buffer);
 }
 
-
 size_t	ft_digit_count(long int n)
 {
 	size_t	digits;
@@ -76,9 +87,6 @@ char	*ft_itoa(int n, t_pipex *data)
 	if (n < 0)
 		num *= -1;
 	result = ft_calloc(sizeof(char), (digits + 1), data);
-	// if (!result)
-		// return (NULL);
-	// *(result + digits) = '\0';
 	while (digits--)
 	{
 		*(result + digits) = (num % 10) + 48;
@@ -98,8 +106,6 @@ void	*ft_memcpy(void *dest, const void *src, size_t n)
 	{
 		while (i < n)
 		{
-			// if (((unsigned char *)src)[i] == '\n')
-			// 	break ;
 			((unsigned char *)dest)[i] = ((unsigned char *)src)[i];
 			i++;
 		}

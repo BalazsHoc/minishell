@@ -1,16 +1,28 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   start_mini_exec_1.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bhocsak <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/02 14:35:33 by bhocsak           #+#    #+#             */
+/*   Updated: 2025/02/02 14:35:34 by bhocsak          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../../minishell.h"
 
 int	is_valid_cwd(t_pipex *data)
 {
 	char	*buf;
 
-	buf = ft_calloc(sizeof(char), (BUF_SIZE_ENV * 100) + 1, data);
-	getcwd(buf, BUF_SIZE_ENV * 100);
+	buf = NULL;
+	buf = getcwd(NULL, 0);
 	if (!buf)
 		return (perror("getcwd() failed!"), error_code(data), -1);
 	if (!*buf)
-		return (free(buf), 0);
-	return (free(buf), 1);
+		return (free_str(&buf), 0);
+	return (free_str(&buf), 1);
 }
 
 void	print_update_env(t_pipex *data, int index_1, int index_2)

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   start_exec_utils_1.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bhocsak <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/02 14:38:12 by bhocsak           #+#    #+#             */
+/*   Updated: 2025/02/02 14:38:15 by bhocsak          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../../minishell.h"
 
 char	*join_this(char *s1, char *s2, t_pipex *data)
@@ -92,7 +104,8 @@ char	*get_input(t_pipex *data, int index_1, int index_2, int index_3)
 	if (g_signal)
 		return (free_str(&buf), free_str(&input), NULL);
 	if (!buf)
-		return (printf("bash: warning: here-document delimited by end-of-file (wanted `%s')\n", key), input);
+		return (printf("bash: warning: here-document delimited\
+by end-of-file (wanted `%s')\n", key), input);
 	if (!input)
 		return (free_str(&buf), ft_strdup(data, ""));
 	return (input);

@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   signal_handling_1.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bhocsak <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/02 14:30:33 by bhocsak           #+#    #+#             */
+/*   Updated: 2025/02/02 14:30:36 by bhocsak          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 int	g_signal;
 
-void signal_main(int sig)
+void	signal_main(int sig)
 {
 	if (sig == SIGINT)
 	{
@@ -14,20 +26,20 @@ void signal_main(int sig)
 	}
 }
 
-void signal_mini_commands(int sig) // here_doc
+void	signal_mini_commands(int sig)
 {
-     if (sig == SIGINT)
-	 {
+	if (sig == SIGINT)
+	{
 		g_signal = 2;
-        ioctl(STDIN_FILENO, TIOCSTI, "\n");
+		ioctl(STDIN_FILENO, TIOCSTI, "\n");
 		rl_replace_line("", 0);
 		rl_on_new_line();
-	 }
+	}
 }
 
-void signal_exec_cmnd(int sig) // cat
+void	signal_exec_cmnd(int sig)
 {
-    if (sig == SIGINT)
+	if (sig == SIGINT)
 	{
 		g_signal = 2;
 		printf("\n");
@@ -52,12 +64,12 @@ void	signal_change(t_pipex *data, int flag)
 		signal(SIGINT, signal_main);
 		signal(SIGQUIT, SIG_IGN);
 	}
-    if (flag == 1) // for our commands
+	if (flag == 1)
 	{
 		signal(SIGINT, signal_mini_commands);
 		signal(SIGQUIT, SIG_IGN);
 	}
-    if (flag == 2) // for prebuilt commands
+	if (flag == 2)
 	{
 		signal(SIGINT, signal_exec_cmnd);
 		signal(SIGQUIT, signal_exec_cmnd);

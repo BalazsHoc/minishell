@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils_libft_02.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bhocsak <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/02 14:49:23 by bhocsak           #+#    #+#             */
+/*   Updated: 2025/02/02 14:49:25 by bhocsak          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../minishell.h"
 
 char	*ft_strchr(const char *s, int c)
@@ -20,7 +32,6 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 		return (0);
 	if (!s1 || !s2 || !*s1 || !*s2)
 		return (-1);
-	// printf("S1: %s$ | S2: %s$ %ld\n", s1, s2, n);
 	while (i < n)
 	{
 		if (!s1[i])
@@ -30,18 +41,16 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 		}
 		else if (!s2[i])
 			return (-1);
-		// printf("I: %s$ | N: %ld$\n", s1 + i, n);
 		else if (s1[i] != s2[i])
 			return (s1[i] - s2[i]);
 		i++;
 	}
-	// return (printf("THE SAME\n"), 0);
 	return (0);
 }
 
-int ft_strcmp_2(char *s1, char *s2)
+int	ft_strcmp_2(char *s1, char *s2)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	if (!s1 || !s2)

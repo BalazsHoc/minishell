@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   mini_cd_2.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bhocsak <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/02 14:32:23 by bhocsak           #+#    #+#             */
+/*   Updated: 2025/02/02 14:32:24 by bhocsak          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../../minishell.h"
 
 char	*get_home(t_pipex *data)
@@ -65,7 +77,7 @@ void	update_env_continue(t_pipex *d, int index_1, int index_2, char *buf)
 			}
 			else if (free_this(&d->cur_env[i]))
 				d->cur_env[i] = ft_strjoin("PWD=", buf, d);
-			free(buf);
+			free_str(&buf);
 		}
 	}
 }
@@ -88,9 +100,9 @@ void	update_env(t_pipex *data, int index_1, int index_2)
 			free(buf);
 		}
 	}
-	buf = ft_calloc(sizeof(char), (BUF_SIZE_ENV * 100) + 1, data);
-	getcwd(buf, BUF_SIZE_ENV * 100);
+	buf = getcwd(NULL, 0);
 	if (!buf)
 		return (printf("failed getcwd() !\n"), error_code(data));
 	update_env_continue(data, index_1, index_2, buf);
+	free_str(&buf);
 }

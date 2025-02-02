@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   count_utils.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bhocsak <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/02 14:50:41 by bhocsak           #+#    #+#             */
+/*   Updated: 2025/02/02 14:50:42 by bhocsak          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../minishell.h"
 
 int	if_count_elem_1(t_pipex *data, int j, int *open)
@@ -48,7 +60,7 @@ int	count_chars_utils_2(t_pipex *data, int i, int open, int count)
 int	count_chars_utils_1(t_pipex *data, int i, int open, int count)
 {
 	if (count > 0 && is_q_2(data->line[i]) && open == 2 && ((data->line[i + 1]
-			&& is_delim_front(data->line, i + 1)) || !data->line[i + 1]))
+				&& is_delim_front(data->line, i + 1)) || !data->line[i + 1]))
 		return (1);
 	return (0);
 }

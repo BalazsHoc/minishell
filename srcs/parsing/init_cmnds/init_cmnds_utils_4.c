@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init_cmnds_utils_4.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bhocsak <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/02 14:55:42 by bhocsak           #+#    #+#             */
+/*   Updated: 2025/02/02 14:55:43 by bhocsak          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../../minishell.h"
 
 int	handle_open(t_pipex *data, int j, int *open)
@@ -33,7 +45,7 @@ char	*fill_normal(t_pipex *data, int index, int open)
 	return (new);
 }
 
-void	fill_for_empty(t_pipex *data, int index_1, int index_2, int index_3)
+void	fill_for_empty(t_pipex *data, int i_1, int index_2, int index_3)
 {
 	char	*str;
 
@@ -47,7 +59,7 @@ void	fill_for_empty(t_pipex *data, int index_1, int index_2, int index_3)
 	}
 	else
 		str = ft_calloc(sizeof(char), (1), data);
-	data->l[index_1]->cmnds[index_2][index_3] = str;
+	data->l[i_1]->cmnds[index_2][index_3] = str;
 }
 
 int	flag_empty(int *this, int pos)

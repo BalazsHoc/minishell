@@ -13,37 +13,33 @@
 #include "../../minishell.h"
 
 // TAKE THAT OUT
-void	print_that_shit(t_pipex *data, int index_1)
-{
-	int	i;
-	int	j;
+// void	print_that_shit(t_pipex *data, int index_1)
+// {
+// 	int	i;
+// 	int	j;
 
-	i = -1;
-	printf("|\n");
-	while (data->l[index_1]->cmnds[++i])
-	{
-		j = -1;
-		// printf("data->lines[%d]->cmnds[%d]\n", index_1, i);
-		while (data->l[index_1]->cmnds[i][++j])
-		{
-			if (data->l[index_1]->cmnds[i][j])
-				printf("ELEM: %d:%d | |%s| ", i, j, data->l[index_1]->cmnds[i][j]);
-			// if (data->lines[index_1]->red_cmnd[i][j])
-			// 	printf("FLAG");
-			printf("\n");
-		}
-		j = -1;
-		if (data->l[index_1]->ops && data->l[index_1]->ops[i])
-		{
-			while (data->l[index_1]->ops[i][++j])
-				printf("OP:   %d:%d | |%s|\n", i, j, data->l[index_1]->ops[i][j]);
-		}
-		printf("PATH: |%s|\n", data->l[index_1]->paths[i]);
-	}
-	// i = -1;
-	// while (data->mini_env[++i])
-	// 	printf("ENV[%d]: %s\n", i, data->mini_env[i]);
-}
+// 	i = -1;
+// 	printf("|\n");
+// 	while (data->l[index_1]->cmnds[++i])
+// 	{
+// 		j = -1;
+// 		while (data->l[index_1]->cmnds[i][++j])
+// 		{
+// 			if (data->l[index_1]->cmnds[i][j])
+// 				printf("ELEM: %d:%d | |%s| ", i, j,
+// data->l[index_1]->cmnds[i][j]);
+// 			printf("\n");
+// 		}
+// 		j = -1;
+// 		if (data->l[index_1]->ops && data->l[index_1]->ops[i])
+// 		{
+// 			while (data->l[index_1]->ops[i][++j])
+// 				printf("OP:   %d:%d | |%s|\n", i, j,
+// data->l[index_1]->ops[i][j]);
+// 		}
+// 		printf("PATH: |%s|\n", data->l[index_1]->paths[i]);
+// 	}
+// }
 
 void	init_ops(t_pipex *data, int index_1)
 {
@@ -76,11 +72,7 @@ void	init_paths(t_pipex *d, int i_1, int i_2)
 			d->l[i_1]->paths[i_2] = ft_strdup(d, "minicmnds");
 		else if (!ft_strncmp(d->l[i_1]->ops[i_2][0], "echo", 5))
 			d->l[i_1]->paths[i_2] = ft_strdup(d, "/usr/bin/echo");
-		// else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "gcc", 4))
-		// 	data->lines[index_1]->paths[index_2] = ft_strdup(data, "/usr/libexec/gcc/aarch64-linux-gnu/13/cc1");
-		// else if (!ft_strncmp(data->lines[index_1]->ops[index_2][0], "tmp", 3))
-		// 	data->lines[index_1]->paths[index_2] = ft_strdup(data, data->lines[index_1]->ops[index_2][0]);
-		else if (d->l[i_1]->ops[i_2] && d->l[i_1]->ops[i_2][0] 
+		else if (d->l[i_1]->ops[i_2] && d->l[i_1]->ops[i_2][0]
 			&& !one_of_those(d, i_1, i_2)
 				&& !is_executable(d, i_1, i_2) && get_path(d))
 		{
