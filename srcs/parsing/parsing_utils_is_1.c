@@ -7,28 +7,28 @@ int	is_space(char c)
 	return (0);
 }
 
-int is_quote(char c)
+int	is_quote(char c)
 {
 	if (c == 39 || c == 34)
 		return (1);
 	return (0);
 }
 
-int is_quote_one(char c)
+int	is_quote_one(char c)
 {
 	if (c == 39)
 		return (1);
 	return (0);
 }
 
-int is_quote_two(char c)
+int	is_q_2(char c)
 {
 	if (c == 34)
 		return (1);
 	return (0);
 }
 
-int is_or(char *cur)
+int	is_or(char *cur)
 {
 	if (cur[0] == '|' && cur[-1] == '|')
 		return (1);

@@ -1,15 +1,4 @@
-#include "../minishell.h"
-
-char	*ft_strchr(const char *s, int c)
-{
-	while ((char)c != *s)
-	{
-		if (!*s)
-			return (0);
-		s++;
-	}
-	return ((char *)s);
-}
+#include "../../minishell.h"
 
 char	*ft_strdup(t_pipex *data, const char *s)
 {

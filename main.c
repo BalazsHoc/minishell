@@ -12,28 +12,10 @@
 
 #include "minishell.h"
 
-void	init_data(t_pipex *data)
-{
-	data->lines = NULL;
-	data->cur_env = NULL;
-	data->export = NULL;
-	data->cur_env = NULL;
-	data->buf_array = NULL;
-	data->line = NULL;
-	data->pid = NULL;
-	data->line_count = 0;
-	data->here_2 = 0;
-	data->last_exit_status = 0;
-	data->fd_out = -1;
-	data->fd_in = -1;
-	data->buf_int = 0;
-	data->count_elem = 0;
-}
-
 void	init_env(t_pipex *data, char **env)
 {
-    int i;
-	
+	int	i;
+
 	i = 0;
 	data->cur_env = ft_calloc(sizeof(char *), (count_env(env) + 1), data);
 	i = -1;
@@ -50,9 +32,8 @@ void	init_env(t_pipex *data, char **env)
 
 void	init_export(t_pipex *data)
 {
-	// make sure _= can not be deleted
-	int i;
-	int count;
+	int	i;
+	int	count;
 
 	i = -1;
 	count = 0;
@@ -68,23 +49,39 @@ void	init_export(t_pipex *data)
 	while (data->cur_env[++i])
 	{
 		if (ft_strncmp(data->cur_env[i], "_=", 2))
-			data->export[count++] = malloc_cpy_export(data, data->cur_env[i], 0, -1);
+			data->export[count++]
+				= malloc_cpy_export(data, data->cur_env[i], 0, -1);
 	}
+}
+
+void	init_data(t_pipex *data, char **env)
+{
+	data->l = NULL;
+	data->cur_env = NULL;
+	data->export = NULL;
+	data->cur_env = NULL;
+	data->buf_array = NULL;
+	data->line = NULL;
+	data->pid = NULL;
+	data->line_count = 0;
+	data->here_2 = 0;
+	data->last_exit_status = 0;
+	data->fd_out = 0;
+	data->fd_in = -1;
+	data->buf_int = 0;
+	data->count_elem = 0;
+	init_env(data, env);
+	init_export(data);
 }
 
 int	main(int argc, char **argv, char **env)
 {
-	t_pipex *data;
+	t_pipex	*data;
 
-	// terminal_settings();
 	if (argc != 1 && argv)
 		return (printf("No argument is accepted\n"), 1);
 	data = ft_calloc(sizeof(t_pipex), 1, NULL);
-	init_data(data);
-	init_env(data, env);
-	init_export(data);
-	data->fd_out = 0;
-	data->last_exit_status = 0;
+	init_data(data, env);
 	g_signal = 0;
 	while (1)
 	{
@@ -92,11 +89,11 @@ int	main(int argc, char **argv, char **env)
 		g_signal = 0;
 		data->line = readline("minishell$ ");
 		if (!data->line)
-			return (printf("exit\n"), errno = data->last_exit_status, error_code(data), 0);
+			return (printf("exit\n"), errno = data->last_exit_status,
+				error_code(data), 0);
 		if (data->line[0] != '\0')
 		{
 			data->line = ft_strtrim(data->line, " \n\t\v\f\r\b", data);
-			// add_history(data->line);
 			parsing(data);
 		}
 		else

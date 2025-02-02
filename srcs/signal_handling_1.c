@@ -2,11 +2,10 @@
 
 int	g_signal;
 
-//	It will take sigquit access from printing anything 
-void	terminal_settings()
+void	terminal_settings(void)
 {
-	struct termios original_termios;
-	struct termios new_termios;
+	struct termios	original_termios;
+	struct termios	new_termios;
 
 	if (tcgetattr(STDIN_FILENO, &original_termios) == -1)
 	{
@@ -23,7 +22,7 @@ void	terminal_settings()
 	}
 }
 
-void signal_main(int sig)
+void	signal_main(int sig)
 {
 	if (sig == SIGINT)
 	{
@@ -35,27 +34,27 @@ void signal_main(int sig)
 	}
 }
 
-void    signal_back()
+void	signal_back(void)
 {
 	signal(SIGINT, signal_main);
 	signal(SIGQUIT, signal_main);
 }
 
-void signal_mini_commands(int sig) // here_doc
+void	signal_mini_commands(int sig)
 {
-     if (sig == SIGINT)
-	 {
+	if (sig == SIGINT)
+	{
 		g_signal += 1;
 		errno = 130;
-        ioctl(STDIN_FILENO, TIOCSTI, "\n");
+		ioctl(STDIN_FILENO, TIOCSTI, "\n");
 		rl_replace_line("", 0);
 		rl_on_new_line();
-	 }
+	}
 }
 
-void signal_exec_cmnd(int sig) // cat
+void	signal_exec_cmnd(int sig)
 {
-    if (sig == SIGINT)
+	if (sig == SIGINT)
 	{
 		g_signal += 1;
 		errno = 130;
@@ -64,23 +63,4 @@ void signal_exec_cmnd(int sig) // cat
 	}
 	if (sig == SIGQUIT)
 		printf("Quit (core dumped)\n");
-}
-
-void	signal_change(int flag)
-{
-	if (flag == 0)
-	{
-		signal(SIGINT, signal_main);
-		signal(SIGQUIT, SIG_IGN);
-	}
-    if (flag == 1) // for our commands
-	{
-		signal(SIGINT, signal_mini_commands);
-		signal(SIGQUIT, SIG_IGN);
-	}
-    if (flag == 2) // for prebuilt commands
-	{
-		signal(SIGINT, signal_exec_cmnd);
-		signal(SIGQUIT, signal_exec_cmnd);
-	}
 }

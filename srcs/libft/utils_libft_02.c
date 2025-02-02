@@ -1,4 +1,15 @@
-#include "../minishell.h"
+#include "../../minishell.h"
+
+char	*ft_strchr(const char *s, int c)
+{
+	while ((char)c != *s)
+	{
+		if (!*s)
+			return (0);
+		s++;
+	}
+	return ((char *)s);
+}
 
 int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {

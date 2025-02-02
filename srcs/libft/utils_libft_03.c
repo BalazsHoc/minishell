@@ -1,4 +1,4 @@
-#include "../minishell.h"
+#include "../../minishell.h"
 
 long long	ft_atoi(const char *nptr)
 {

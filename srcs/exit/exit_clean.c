@@ -1,4 +1,4 @@
-#include "../minishell.h"
+#include "../../minishell.h"
 
 void	error_code(t_pipex *data)
 {
@@ -8,9 +8,9 @@ void	error_code(t_pipex *data)
 	exit(errno);
 }
 
-void exit_child(t_pipex *data, int index_1, int index_2, int errnum)
+void	exit_child(t_pipex *data, int index_1, int index_2, int errnum)
 {
-	int status;
+	int	status;
 
 	data->pid[index_2] = fork();
 	if (data->pid[index_2] == -1)
@@ -24,7 +24,7 @@ void exit_child(t_pipex *data, int index_1, int index_2, int errnum)
 	{
 		if (waitpid(data->pid[index_2], &status, 0) == -1)
 			return (perror("waitpid failed!"), error_code(data));
-		data->lines[index_1]->exit_codes[index_2] = WEXITSTATUS(status);
+		data->l[index_1]->exit_codes[index_2] = WEXITSTATUS(status);
 		errno = WEXITSTATUS(status);
 	}
 }
