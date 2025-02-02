@@ -349,7 +349,7 @@ char		**malloc_unset(t_pipex *data, int index_1, int index_2);
 void		mini_child(t_pipex *data, int index_1, int index_2);
 void		mini_parent(t_pipex *data, int index_1, int index_2);
 
-int			is_valid_cwd(t_pipex *data);
+int			is_valid_cwd(void);
 
 //	start_mini_exec_2.c
 

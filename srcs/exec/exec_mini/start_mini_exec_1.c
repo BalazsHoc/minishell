@@ -12,14 +12,14 @@
 
 #include "../../../minishell.h"
 
-int	is_valid_cwd(t_pipex *data)
+int	is_valid_cwd(void)
 {
 	char	*buf;
 
 	buf = NULL;
 	buf = getcwd(NULL, 0);
 	if (!buf)
-		return (perror("getcwd() failed!"), error_code(data), -1);
+		return (perror("getcwd() failed!"), -1);
 	if (!*buf)
 		return (free_str(&buf), 0);
 	return (free_str(&buf), 1);
@@ -82,7 +82,7 @@ void	mini_parent(t_pipex *data, int index_1, int index_2)
 	else if (!ft_strncmp(data->l[index_1]->ops[index_2][0], "exit", 5))
 		exit_cmnd(data, index_1, index_2);
 	else if (!ft_strncmp(data->l[index_1]->ops[index_2][0], "ls", 3)
-		&& !is_valid_cwd(data))
+		&& !is_valid_cwd())
 		printf("\n");
 }
 
@@ -109,6 +109,6 @@ void	mini_child(t_pipex *data, int index_1, int index_2)
 	else if (!ft_strncmp(data->l[index_1]->ops[index_2][0], "exit", 5))
 		exit_cmnd_child(data, index_1, index_2);
 	else if (!ft_strncmp(data->l[index_1]->ops[index_2][0], "ls", 3)
-		&& !is_valid_cwd(data))
+		&& !is_valid_cwd())
 		printf("\n");
 }

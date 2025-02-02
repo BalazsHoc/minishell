@@ -65,7 +65,7 @@ void	update_env_continue(t_pipex *d, int index_1, int index_2, char *buf)
 		if (!ft_strncmp(d->cur_env[i], "PWD=", 4))
 		{
 			if (!ft_strncmp(d->l[index_1]->ops[index_2][1], ".", 1)
-				&& !*buf && free_this(&buf))
+				&& !*buf)
 			{
 				if (cur_pwd[ft_strlen(cur_pwd) - 1] != '/')
 					buf = ft_strjoin("/", d->l[index_1]->ops[index_2][1], d);
@@ -102,7 +102,8 @@ void	update_env(t_pipex *data, int index_1, int index_2)
 	}
 	buf = getcwd(NULL, 0);
 	if (!buf)
-		return (printf("failed getcwd() !\n"), error_code(data));
+		printf("failed getcwd() !\n");
 	update_env_continue(data, index_1, index_2, buf);
-	free_str(&buf);
+	if (!data->cur_env || !*data->cur_env || !get_pwd(data))
+		free_str(&buf);
 }
