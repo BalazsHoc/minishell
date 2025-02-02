@@ -45,7 +45,7 @@ int	count_chars_utils_2(t_pipex *data, int i, int open, int count)
 	return (0);
 }
 
-count_chars_utils_1(t_pipex *data, int i, int open, int count)
+int	count_chars_utils_1(t_pipex *data, int i, int open, int count)
 {
 	if (count > 0 && is_q_2(data->line[i]) && open == 2 && ((data->line[i + 1]
 			&& is_delim_front(data->line, i + 1)) || !data->line[i + 1]))

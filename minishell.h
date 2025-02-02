@@ -225,6 +225,14 @@ int			flag_empty(int *this, int pos);
 int			set_pos(int *to_set, int pos);
 
 
+//	count_utils.c
+
+int			if_count_elem_1(t_pipex *data, int j, int *open);
+int			count_chars_utils_2(t_pipex *data, int i, int open, int count);
+int			count_chars_utils_1(t_pipex *data, int i, int open, int count);
+
+
+
 //	count.c
 
 int			count_cmnds(char *line);
