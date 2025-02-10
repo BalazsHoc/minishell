@@ -100,7 +100,8 @@ void	update_env(t_pipex *data, int index_1, int index_2)
 			free(buf);
 		}
 	}
-	buf = getcwd(NULL, 0);
+	buf = ft_calloc(sizeof(char), (BUF_SIZE_ENV * 100), data);
+	getcwd(buf, BUF_SIZE_ENV * 100);
 	if (!buf)
 		printf("failed getcwd() !\n");
 	update_env_continue(data, index_1, index_2, buf);

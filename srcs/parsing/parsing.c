@@ -12,7 +12,6 @@
 
 #include "../../minishell.h"
 
-// TAKE THAT OUT
 // void	print_that_shit(t_pipex *data, int index_1)
 // {
 // 	int	i;
@@ -30,14 +29,14 @@
 // data->l[index_1]->cmnds[i][j]);
 // 			printf("\n");
 // 		}
-// 		j = -1;
-// 		if (data->l[index_1]->ops && data->l[index_1]->ops[i])
-// 		{
-// 			while (data->l[index_1]->ops[i][++j])
-// 				printf("OP:   %d:%d | |%s|\n", i, j,
-// data->l[index_1]->ops[i][j]);
-// 		}
-// 		printf("PATH: |%s|\n", data->l[index_1]->paths[i]);
+// // 		j = -1;
+// // 		if (data->l[index_1]->ops && data->l[index_1]->ops[i])
+// // 		{
+// // 			while (data->l[index_1]->ops[i][++j])
+// // 				printf("OP:   %d:%d | |%s|\n", i, j,
+// // data->l[index_1]->ops[i][j]);
+// // 		}
+// // 		printf("PATH: |%s|\n", data->l[index_1]->paths[i]);
 // 	}
 // }
 
@@ -125,6 +124,7 @@ void	init_line(t_pipex *data, int i)
 			data->l[i]->cmnd_count + 1, data);
 	init_pos_in_line(data, i);
 	init_cmnds(data, i, -1);
+	// print_that_shit(data, i);
 	make_history(data, i, -1, 0);
 	init_pipes_pids(data, i);
 }

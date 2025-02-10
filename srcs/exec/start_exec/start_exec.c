@@ -85,6 +85,7 @@ void	start_exec(t_pipex *data, int index, int i, int status)
 	here_doc(data, index, -1, -1);
 	handle_expansion_here_doc(data, index);
 	exec_cmnds(data, index, i);
+	// printf("AFTER EXEC: NEW: %d | OLD: %d\n", data->here_2, data->here_2_old);
 	close_pipes_array(data, index);
 	while (++i < data->l[index]->cmnd_count)
 	{
@@ -99,6 +100,7 @@ void	start_exec(t_pipex *data, int index, int i, int status)
 		}
 	}
 	set_here(data, index);
+	// printf("AFTER SET: NEW: %d | OLD: %d\n", data->here_2, data->here_2_old);
 	data->last_exit_status = data->l[index]->exit_codes[data->l[
 		index]->cmnd_count - 1];
 }

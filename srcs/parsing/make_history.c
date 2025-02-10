@@ -33,7 +33,7 @@ void	make_history_3(t_pipex *data, int i)
 		i = count_nl(data);
 		data->buf_int = data->here_2_old;
 	}
-	if (i == data->buf_int)
+	else if (i == data->buf_int)
 		data->buf_int = 0;
 	new = ft_calloc(sizeof(char), (i + 1), data);
 	j = -1;

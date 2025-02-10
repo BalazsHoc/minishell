@@ -93,6 +93,10 @@ int	main(int argc, char **argv, char **env)
 				error_code(data), 0);
 		if (data->line[0] != '\0')
 		{
+			// free_this(&data->line);
+			// data->line = "echo hi\necho lol\necho shesh\nhis";
+			// data->line = "<< EOF\necho lol\necho shesh\nEOF";
+			// data->line = "cat << EOF\necho lol\necho shesh\nEOF";
 			data->line = ft_strtrim(data->line, " \n\t\v\f\r\b", data);
 			parsing(data);
 		}

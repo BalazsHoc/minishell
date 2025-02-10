@@ -52,7 +52,8 @@ int	set_here_util_2(t_pipex *data, int index_1, int i)
 
 void	set_here_continue(t_pipex *data, int index_1, int i, int check)
 {
-	if (!check && data->l[index_1]->cmnds[0][0][0])
+	if (check == -1 && data->l[index_1]->cmnds[0][0][0]
+		&& data->l[index_1]->cmnds[0][i])
 	{
 		i = 0;
 		while (set_here_util_2(data, index_1, i))
@@ -64,7 +65,7 @@ void	set_here_continue(t_pipex *data, int index_1, int i, int check)
 			index_1]->cmnd_count - 1][last_one(data->l[
 				index_1]->cmnds[data->l[index_1]->cmnd_count - 1])] + i + 1;
 	}
-	else if (check && data->l[index_1]->cmnd_count)
+	else if (check >= 0 && data->l[index_1]->cmnd_count)
 		data->here_2_old = find_key(data, index_1, i, check + 1);
 }
 
@@ -75,8 +76,8 @@ void	set_here(t_pipex *data, int index_1)
 	int	check;
 
 	i = -1;
-	check = 0;
-	while (!check && ++i != INT_MIN && set_here_util_1(data, index_1, i))
+	check = -1;
+	while (check == -1 && ++i != INT_MIN && set_here_util_1(data, index_1, i))
 	{
 		j = -1;
 		while (data->l[index_1]->cmnds[i][++j])

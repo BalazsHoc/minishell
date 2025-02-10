@@ -27,7 +27,7 @@ int	is_mini(t_pipex *data, int index_1, int index_2)
 		|| !ft_strncmp(data->l[index_1]->ops[index_2][0], "/usr/bin/pwd", 13)
 	|| !ft_strncmp(data->l[index_1]->ops[index_2][0], "/bin/pwd", 9)
 	|| (!ft_strncmp(data->l[index_1]->ops[index_2][0], "ls", 3)
-	&& !is_valid_cwd())))
+	&& !is_valid_cwd(data))))
 		return (1);
 	return (0);
 }
