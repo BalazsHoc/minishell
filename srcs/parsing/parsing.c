@@ -25,21 +25,21 @@
 // 		while (data->l[index_1]->cmnds[i][++j])
 // 		{
 // 			if (data->l[index_1]->cmnds[i][j])
-// 				printf("ELEM: %d:%d | |%s| ", i, j,
-// data->l[index_1]->cmnds[i][j]);
-// 			printf("\n");
+// 				printf("ELEM: %d:%d | |%s| ", i, j, data->l[index_1]->cmnds[i][j]);
+// 			if (data->l[index_1]->red_cmnd[i][j])
+// 				printf("X\n");
+// 			else
+// 				printf("\n");
 // 		}
-// // 		j = -1;
-// // 		if (data->l[index_1]->ops && data->l[index_1]->ops[i])
-// // 		{
-// // 			while (data->l[index_1]->ops[i][++j])
-// // 				printf("OP:   %d:%d | |%s|\n", i, j,
-// // data->l[index_1]->ops[i][j]);
-// // 		}
-// // 		printf("PATH: |%s|\n", data->l[index_1]->paths[i]);
+// 		j = -1;
+// 		if (data->l[index_1]->ops && data->l[index_1]->ops[i])
+// 		{
+// 			while (data->l[index_1]->ops[i][++j])
+// 				printf("OP:   %d:%d | |%s|\n", i, j, data->l[index_1]->ops[i][j]);
+// 		}
+// 		printf("PATH: |%s|\n", data->l[index_1]->paths[i]);
 // 	}
 // }
-
 void	init_ops(t_pipex *data, int index_1)
 {
 	int	i;
@@ -79,7 +79,7 @@ void	init_paths(t_pipex *d, int i_1, int i_2)
 			if (!d->l[i_1]->paths[i_2])
 				d->l[i_1]->paths[i_2] = ft_strdup(d, "pathnfound");
 		}
-		else if (check_executable(d, i_1, i_2))
+		else if (!one_of_those(d, i_1, i_2) && check_executable(d, i_1, i_2))
 			d->l[i_1]->paths[i_2] = ft_strdup(d, d->l[i_1]->ops[i_2][0]);
 		else
 			d->l[i_1]->paths[i_2] = ft_strdup(d, "pathnfound");
@@ -116,16 +116,19 @@ void	init_lines(t_pipex *data)
 
 void	init_line(t_pipex *data, int i)
 {
+	// printf("neW ONE: %d| OLD: %d | I: %d\n", data->here_2, data->here_2_old, i);
 	data->l[i]->cmnd_count = count_cmnds(data->line + data->here_2);
 	data->l[i]->exit_codes = ft_calloc(sizeof(int),
 			(data->l[i]->cmnd_count), data);
+	data->l[i]->ex = INT_MAX;
 	init_red_cmnds(data, i);
 	data->l[i]->input = ft_calloc(sizeof(char *),
 			data->l[i]->cmnd_count + 1, data);
 	init_pos_in_line(data, i);
 	init_cmnds(data, i, -1);
 	// print_that_shit(data, i);
-	make_history(data, i, -1, 0);
+	handle_here(data, i, -1, 0);
+	// printf("NEW1: %d| OLD: %d\n", data->here_2, data->here_2_old);
 	init_pipes_pids(data, i);
 }
 
@@ -135,6 +138,7 @@ void	parsing(t_pipex *data)
 
 	i = -1;
 	init_lines(data);
+	make_history(data);
 	if (!syntax_check(data, -1, 0))
 		return (write(2, "bash: syntax error near unexpected token `|'\n", 46),
 			data->last_exit_status = 2, add_history(data->line),
@@ -148,11 +152,24 @@ void	parsing(t_pipex *data)
 		signal_change(NULL, 2);
 		init_line(data, i);
 		if (!check_reds(data, i, -1, -1))
-			return (free_lines(data));
+		{
+			if (data->here_2_old >= data->chars_in_line)
+				return (free_lines(data));
+			else
+			{
+				// printf("NEW0: %d| OLD: %d\n", data->here_2, data->here_2_old);
+				set_here(data, i);
+				// printf("NEW1: %d| OLD: %d\n", data->here_2, data->here_2_old);
+				continue ;
+			}
+		}
+		// printf("PENIS++++++++++++++++++++++++++++++++++++++++++2222\n");
 		init_ops(data, i);
 		init_paths(data, i, -1);
 		check_folder(data, i, -1, -1);
+		// print_that_shit(data, i);
 		start_exec(data, i, -1, 0);
+		// printf("NEW2: %d| OLD: %d\n", data->here_2, data->here_2_old);
 	}
 	free_lines(data);
 }

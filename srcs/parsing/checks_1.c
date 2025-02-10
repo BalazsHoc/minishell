@@ -67,12 +67,14 @@ int	check_reds(t_pipex *data, int index_1, int i, int j)
 							index_1]->red_cmnd[i][j])
 			{
 				if (!data->l[index_1]->cmnds[i + 1])
-					return (check_reds_util_1(data), 0);
-				return (check_reds_util_2(data), 0);
+					return (check_reds_util_1(data),
+						data->l[index_1]->ex = i, 0);
+				return (check_reds_util_2(data), data->l[index_1]->ex = i, 0);
 			}
 			else if (is_red(data, index_1, i, j)
 				&& is_red(data, index_1, i, j + 1))
-				return (check_reds_util_3(data, index_1, i, j), 0);
+				return (check_reds_util_3(data, index_1, i, j),
+					data->l[index_1]->ex = i, 0);
 		}
 	}
 	return (1);

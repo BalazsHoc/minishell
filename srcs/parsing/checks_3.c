@@ -34,6 +34,8 @@ void	check_folder_utils_6(t_pipex *data, int index, int i)
 	if (ptr)
 		return (closedir(ptr),
 			check_folder_utils_3(data, index, i));
+	else if (one_of_those(data, index, i))
+		return (check_folder_utils_3(data, index, i));
 	else if (errno == EACCES)
 		return (check_folder_utils_4(data, index, i));
 	else

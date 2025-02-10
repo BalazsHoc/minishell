@@ -47,6 +47,7 @@ typedef struct lines_s
 	int		*exit_codes;
 
 	int		cmnd_count;
+	int		ex;
 	int		*fd_infiles;
 	int		*fd_outfiles;
 
@@ -88,7 +89,6 @@ int			main(int argc, char **argv, char **env);
 //						exit/
 
 //	close_1.c
-
 void		close_children_pipes(t_pipex *data, int index_1, int index_2);
 void		close_everything(t_pipex *data, int index_1);
 void		create_buf_pipe(t_pipex *data, int index_1, int index_2);
@@ -222,6 +222,8 @@ int			count_env(char **env);
 int			count_reds(t_pipex *data, int index_1, int index_2);
 int			count_ops(t_pipex *data, int index_1, int index_2);
 
+int			if_th(t_pipex *data, int index_1, int index_2, int i);
+
 //	init_paths.c
 
 char		*find_path(t_pipex *data, char *cmnd);
@@ -232,7 +234,9 @@ int			slash_in_cmnd(char *str);
 
 //	make_history.c
 
-void		make_history(t_pipex *data, int index_1, int i, int j);
+// void		make_history(t_pipex *data, int index_1, int i, int j);
+void		handle_here(t_pipex *data, int index_1, int i, int j);
+void		make_history(t_pipex *data);
 
 //	one_of_those.c
 
@@ -266,6 +270,8 @@ int			is_red_clean(char *str, int index);
 //	parsing.c
 
 void		parsing(t_pipex *data);
+
+int			count_nl(t_pipex *data, int i);
 
 //	util_checks.c
 

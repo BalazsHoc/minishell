@@ -12,37 +12,6 @@
 
 #include "../../minishell.h"
 
-int	count_nl(t_pipex *data)
-{
-	int	i;
-
-	i = 0;
-	while (data->line[i + data->here_2] && data->line[i + data->here_2] != '\n')
-		i++;
-	return (i);
-}
-
-void	make_history_3(t_pipex *data, int i)
-{
-	char	*new;
-	int		j;
-
-	data->buf_int = 0;
-	if (i == 0)
-	{
-		i = count_nl(data);
-		data->buf_int = data->here_2_old;
-	}
-	else if (i == data->buf_int)
-		data->buf_int = 0;
-	new = ft_calloc(sizeof(char), (i + 1), data);
-	j = -1;
-	while (++j < i)
-		new[j] = data->line[data->buf_int + j];
-	add_history(new);
-	free_str(&new);
-}
-
 void	set_old(t_pipex *data, int index_1, int index_2, int index_3)
 {
 	int	k;
@@ -57,22 +26,125 @@ void	set_old(t_pipex *data, int index_1, int index_2, int index_3)
 	data->here_2_old = data->l[index_1]->pos_in_line[index_2][index_3] + k;
 }
 
-void	make_history_2(t_pipex *data, int index_1, int check, int check_2)
+int	count_nl(t_pipex *data, int i)
 {
-	if (check < 0)
-		make_history_3(data, 0);
-	else
+	while (data->line[++i] && data->line[i] != '\n')
+		i++;
+	return (i);
+}
+
+// void	make_history(t_pipex *data, int i)
+// {
+// 	char	*new;
+// 	int		j;
+
+// 	data->buf_int = 0;
+// 	printf("I1: %d\n", i);
+// 	if (i == 0)
+// 	{
+// 		i = count_nl(data);
+// 		data->buf_int = data->here_2_old;
+// 		printf("buf1111 INT: %d\n", data->buf_int);
+// 	}
+// 	printf("I2: %d\n", i);
+// 	printf("buf INT: %d\n", data->buf_int);
+// 	new = ft_calloc(sizeof(char), (i + 1), data);
+// 	j = -1;
+// 	while (++j < i)
+// 		new[j] = data->line[data->buf_int + j];
+// 	printf("NEW: %s\n", new);
+// 	add_history(new);
+// 	free_str(&new);
+// }
+
+void	make_history(t_pipex *data)
+{
+	char	*new;
+	int		k;
+	int		j;
+	int		i;
+
+	i = -1;
+	while (data->line[++i])
 	{
-		data->buf_int = data->here_2_old;
-		set_old(data, index_1, check_2, check);
-		find_key(data, index_1, check_2, check + 1);
-		check = data->here_2 - data->buf_int - 1;
-		make_history_3(data, check + 1);
-		data->buf_int = 0;
+		k = 0;
+		while (data->line[i + k] && data->line[i + k] != '\n')
+			k++;
+		new = ft_calloc(sizeof(char), (k + 1), data);
+		j = -1;
+		while (++j < k)
+			new[j] = data->line[i + j];
+		i += k;
+		// printf("NEW: %s\n", new);
+		add_history(new);
+		free_str(&new);
+		if (!data->line[i])
+			break ;
 	}
 }
 
-void	make_history(t_pipex *data, int index_1, int i, int j)
+// void	make_history(t_pipex *data, int index_1, int check, int check_2)
+// {
+// 	int this;
+
+// 	this = 0;
+// 	if (check < 0)
+// 		make_history_3(data, 0);
+// 	else
+// 	{
+// 		printf("CHECK THIS1: here_2: %d | here_2_old: %d check: %d\n", data->here_2, data->here_2_old, check);
+// 		data->buf_int = data->here_2_old;
+// 		if (data->here_2 && ++this)
+// 		{
+// 			set_old(data, index_1, check_2, check);
+// 		}
+// 		printf("CHECK THIS2: here_2: %d | here_2_old: %d check: %d\n", data->here_2, data->here_2_old, check);
+// 		find_key(data, index_1, check_2, check + 1);
+// 		if (data->here_2 == data->here_2_old)
+// 			check = count_nl(data);
+// 		else if (index_1 == 0)
+// 			check = -1;
+// 			check = data->here_2_old - data->buf_int;
+// 		printf("CHECK THIS3: here_2: %d | here_2_old: %d check: %d\n", data->here_2, data->here_2_old, check);
+// 		make_history_3(data, check + 1);
+// 		data->buf_int = 0;
+// 		if (!this && printf("PENIS\n"))
+// 			set_old(data, index_1, check_2, check);
+// 	}
+// // }
+void	make_history_2(t_pipex *data, int index_1, int check, int check_2)
+{
+	int	this;
+
+	this = 0;
+	if (check < 0)
+		return ;
+		// make_history_3(data, 0);
+	else
+	{
+		// printf("CHECK THIS1: here_2: %d | here_2_old: %d check: %d\n", data->here_2, data->here_2_old, check);
+		data->buf_int = data->here_2_old;
+		if (data->here_2 && ++this)
+		{
+			set_old(data, index_1, check_2, check);
+		}
+		// printf("CHECK THIS2: here_2: %d | here_2_old: %d check: %d\n", data->here_2, data->here_2_old, check);
+		find_key(data, index_1, check_2, check + 1);
+		// if (index_1 == 0)
+		// 	check = -1;
+		// else if (data->here_2 < data->here_2_old)
+		// 	check = data->here_2_old - data->buf_int;
+		// else
+		// 	check = data->here_2 - data->buf_int;
+		// printf("CHECK THIS3: here_2: %d | here_2_old: %d check: %d\n", data->here_2, data->here_2_old, check);
+		// make_history_3(data, check + 1);
+		data->buf_int = 0;
+		if (!this)
+			set_old(data, index_1, check_2, check);
+	}
+}
+
+void	handle_here(t_pipex *data, int index_1, int i, int j)
 {
 	int	check;
 	int	check_2;

@@ -41,7 +41,7 @@ int	count_reds(t_pipex *data, int index_1, int index_2)
 	while (data->l[index_1]->cmnds[index_2][++i])
 	{
 		if (is_red(data, index_1, index_2, i))
-			count++;
+			count = count + 1 + (if_th(data, index_1, index_2, i));
 		if (!data->l[index_1]->cmnds[index_2][i + 1])
 			break ;
 	}
@@ -60,7 +60,9 @@ int	count_ops(t_pipex *data, int index_1, int index_2)
 		count++;
 		i++;
 	}
-	return (count - (count_reds(data, index_1, index_2) * 2));
+	count = count - (count_reds(data, index_1, index_2) * 2);
+	// printf("COOUNT: %d\n", count);
+	return (count);
 }
 
 void	fill_ops(t_pipex *data, int index_1, int index_2)
@@ -70,7 +72,8 @@ void	fill_ops(t_pipex *data, int index_1, int index_2)
 
 	i = -1;
 	j = -1;
-	while (data->l[index_1]->cmnds[index_2][++i])
+	while (data->l[index_1]->cmnds[index_2][++i]
+		&& j < count_ops(data, index_1, index_2))
 	{
 		while (data->l[index_1]->cmnds[index_2][i]
 			&& is_red(data, index_1, index_2, i))

@@ -76,30 +76,38 @@ void	open_out_util_2(t_pipex *data, int index_1, int index_2, int i)
 	exit_child(data, index_1, index_2, 1);
 }
 
-int	open_out(t_pipex *data, int index_1, int index_2)
+int if_th(t_pipex *data, int index_1, int index_2, int i)
+{
+	if (!ft_strncmp(data->l[index_1]->cmnds[index_2][i + 1], "|", 2)
+		&& index_2 != data->l[index_1]->ex)
+		return (1);
+	return (0);
+}
+
+int	open_out(t_pipex *d, int i_1, int i_2)
 {
 	int	i;
 	int	fd;
 
 	i = -1;
 	fd = -1;
-	if (open_out_util_1(data, index_1, index_2))
+	if (open_out_util_1(d, i_1, i_2))
 		return (-1);
-	while (data->l[index_1]->cmnds[index_2][++i])
+	while (d->l[i_1]->cmnds[i_2][++i])
 	{
-		if ((!ft_strncmp(data->l[index_1]->cmnds[index_2][i], ">>", 3)
-			|| !ft_strncmp(data->l[index_1]->cmnds[index_2][i], ">", 2))
-				&& data->l[index_1]->red_cmnd[index_2][i] == 0)
+		if ((!ft_strncmp(d->l[i_1]->cmnds[i_2][i], ">>", 3)
+			|| !ft_strncmp(d->l[i_1]->cmnds[i_2][i], ">", 2))
+				&& d->l[i_1]->red_cmnd[i_2][i] == 0)
 		{
-			close_pipe(data, &fd);
-			if (!ft_strncmp(data->l[index_1]->cmnds[index_2][i], ">>", 3))
-				fd = open(data->l[index_1]->cmnds[index_2][i + 1],
+			close_pipe(d, &fd);
+			if (!ft_strncmp(d->l[i_1]->cmnds[i_2][i], ">>", 3))
+				fd = open(d->l[i_1]->cmnds[i_2][i + 1],
 						O_WRONLY | O_CREAT | O_APPEND, 0644);
 			else
-				fd = open(data->l[index_1]->cmnds[index_2][i + 1],
+				fd = open(d->l[i_1]->cmnds[i_2][i + 1 + if_th(d, i_1, i_2, i)],
 						O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			if (fd == -1)
-				return (open_out_util_2(data, index_1, index_2, i), -1);
+				return (open_out_util_2(d, i_1, i_2, i), -1);
 		}
 	}
 	return (fd);
