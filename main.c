@@ -94,7 +94,7 @@ int	main(int argc, char **argv, char **env)
 		if (data->line[0] != '\0')
 		{
 			data->line = ft_strtrim(data->line, " \n\t\v\f\r\b", data);
-			parsing(data);
+			parsing(data, -1);
 		}
 		else
 			free_str(&data->line);

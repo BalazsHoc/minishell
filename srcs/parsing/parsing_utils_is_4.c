@@ -1,0 +1,43 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing_utils_is_4.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bhocsak <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/11 15:18:47 by bhocsak           #+#    #+#             */
+/*   Updated: 2025/02/11 15:18:48 by bhocsak          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../minishell.h"
+
+void	init_paths_2(t_pipex *data, int i)
+{
+	int	j;
+	int	k;
+
+	j = -1;
+	while (data->l[i]->ops[++j])
+	{
+		k = -1;
+		while (data->l[i]->ops[j][++k])
+		{
+			if (!access(data->l[i]->ops[j][k], X_OK))
+			{
+				free_str(&data->l[i]->paths[j]);
+				data->l[i]->paths[j] = ft_strdup(data, data->l[i]->ops[j][k]);
+				return ;
+			}
+		}
+	}
+}
+
+void	init_rest(t_pipex *data, int i)
+{
+	init_ops(data, i);
+	init_paths(data, i, -1);
+	init_paths_2(data, i);
+	check_folder(data, i, -1, -1);
+	start_exec(data, i, -1, 0);
+}

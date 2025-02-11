@@ -35,13 +35,6 @@ int	is_red(t_pipex *data, int index_1, int index_2, int index_3)
 		|| !ft_strncmp(data->l[index_1]->cmnds[index_2][index_3], ">", 2)
 		|| !ft_strncmp(data->l[index_1]->cmnds[index_2][index_3], "<", 2)
 		|| !ft_strncmp(data->l[index_1]->cmnds[index_2][index_3], ">>", 3))
-		// && (!data->l[index_1]->cmnds[index_2][index_3 + 1] || (data->l[index_1]->cmnds[index_2][index_3 + 1] &&
-		// 	!(
-		// 	!ft_strncmp(data->l[index_1]->cmnds[index_2][index_3 + 1], "<<", 3)
-		// 	|| !ft_strncmp(data->l[index_1]->cmnds[index_2][index_3 + 1], ">", 2)
-		// 	|| !ft_strncmp(data->l[index_1]->cmnds[index_2][index_3 + 1], "<", 2)
-		// 	|| !ft_strncmp(data->l[index_1]->cmnds[index_2][index_3 + 1], ">>", 3)
-		// 	)))
 		&& data->l[index_1]->red_cmnd[index_2][index_3] == 0)
 		return (1);
 	return (0);

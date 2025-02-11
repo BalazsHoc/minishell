@@ -222,8 +222,6 @@ int			count_env(char **env);
 int			count_reds(t_pipex *data, int index_1, int index_2);
 int			count_ops(t_pipex *data, int index_1, int index_2);
 
-int			if_th(t_pipex *data, int index_1, int index_2, int i);
-
 //	init_paths.c
 
 char		*find_path(t_pipex *data, char *cmnd);
@@ -234,9 +232,10 @@ int			slash_in_cmnd(char *str);
 
 //	make_history.c
 
-// void		make_history(t_pipex *data, int index_1, int i, int j);
 void		handle_here(t_pipex *data, int index_1, int i, int j);
 void		make_history(t_pipex *data);
+
+int			count_nl(t_pipex *data, int i);
 
 //	one_of_those.c
 
@@ -267,11 +266,16 @@ int			check_executable(t_pipex *data, int index_1, int index_2);
 int			is_executable(t_pipex *data, int index_1, int index_2);
 int			is_red_clean(char *str, int index);
 
+//	parsing_utils_is_4.c
+
+void		init_rest(t_pipex *data, int i);
+void		init_paths_2(t_pipex *data, int i);
+
 //	parsing.c
 
-void		parsing(t_pipex *data);
-
-int			count_nl(t_pipex *data, int i);
+void		parsing(t_pipex *data, int i);
+void		init_ops(t_pipex *data, int index_1);
+void		init_paths(t_pipex *d, int i_1, int i_2);
 
 //	util_checks.c
 
@@ -378,6 +382,7 @@ char		*get_input(t_pipex *data, int index_1, int index_2, int index_3);
 //	start_exec_utils_2.c
 
 int			here_doc(t_pipex *data, int index_1, int index_2, int i);
+int			if_th(t_pipex *data, int index_1, int index_2, int i);
 
 //	start_exec_utils_3.c
 
@@ -426,8 +431,10 @@ int			check_here_doc(t_pipex *data, int index_1, int index_2);
 //	utils_libft_01.c
 
 void		ft_bzero(void *s, size_t n);
-char		*ft_strtrim(char *s1, char const *set, t_pipex *data);
+
 size_t		ft_strlen(const char *str);
+
+char		*ft_strtrim(char *s1, char const *set, t_pipex *data);
 char		*ft_strdup_2(t_pipex *data, const char *s);
 char		*ft_strdup(t_pipex *data, const char *s);
 
@@ -436,6 +443,7 @@ char		*ft_strdup(t_pipex *data, const char *s);
 char		*ft_strchr(const char *s, int c);
 char		*ft_strjoin(char const *s1, char const *s2, t_pipex *data);
 char		*ft_substr(char *s, unsigned int start, size_t len, t_pipex *data);
+
 int			ft_strcmp_2(char *s1, char *s2);
 int			ft_strncmp(const char *s1, const char *s2, size_t n);
 

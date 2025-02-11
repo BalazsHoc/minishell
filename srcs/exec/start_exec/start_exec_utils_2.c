@@ -70,3 +70,11 @@ int	here_doc(t_pipex *data, int index_1, int index_2, int i)
 	}
 	return (signal_change(NULL, 2), 1);
 }
+
+int	if_th(t_pipex *data, int index_1, int index_2, int i)
+{
+	if (!ft_strncmp(data->l[index_1]->cmnds[index_2][i + 1], "|", 2)
+		&& index_2 != data->l[index_1]->ex)
+		return (1);
+	return (0);
+}

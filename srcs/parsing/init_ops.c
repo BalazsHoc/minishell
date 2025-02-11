@@ -61,7 +61,6 @@ int	count_ops(t_pipex *data, int index_1, int index_2)
 		i++;
 	}
 	count = count - (count_reds(data, index_1, index_2) * 2);
-	// printf("COOUNT: %d\n", count);
 	return (count);
 }
 

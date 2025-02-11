@@ -55,8 +55,6 @@ void	set_here_continue(t_pipex *data, int index_1, int i, int check)
 	int	lol;
 
 	lol = data->here_2;
-	// if (check == -1 && !data->l[index_1]->cmnds[0][i])
-	// 		data->here_2_old = count_nl(data, index_1);
 	if (check == -1 && data->l[index_1]->cmnds[0][0][0]
 		&& (i == 1 || data->l[index_1]->cmnds[i]))
 	{

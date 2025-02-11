@@ -12,34 +12,36 @@
 
 #include "../../minishell.h"
 
-void	print_that_shit(t_pipex *data, int index_1)
-{
-	int	i;
-	int	j;
+// void	print_that_shit(t_pipex *data, int index_1)
+// {
+// 	int	i;
+// 	int	j;
 
-	i = -1;
-	printf("|\n");
-	while (data->l[index_1]->cmnds[++i])
-	{
-		j = -1;
-		while (data->l[index_1]->cmnds[i][++j])
-		{
-			if (data->l[index_1]->cmnds[i][j])
-				printf("ELEM: %d:%d | |%s| ", i, j, data->l[index_1]->cmnds[i][j]);
-			if (data->l[index_1]->red_cmnd[i][j])
-				printf("X\n");
-			else
-				printf("\n");
-		}
-		j = -1;
-		if (data->l[index_1]->ops && data->l[index_1]->ops[i])
-		{
-			while (data->l[index_1]->ops[i][++j])
-				printf("OP:   %d:%d | |%s|\n", i, j, data->l[index_1]->ops[i][j]);
-		}
-		printf("PATH: |%s|\n", data->l[index_1]->paths[i]);
-	}
-}
+// 	i = -1;
+// 	printf("|\n");
+// 	while (data->l[index_1]->cmnds[++i])
+// 	{
+// 		j = -1;
+// 		while (data->l[index_1]->cmnds[i][++j])
+// 		{
+// 			if (data->l[index_1]->cmnds[i][j])
+// 				printf("ELEM: %d:%d | |%s| ", i,
+// 					j, data->l[index_1]->cmnds[i][j]);
+// 			if (data->l[index_1]->red_cmnd[i][j])
+// 				printf("X\n");
+// 			else
+// 				printf("\n");
+// 		}
+// 		j = -1;
+// 		if (data->l[index_1]->ops && data->l[index_1]->ops[i])
+// 		{
+// 			while (data->l[index_1]->ops[i][++j])
+// 				printf("OP:   %d:%d | |%s|\n", i,
+// 					j, data->l[index_1]->ops[i][j]);
+// 		}
+// 		printf("PATH: |%s|\n", data->l[index_1]->paths[i]);
+// 	}
+// }
 void	init_ops(t_pipex *data, int index_1)
 {
 	int	i;
@@ -79,7 +81,8 @@ void	init_paths(t_pipex *d, int i_1, int i_2)
 			if (!d->l[i_1]->paths[i_2])
 				d->l[i_1]->paths[i_2] = ft_strdup(d, "pathnfound");
 		}
-		else if ((!ft_strncmp(d->l[i_1]->ops[i_2][0], ".", 2) || !one_of_those(d, i_1, i_2)) && check_executable(d, i_1, i_2))
+		else if ((!ft_strncmp(d->l[i_1]->ops[i_2][0], ".", 2)
+			|| !one_of_those(d, i_1, i_2)) && check_executable(d, i_1, i_2))
 			d->l[i_1]->paths[i_2] = ft_strdup(d, d->l[i_1]->ops[i_2][0]);
 		else
 			d->l[i_1]->paths[i_2] = ft_strdup(d, "pathnfound");
@@ -116,7 +119,6 @@ void	init_lines(t_pipex *data)
 
 void	init_line(t_pipex *data, int i)
 {
-	// printf("neW ONE: %d| OLD: %d | I: %d\n", data->here_2, data->here_2_old, i);
 	data->l[i]->cmnd_count = count_cmnds(data->line + data->here_2);
 	data->l[i]->exit_codes = ft_calloc(sizeof(int),
 			(data->l[i]->cmnd_count), data);
@@ -127,47 +129,11 @@ void	init_line(t_pipex *data, int i)
 	init_pos_in_line(data, i);
 	init_cmnds(data, i, -1);
 	handle_here(data, i, -1, 0);
-	// printf("NEW1: %d| OLD: %d\n", data->here_2, data->here_2_old);
 	init_pipes_pids(data, i);
 }
 
-void	init_paths_2(t_pipex *data, int i)
+void	parsing(t_pipex *data, int i)
 {
-	int j;
-	int k;
-
-	j = -1;
-	while (data->l[i]->ops[++j])
-	{
-		k = -1;
-		while (data->l[i]->ops[j][++k])
-		{
-			if (!access(data->l[i]->ops[j][k], X_OK))
-			{
-				free_str(&data->l[i]->paths[j]);
-				data->l[i]->paths[j] = ft_strdup(data, data->l[i]->ops[j][k]);
-				return ;
-			}
-		}
-	}
-}
-
-void	init_rest(t_pipex *data, int i)
-{
-		init_ops(data, i);
-		init_paths(data, i, -1);
-		init_paths_2(data, i);
-		check_folder(data, i, -1, -1);
-		print_that_shit(data, i);
-		start_exec(data, i, -1, 0);
-
-}
-
-void	parsing(t_pipex *data)
-{
-	int	i;
-
-	i = -1;
 	init_lines(data);
 	make_history(data);
 	if (!syntax_check(data, -1, 0))
