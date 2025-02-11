@@ -48,7 +48,7 @@ void	handle_child(t_pipex *d, int i_1, int i_2)
 		return (perror("out dup2"), close_children_pipes(d, i_1, i_2),
 			error_code(d));
 	close_children_pipes(d, i_1, i_2);
-	if (execve(d->l[i_1]->paths[i_2], d->l[i_1]->ops[i_2], NULL) == -1)
+	if (execve(d->l[i_1]->paths[i_2], d->l[i_1]->ops[i_2], d->cur_env) == -1)
 		return (perror("execve"), error_code(d));
 }
 

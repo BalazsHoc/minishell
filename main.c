@@ -22,11 +22,11 @@ void	init_env(t_pipex *data, char **env)
 	while (++i < count_env(env))
 	{
 		if (!ft_strncmp(env[i], "_=", 2))
-			data->cur_env[i] = ft_strdup(NULL, "_=/usr/bin/env");
+			data->cur_env[i] = ft_strdup(data, "_=/usr/bin/env");
 		else if (!ft_strncmp(env[i], "SHLVL=", 6))
-			data->cur_env[i] = ft_strdup(NULL, "SHLVL=1");
+			data->cur_env[i] = ft_strdup(data, "SHLVL=0");
 		else
-			data->cur_env[i] = ft_strdup(NULL, env[i]);
+			data->cur_env[i] = ft_strdup(data, env[i]);
 	}
 }
 
@@ -48,7 +48,9 @@ void	init_export(t_pipex *data)
 	count = 0;
 	while (data->cur_env[++i])
 	{
-		if (ft_strncmp(data->cur_env[i], "_=", 2))
+		if (!ft_strncmp(data->cur_env[i], "SHLVL=", 6))
+			data->export[count++] = ft_strdup(data, "SHLVL=1");
+		else if (ft_strncmp(data->cur_env[i], "_=", 2))
 			data->export[count++]
 				= malloc_cpy_export(data, data->cur_env[i], 0, -1);
 	}

@@ -66,7 +66,8 @@ int	check_folder_utils_1(t_pipex *data, int index, int i)
 
 int	check_folder_utils_2(t_pipex *data, int index, int i, int j)
 {
-	if ((data->l[index]->ops[i][0][j] == '/' || one_of_those(data, index, i))
+	if ((data->l[index]->ops[i][0][j] == '/'
+			|| one_of_those(data->l[index]->ops[i][0]))
 				&& (!check_cmnd_as_dir(data, index, i)))
 		return (1);
 	return (0);

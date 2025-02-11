@@ -83,6 +83,7 @@ typedef struct pipex_s
 extern int	g_signal;
 
 int			main(int argc, char **argv, char **env);
+void		print_that_shit(t_pipex *data, int index_1);
 
 //								srcs/
 
@@ -239,8 +240,8 @@ int			count_nl(t_pipex *data, int i);
 
 //	one_of_those.c
 
-int			one_of_those(t_pipex *data, int index_1, int index_2);
-int			one_of_those_2(t_pipex *data, int index_1, int index_2, int i);
+int			one_of_those(char *str);
+int			one_of_those_2(char *str);
 int			one_of_those_3(char *str);
 
 //	parsing_utils_is_1.c

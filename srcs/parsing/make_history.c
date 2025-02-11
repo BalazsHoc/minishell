@@ -58,7 +58,7 @@ void	make_history(t_pipex *data)
 	}
 }
 
-void	make_history_2(t_pipex *data, int index_1, int check, int check_2)
+void	handle_here_2(t_pipex *data, int index_1, int check, int check_2)
 {
 	int	this;
 
@@ -99,5 +99,5 @@ void	handle_here(t_pipex *data, int index_1, int i, int j)
 			}
 		}
 	}
-	make_history_2(data, index_1, check, check_2);
+	handle_here_2(data, index_1, check, check_2);
 }

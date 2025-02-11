@@ -23,7 +23,11 @@ void	init_paths_2(t_pipex *data, int i)
 		k = -1;
 		while (data->l[i]->ops[j][++k])
 		{
-			if (!access(data->l[i]->ops[j][k], X_OK))
+			if (!access(data->l[i]->ops[j][k], X_OK)
+				&& !one_of_those(data->l[i]->ops[j][k])
+				&& !ft_strncmp(data->l[i]->ops[j][0], "env", 4)
+				&& (!ft_strncmp(data->l[i]->ops[j][k], "../", 3)
+					|| !ft_strncmp(data->l[i]->ops[j][k], "./", 2)))
 			{
 				free_str(&data->l[i]->paths[j]);
 				data->l[i]->paths[j] = ft_strdup(data, data->l[i]->ops[j][k]);
@@ -36,6 +40,7 @@ void	init_paths_2(t_pipex *data, int i)
 void	init_rest(t_pipex *data, int i)
 {
 	init_ops(data, i);
+	// print_that_shit(data, i);
 	init_paths(data, i, -1);
 	init_paths_2(data, i);
 	check_folder(data, i, -1, -1);

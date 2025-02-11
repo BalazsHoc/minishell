@@ -17,8 +17,11 @@
 // 	int	i;
 // 	int	j;
 
-// 	i = -1;
+// 	// i = -1;
 // 	printf("|\n");
+// 	// while (data->cur_env[++i])
+// 	// 	printf("%s\n", data->cur_env[i]);
+// 	i = -1;
 // 	while (data->l[index_1]->cmnds[++i])
 // 	{
 // 		j = -1;
@@ -39,9 +42,10 @@
 // 				printf("OP:   %d:%d | |%s|\n", i,
 // 					j, data->l[index_1]->ops[i][j]);
 // 		}
-// 		printf("PATH: |%s|\n", data->l[index_1]->paths[i]);
+// 		// printf("PATH: |%s|\n", data->l[index_1]->paths[i]);
 // 	}
 // }
+
 void	init_ops(t_pipex *data, int index_1)
 {
 	int	i;
@@ -74,7 +78,7 @@ void	init_paths(t_pipex *d, int i_1, int i_2)
 		else if (!ft_strncmp(d->l[i_1]->ops[i_2][0], "echo", 5))
 			d->l[i_1]->paths[i_2] = ft_strdup(d, "/usr/bin/echo");
 		else if (d->l[i_1]->ops[i_2] && d->l[i_1]->ops[i_2][0]
-			&& !one_of_those(d, i_1, i_2)
+			&& !one_of_those(d->l[i_1]->ops[i_2][0])
 				&& !is_executable(d, i_1, i_2) && get_path(d))
 		{
 			d->l[i_1]->paths[i_2] = find_path(d, d->l[i_1]->ops[i_2][0]);
@@ -82,7 +86,8 @@ void	init_paths(t_pipex *d, int i_1, int i_2)
 				d->l[i_1]->paths[i_2] = ft_strdup(d, "pathnfound");
 		}
 		else if ((!ft_strncmp(d->l[i_1]->ops[i_2][0], ".", 2)
-			|| !one_of_those(d, i_1, i_2)) && check_executable(d, i_1, i_2))
+			|| !one_of_those(d->l[i_1]->ops[i_2][0]))
+				&& check_executable(d, i_1, i_2))
 			d->l[i_1]->paths[i_2] = ft_strdup(d, d->l[i_1]->ops[i_2][0]);
 		else
 			d->l[i_1]->paths[i_2] = ft_strdup(d, "pathnfound");
@@ -138,11 +143,11 @@ void	parsing(t_pipex *data, int i)
 	make_history(data);
 	if (!syntax_check(data, -1, 0))
 		return (write(2, "bash: syntax error near unexpected token `|'\n", 46),
-			data->last_exit_status = 2, add_history(data->line),
+			data->last_exit_status = 2,
 			free_lines(data));
 	if (check_open(data->line))
 		return (write(2, "bash: syntax error: open quotes \n", 34),
-			data->last_exit_status = 2, add_history(data->line),
+			data->last_exit_status = 2,
 			free_lines(data));
 	while (data->l[++i] && data->here_2_old < data->chars_in_line)
 	{
