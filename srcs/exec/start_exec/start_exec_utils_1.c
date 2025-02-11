@@ -65,6 +65,7 @@ int	get_input_2(t_pipex *data, int index_1, int i)
 	int		k;
 	int		j;
 	char	*new;
+	char	*buf;
 
 	k = 0;
 	j = 2;
@@ -78,7 +79,9 @@ int	get_input_2(t_pipex *data, int index_1, int i)
 		new[k] = data->line[data->here_2_old + k];
 		k++;
 	}
-	data->l[index_1]->input[i] = new;
+	buf = ft_strjoin(new, "\n", data);
+	free_str(&new);
+	data->l[index_1]->input[i] = buf;
 	return (1);
 }
 
@@ -128,6 +131,7 @@ int	find_key(t_pipex *data, int index_1, int index_2, int index_3)
 					index_1]->cmnds[index_2][index_3][j])
 			j++;
 		if (!data->l[index_1]->cmnds[index_2][index_3][j]
+			&& (i == 0 || (data->line[i - 1] == '\n'))
 			&& (!data->line[i + j] || data->line[i + j] == '\n'
 				|| is_space(data->line[i + j])))
 			return (data->here_2 = i + j + 1, i + j + 1);

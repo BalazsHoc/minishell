@@ -94,7 +94,8 @@ char	*ft_strjoin(char const *s1, char const *s2, t_pipex *data)
 
 	if (s1 == 0 && s2 == 0)
 		return (0);
-	i = ft_strlen(s1) + ft_strlen(s2);
+	i = ft_strlen(s1)
+		+ ft_strlen(s2);
 	joined = ft_calloc(sizeof(char), (i + 1), data);
 	i = 0;
 	while (s1[i])

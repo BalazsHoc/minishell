@@ -76,7 +76,7 @@ void	set_here_continue(t_pipex *data, int index_1, int i, int check)
 		data->here_2_old = find_key(data, index_1, i, check + 1);
 }
 
-void	set_here(t_pipex *data, int index_1)
+int	set_here(t_pipex *data, int index_1)
 {
 	int	i;
 	int	j;
@@ -86,23 +86,20 @@ void	set_here(t_pipex *data, int index_1)
 	i = -1;
 	check = -1;
 	check_2 = 0;
-	// printf("EX: %d\n", data->l[index_1]->ex);
 	while (++i != INT_MIN && set_here_util_1(data, index_1, i))
 	{
 		j = -1;
 		while (data->l[index_1]->cmnds[i][++j] && data->l[index_1]->ex > i)
 		{
-			// printf("I THIS: %d\n", i);
 			if (!ft_strncmp(data->l[index_1]->cmnds[i][j], "<<", 3)
 				&& !data->l[index_1]->red_cmnd[i][j])
 			{
-				// printf("I: %d\n", i);
 				check = j;
 				check_2 = i;
 			}
 		}
 		j = 0;
 	}
-	// printf("CHECK: %d | CHECK 2: %d\n", check, check_2);
 	set_here_continue(data, index_1, check_2, check);
+	return (1);
 }

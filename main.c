@@ -78,8 +78,8 @@ int	main(int argc, char **argv, char **env)
 {
 	t_pipex	*data;
 
-	if (argc != 1 && argv)
-		return (printf("No argument is accepted\n"), 1);
+	(void)argc;
+	(void)argv;
 	data = ft_calloc(sizeof(t_pipex), 1, NULL);
 	init_data(data, env);
 	g_signal = 0;

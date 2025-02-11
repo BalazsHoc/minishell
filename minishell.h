@@ -385,7 +385,7 @@ void		exec_cmnds(t_pipex *data, int index, int i);
 
 //	start_exec_utils_4.c
 
-void		set_here(t_pipex *data, int index_1);
+int			set_here(t_pipex *data, int index_1);
 
 int			last_one(char **arr);
 

@@ -55,28 +55,28 @@ char	*get_path(t_pipex *data)
 
 void	update_env_continue(t_pipex *d, int index_1, int index_2, char *buf)
 {
-	int		i;
 	char	*cur_pwd;
 
-	i = -1;
+	d->buf_int = -1;
 	cur_pwd = get_pwd(d);
-	while (d->cur_env[++i] && i < 100)
+	while (d->cur_env[++d->buf_int] && d->buf_int < 100)
 	{
-		if (!ft_strncmp(d->cur_env[i], "PWD=", 4))
+		if (!ft_strncmp(d->cur_env[d->buf_int], "PWD=", 4))
 		{
 			if (!ft_strncmp(d->l[index_1]->ops[index_2][1], ".", 1)
 				&& !*buf)
 			{
-				if (cur_pwd[ft_strlen(cur_pwd) - 1] != '/')
+				if (free_this(&buf) && cur_pwd[ft_strlen(cur_pwd) - 1] != '/')
 					buf = ft_strjoin("/", d->l[index_1]->ops[index_2][1], d);
 				else
 					buf = ft_strjoin(NULL, d->l[index_1]->ops[index_2][1], d);
 				cur_pwd = ft_strjoin(cur_pwd + 4, buf, d);
-				d->cur_env[i] = ft_strjoin("PWD=", cur_pwd, d);
+				free_this(&d->cur_env[d->buf_int]);
+				d->cur_env[d->buf_int] = ft_strjoin("PWD=", cur_pwd, d);
 				free_str(&cur_pwd);
 			}
-			else if (free_this(&d->cur_env[i]))
-				d->cur_env[i] = ft_strjoin("PWD=", buf, d);
+			else if (free_this(&d->cur_env[d->buf_int]) && *buf)
+				d->cur_env[d->buf_int] = ft_strjoin("PWD=", buf, d);
 			free_str(&buf);
 		}
 	}
@@ -97,7 +97,7 @@ void	update_env(t_pipex *data, int index_1, int index_2)
 		{
 			buf = data->cur_env[i];
 			data->cur_env[i] = ft_strjoin("OLDPWD=", cur_pwd + 4, data);
-			free(buf);
+			free_str(&buf);
 		}
 	}
 	buf = ft_calloc(sizeof(char), (BUF_SIZE_ENV * 100), data);
