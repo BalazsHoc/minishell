@@ -42,7 +42,7 @@ int	syntax_check(t_pipex *data, int i, int count)
 	while (data->line[++i])
 	{
 		handle_open(data, i, &open);
-		if (!open && i == 0 && data->line[0] == '|')
+		if (!open && (i == 0 || !data->line[i + 1]) && data->line[i] == '|')
 			return (0);
 		else if (!open && !is_real_pipe(data->line, i)
 			&& !is_space(data->line[i]) && ++word)

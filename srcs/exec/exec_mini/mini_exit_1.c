@@ -64,7 +64,7 @@ void	exit_cmnd(t_pipex *data, int index_1, int index_2)
 		return (write(2, "bash: exit: too many arguments\n", 32),
 			exit_child(data, index_1, index_2, data->last_exit_status));
 	else
-		return (data->last_exit_status = errno, error_code(data));
+		return (errno = 0, data->last_exit_status = errno, error_code(data));
 }
 
 void	exit_cmnd_child(t_pipex *data, int index_1, int index_2)
@@ -89,5 +89,5 @@ void	exit_cmnd_child(t_pipex *data, int index_1, int index_2)
 	if (data->l[index_1]->ops[index_2][2])
 		return (write(2, "bash: exit: too many arguments\n", 32),
 			errno = 1, error_code(data));
-	return (data->last_exit_status = errno, error_code(data));
+	return (errno = 0, data->last_exit_status = errno, error_code(data));
 }
