@@ -33,6 +33,8 @@ void	init_paths_2(t_pipex *data, int i)
 				data->l[i]->paths[j] = ft_strdup(data, data->l[i]->ops[j][k]);
 				return ;
 			}
+			else
+				errno = data->last_exit_status;
 		}
 	}
 }

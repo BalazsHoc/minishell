@@ -76,12 +76,13 @@ void	free_lines(t_pipex *data)
 		return ;
 	while (++i < data->line_count)
 	{
-		if (i == data->line_count - 1 && data->l[i]->exit_codes
+		if (i == data->line_count - 1 && data->l[i] && data->l[i]->exit_codes
 			&& data->l[i]->exit_codes[data->l[i]->cmnd_count - 1])
 			data->last_exit_status = data->l[
 				i]->exit_codes[data->l[i]->cmnd_count - 1];
 		if (data->l[i])
 			free_line(data, i);
+		close_everything(data, i);
 	}
 	data->here_2 = 0;
 	data->here_2_old = 0;

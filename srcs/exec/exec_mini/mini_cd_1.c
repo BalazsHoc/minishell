@@ -80,7 +80,8 @@ void	update_env_2(t_pipex *data, int index_1, int index_2)
 	data->buf_str = get_old(data, index_1, index_2);
 	if (!data->buf_str)
 		return ;
-	chdir(data->buf_str);
+	if (chdir(data->buf_str + 7) == -1)
+		print_cd_err(errno, data->buf_str + 7);
 	j = 0;
 	while (data->buf_str[j] && data->buf_str[j] != '=')
 		j++;
