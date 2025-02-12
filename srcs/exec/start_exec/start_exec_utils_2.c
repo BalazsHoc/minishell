@@ -56,11 +56,11 @@ int	here_doc(t_pipex *data, int index_1, int index_2, int i)
 			if (here_doc_util_1(data, index_1, index_2, i))
 			{
 				infile = get_input(data, index_1, index_2, i);
-				if (!infile)
-					break ;
+				if (!infile && g_signal)
+					return (signal_change(NULL, 2), 0);
 				if (here_doc_util_2(data, index_1, index_2, i))
 					free_str(&infile);
-				else
+				else if (infile)
 					data->l[index_1]->input[index_2] = infile;
 				infile = NULL;
 			}
