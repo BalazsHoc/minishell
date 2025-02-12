@@ -42,7 +42,7 @@
 // 				printf("OP:   %d:%d | |%s|\n", i,
 // 					j, data->l[index_1]->ops[i][j]);
 // 		}
-// 		// printf("PATH: |%s|\n", data->l[index_1]->paths[i]);
+// 		printf("PATH: |%s|\n", data->l[index_1]->paths[i]);
 // 	}
 // }
 

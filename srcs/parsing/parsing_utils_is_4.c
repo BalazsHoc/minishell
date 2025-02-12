@@ -40,7 +40,6 @@ void	init_paths_2(t_pipex *data, int i)
 void	init_rest(t_pipex *data, int i)
 {
 	init_ops(data, i);
-	// print_that_shit(data, i);
 	init_paths(data, i, -1);
 	init_paths_2(data, i);
 	check_folder(data, i, -1, -1);

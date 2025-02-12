@@ -12,13 +12,15 @@
 
 #include "../../minishell.h"
 
-int	one_of_those_2(char *str)
+int	one_of_those_2(char *str, int count)
 {
-	if (str || (str + 1 && !one_of_those_2(str + 1)))
+	if (str[0] == '.')
+		count++;
+	if (*str && (str + 1 && !one_of_those_2(str + 1, count)))
 		return (0);
-	else if (!str[0]
-		|| str[0] == '.'
-		|| str[0] == '/')
+	else if (count <= 2 && (!str[0]
+			|| str[0] == '.'
+			|| str[0] == '/'))
 		return (1);
 	else
 		return (0);
@@ -39,13 +41,13 @@ int	one_of_those(char *str)
 	if (!ft_strncmp(str, "/", 2)
 		|| !ft_strncmp(str, ".", 2)
 		|| (!ft_strncmp(str, "/usr", 4)
-			&& one_of_those_2(str + 4))
+			&& one_of_those_2(str + 4, 0))
 		|| (!ft_strncmp(str, "/bin", 4)
-			&& (one_of_those_2(str + 4)))
+			&& (one_of_those_2(str + 4, 0)))
 		|| (!ft_strncmp(str, "/sbin", 5)
-			&& one_of_those_2(str + 5))
+			&& one_of_those_2(str + 5, 0))
 		|| (!ft_strncmp(str, "/snap", 5)
-			&& one_of_those_2(str + 5)))
+			&& one_of_those_2(str + 5, 0)))
 		return (1);
 	return (0);
 }
