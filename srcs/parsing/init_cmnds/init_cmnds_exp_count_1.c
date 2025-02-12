@@ -69,8 +69,7 @@ int	count_ex(t_pipex *data, int i, int open, int count)
 			c_e_4(&elem, &count);
 		if (!data->line[i])
 			break ;
-		handle_open(data, i, &open);
-		if (c_e_5(data, i, open))
+		if (handle_open(data, i, &open) && c_e_5(data, i, open))
 			break ;
 		if (c_e_6(data, i, open))
 			count++;
