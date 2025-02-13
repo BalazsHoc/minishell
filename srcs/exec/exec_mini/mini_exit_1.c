@@ -19,7 +19,7 @@ void	exit_cmnd_util_1(t_pipex *data, int index_1, int index_2)
 		ft_strlen(data->l[index_1]->ops[index_2][1]));
 	write(2, ": numeric argument required\n", 29);
 	errno = 2;
-	error_code(data);
+	er_c(data);
 }
 
 int	exit_cmnd_util_2(t_pipex *data, int index_1, int index_2)
@@ -64,7 +64,7 @@ void	exit_cmnd(t_pipex *data, int index_1, int index_2)
 		return (write(2, "bash: exit: too many arguments\n", 32),
 			exit_child(data, index_1, index_2, data->last_exit_status));
 	else
-		return (data->last_exit_status = errno, error_code(data));
+		return (data->last_exit_status = errno, er_c(data));
 }
 
 void	exit_cmnd_child(t_pipex *data, int index_1, int index_2)
@@ -81,13 +81,13 @@ void	exit_cmnd_child(t_pipex *data, int index_1, int index_2)
 				write(2, data->l[index_1]->ops[index_2][1],
 				ft_strlen(data->l[index_1]->ops[index_2][1])),
 				write(2, ": numeric argument required\n", 29),
-				errno = 2, error_code(data));
+				errno = 2, er_c(data));
 		if (i > 255 || i < 0)
 			i = i % 256;
 		errno = i;
 	}
 	if (data->l[index_1]->ops[index_2][2])
 		return (write(2, "bash: exit: too many arguments\n", 32),
-			errno = 1, error_code(data));
-	return (data->last_exit_status = errno, error_code(data));
+			errno = 1, er_c(data));
+	return (data->last_exit_status = errno, er_c(data));
 }

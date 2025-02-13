@@ -45,7 +45,11 @@ int	set_here_util_2(t_pipex *data, int index_1, int i)
 			&& data->line[data->l[index_1]->pos_in_line[
 					data->l[index_1]->cmnd_count - 1][
 					last_one(data->l[index_1]->cmnds[
-					data->l[index_1]->cmnd_count - 1])] + i] != '\n')
+					data->l[index_1]->cmnd_count - 1])] + i]
+						== data->l[index_1]->cmnds[data->l[
+								index_1]->cmnd_count - 1][
+									last_one(data->l[index_1]->cmnds[
+					data->l[index_1]->cmnd_count - 1])][i])
 		return (1);
 	return (0);
 }

@@ -99,7 +99,7 @@ int	open_out(t_pipex *d, int i_1, int i_2)
 				fd = open(d->l[i_1]->cmnds[i_2][i + 1 + if_th(d, i_1, i_2, i)],
 						O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			if (fd == -1)
-				return (open_out_util_2(d, i_1, i_2, i), -1);
+				return (open_out_util_2(d, i_1, i_2, i), -2);
 		}
 	}
 	return (fd);

@@ -49,7 +49,7 @@ typedef struct lines_s
 	int		cmnd_count;
 	int		ex;
 	int		*fd_infiles;
-	int		*fd_outfiles;
+	int		*fd_ou;
 
 }	t_lines;
 
@@ -90,22 +90,24 @@ int			main(int argc, char **argv, char **env);
 //						exit/
 
 //	close_1.c
-void		close_children_pipes(t_pipex *data, int index_1, int index_2);
 void		close_everything(t_pipex *data, int index_1);
 void		create_buf_pipe(t_pipex *data, int index_1, int index_2);
 void		create_pipes(t_pipex *data, int index);
+
+int			cl_chi_pipes(t_pipex *data, int index_1, int index_2);
 
 //	close_2.c
 
 void		close_pipe(t_pipex *data, int *fd);
 void		close_pipes(t_pipex *data, int index_1, int index_2);
+void		close_parent_pipe(t_pipex *data, int *fd);
 void		close_children_pipe(t_pipex *data, int *fd);
 void		close_pipes_array(t_pipex *data, int index_1);
 
 //	exit_clean.c
 
 void		exit_child(t_pipex *data, int index_1, int index_2, int errnum);
-void		error_code(t_pipex *data);
+void		er_c(t_pipex *data);
 
 //	free_1.c
 
@@ -204,7 +206,7 @@ int			count_chars_utils_1(t_pipex *data, int i, int open, int count);
 
 int			count_cmnds(char *line);
 int			count_elem(t_pipex *data, int i, int j);
-int			count_chars(t_pipex *data, int i, int open);
+int			count_chars(t_pipex *data, int i, int open, int count);
 int			count_chars_2(t_pipex *data, int i);
 
 //	init_1.c
@@ -358,6 +360,7 @@ char		**malloc_unset(t_pipex *data, int index_1, int index_2);
 //	start_mini_exec_1.c
 
 void		mini_child(t_pipex *data, int index_1, int index_2);
+void		parent_child(t_pipex *data, int index_1, int index_2);
 void		mini_parent(t_pipex *data, int index_1, int index_2);
 
 int			is_valid_cwd(t_pipex *data);
@@ -366,6 +369,7 @@ int			is_valid_cwd(t_pipex *data);
 
 void		export_display(t_pipex *data);
 void		print_list(char **arr);
+void		print_pwd(t_pipex *data);
 
 int			bigger_one(char *s1, char *s2);
 
@@ -426,6 +430,7 @@ int			open_this_write(t_pipex *data, char *str);
 int			open_this_read(t_pipex *data, char *str);
 int			is_in_inline(t_pipex *data, int index_1, int index_2);
 int			check_here_doc(t_pipex *data, int index_1, int index_2);
+int			check_infile(t_pipex *data, int index_1, int index_2);
 
 //						libft/
 

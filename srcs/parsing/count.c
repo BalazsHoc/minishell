@@ -69,30 +69,29 @@ int	count_elem(t_pipex *data, int i, int j)
 	return (data->count_elem);
 }
 
-int	count_chars(t_pipex *data, int i, int open)
+int	count_chars(t_pipex *data, int i, int open, int count)
 {
-	int	count;
-
-	count = 0;
 	while (data->line[i])
 	{
-		if (count > 0 && is_quote_one(data->line[i])
-			&& open == 1 && ((data->line[i + 1]
-					&& is_delim_front(data->line, i + 1))
-				|| !data->line[i + 1]))
+		if (i > 0 && !open && is_quote(data->line[i])
+			&& is_d_b(data->line, i - 1, open))
 			break ;
-		else if (count_chars_utils_1(data, i, open, count))
-			break ;
-		else if (i > 0 && !open && is_quote(data->line[i])
-			&& is_d_b(data->line, i - 1, 0))
-			break ;
-		else if (handle_open(data, i, &open)
-			&& count_chars_utils_2(data, i, open, count))
-			break ;
-		if (data->line[i] && ((!is_quote(data->line[i]))
-				|| ((open == 1 && is_q_2(data->line[i]))
-					|| (open == 2 && is_quote_one(data->line[i])))))
-			count++;
+		else if (handle_open(data, i, &open))
+		{
+			if (count > 0 && is_quote_one(data->line[i])
+				&& open == 1 && ((data->line[i + 1]
+						&& is_delim_front(data->line, i + 1))
+					|| !data->line[i + 1]))
+				break ;
+			else if (count_chars_utils_1(data, i, open, count))
+				break ;
+			else if (count_chars_utils_2(data, i, open, count))
+				break ;
+			if (data->line[i] && ((!is_quote(data->line[i]))
+					|| ((open == 1 && is_q_2(data->line[i]))
+						|| (open == 2 && is_quote_one(data->line[i])))))
+				count++;
+		}
 		i++;
 	}
 	return (count);

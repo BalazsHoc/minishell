@@ -26,10 +26,10 @@ void	free_line_continue(t_pipex *data, int index)
 		free(data->l[index]->fd_infiles);
 		data->l[index]->fd_infiles = NULL;
 	}
-	if (data->l[index]->fd_outfiles)
+	if (data->l[index]->fd_ou)
 	{
-		free(data->l[index]->fd_outfiles);
-		data->l[index]->fd_outfiles = NULL;
+		free(data->l[index]->fd_ou);
+		data->l[index]->fd_ou = NULL;
 	}
 	if (data->l[index]->pipes)
 	{

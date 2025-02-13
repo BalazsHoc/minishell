@@ -77,7 +77,7 @@ void	init_fds(t_pipex *data, int index)
 	while (++i < data->l[index]->cmnd_count)
 	{
 		data->l[index]->fd_infiles[i] = -1;
-		data->l[index]->fd_outfiles[i] = -1;
+		data->l[index]->fd_ou[i] = -1;
 		data->l[index]->pipes[i][1] = -1;
 		data->l[index]->pipes[i][0] = -1;
 		data->l[index]->buf_pipes[i][0] = -1;
@@ -89,7 +89,7 @@ void	init_pipes_pids(t_pipex *data, int index)
 {
 	data->l[index]->fd_infiles = ft_calloc(sizeof(int),
 			data->l[index]->cmnd_count, data);
-	data->l[index]->fd_outfiles = ft_calloc(sizeof(int),
+	data->l[index]->fd_ou = ft_calloc(sizeof(int),
 			data->l[index]->cmnd_count, data);
 	data->l[index]->pipes = ft_calloc(sizeof(int) * 2,
 			data->l[index]->cmnd_count, data);

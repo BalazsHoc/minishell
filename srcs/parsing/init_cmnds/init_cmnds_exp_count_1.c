@@ -18,11 +18,11 @@ char	*get_pid(t_pipex *data)
 
 	pid = fork();
 	if (pid < 0)
-		return (perror("fork() failed!"), error_code(data), NULL);
+		return (perror("fork() failed!"), er_c(data), NULL);
 	if (pid == 0)
 		exit(EXIT_SUCCESS);
 	if (wait(NULL) == -1)
-		return (perror("wait() failed!"), error_code(data), NULL);
+		return (perror("wait() failed!"), er_c(data), NULL);
 	return (ft_itoa(pid, data));
 }
 

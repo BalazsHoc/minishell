@@ -38,7 +38,7 @@ char	*fill_normal(t_pipex *data, int index, int open)
 	char	*new;
 	int		char_count;
 
-	char_count = count_chars(data, index, open);
+	char_count = count_chars(data, index, open, 0);
 	new = ft_calloc(sizeof(char), (char_count + 1), data);
 	data->buf_int = open;
 	ft_strncpy_2(new, data->line + index, char_count, data);
@@ -53,7 +53,7 @@ void	fill_for_empty(t_pipex *data, int i_1, int index_2, int index_3)
 	{
 		str = ft_calloc(sizeof(char), (3), data);
 		if (!str)
-			return (perror("malloc fail\n"), error_code(data));
+			return (perror("malloc fail\n"), er_c(data));
 		str[0] = 39;
 		str[1] = 39;
 	}

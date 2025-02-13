@@ -130,6 +130,7 @@ int	find_key(t_pipex *data, int index_1, int index_2, int index_3)
 			&& data->line[i + j] == data->l[
 					index_1]->cmnds[index_2][index_3][j])
 			j++;
+		printf("J: %d\n", j);
 		if (!data->l[index_1]->cmnds[index_2][index_3][j]
 			&& (i == 0 || (data->line[i - 1] == '\n'))
 			&& (!data->line[i + j] || data->line[i + j] == '\n'

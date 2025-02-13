@@ -52,13 +52,6 @@ void	print_update_env(t_pipex *data, int index_1, int index_2)
 	print_list(data->cur_env);
 }
 
-void	print_pwd(t_pipex *data)
-{
-	if (!get_pwd(data))
-		return ;
-	printf("%s\n", get_pwd(data) + 4);
-}
-
 void	mini_parent(t_pipex *data, int index_1, int index_2)
 {
 	if (!ft_strncmp(data->l[index_1]->ops[index_2][0], "cd", 3))
@@ -66,24 +59,25 @@ void	mini_parent(t_pipex *data, int index_1, int index_2)
 	else if (!ft_strncmp(data->l[index_1]->ops[index_2][0], "export", 7)
 		&& data->l[index_1]->ops[index_2][1])
 		export_update(data, index_1, index_2, -1);
-	else if (!ft_strncmp(data->l[index_1]->ops[index_2][0], "export", 7)
-		&& !data->l[index_1]->ops[index_2][1])
-		export_display(data);
 	else if (!ft_strncmp(data->l[index_1]->ops[index_2][0], "env", 4)
 	|| !ft_strncmp(data->l[index_1]->ops[index_2][0], "/bin/env", 9)
 	|| !ft_strncmp(data->l[index_1]->ops[index_2][0], "/usr/bin/env", 13))
 		print_update_env(data, index_1, index_2);
 	else if (!ft_strncmp(data->l[index_1]->ops[index_2][0], "unset", 6))
 		unset_cmnd(data, index_1, index_2, -1);
+	else if (!ft_strncmp(data->l[index_1]->ops[index_2][0], "exit", 5))
+		exit_cmnd(data, index_1, index_2);
+}
+
+void	parent_child(t_pipex *data, int index_1, int index_2)
+{
+	if (!ft_strncmp(data->l[index_1]->ops[index_2][0], "export", 7)
+		&& !data->l[index_1]->ops[index_2][1])
+		export_display(data);
 	else if (!ft_strncmp(data->l[index_1]->ops[index_2][0], "pwd", 4)
 		|| !ft_strncmp(data->l[index_1]->ops[index_2][0], "/bin/pwd", 9)
 		|| !ft_strncmp(data->l[index_1]->ops[index_2][0], "/usr/bin/pwd", 13))
 		print_pwd(data);
-	else if (!ft_strncmp(data->l[index_1]->ops[index_2][0], "exit", 5))
-		exit_cmnd(data, index_1, index_2);
-	else if (!ft_strncmp(data->l[index_1]->ops[index_2][0], "ls", 3)
-		&& !is_valid_cwd(data))
-		printf("\n");
 }
 
 void	mini_child(t_pipex *data, int index_1, int index_2)
@@ -105,7 +99,7 @@ void	mini_child(t_pipex *data, int index_1, int index_2)
 	else if (!ft_strncmp(data->l[index_1]->ops[index_2][0], "pwd", 4)
 		|| !ft_strncmp(data->l[index_1]->ops[index_2][0], "/bin/pwd", 9)
 		|| !ft_strncmp(data->l[index_1]->ops[index_2][0], "/usr/bin/pwd", 13))
-		printf("%s\n", get_pwd(data) + 4);
+		print_pwd(data);
 	else if (!ft_strncmp(data->l[index_1]->ops[index_2][0], "exit", 5))
 		exit_cmnd_child(data, index_1, index_2);
 	else if (!ft_strncmp(data->l[index_1]->ops[index_2][0], "ls", 3)

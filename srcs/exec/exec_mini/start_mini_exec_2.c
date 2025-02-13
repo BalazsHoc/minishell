@@ -45,3 +45,10 @@ void	export_display(t_pipex *data)
 	while (data->export[++i])
 		printf("declare -x %s\n", data->export[i]);
 }
+
+void	print_pwd(t_pipex *data)
+{
+	if (!get_pwd(data))
+		return ;
+	printf("%s\n", get_pwd(data) + 4);
+}

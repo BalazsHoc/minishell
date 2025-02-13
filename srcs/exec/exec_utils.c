@@ -47,7 +47,7 @@ int	open_this_read(t_pipex *data, char *str)
 	if (fd == -1)
 	{
 		perror("open");
-		error_code(data);
+		er_c(data);
 	}
 	return (fd);
 }
@@ -60,7 +60,18 @@ int	open_this_write(t_pipex *data, char *str)
 	if (fd == -1)
 	{
 		perror("open");
-		error_code(data);
+		er_c(data);
 	}
 	return (fd);
+}
+
+int	check_infile(t_pipex *data, int index_1, int index_2)
+{
+	if (is_in_inline(data, index_1, index_2) != -1
+		&& !data->l[index_1]->red_cmnd[index_2][
+		is_red_inline(data, index_1, index_2)]
+		&& !ft_strncmp(data->l[index_1]->cmnds[index_2][
+				is_red_inline(data, index_1, index_2)], "<", 2))
+		return (1);
+	return (0);
 }

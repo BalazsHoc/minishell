@@ -38,7 +38,7 @@ void	create_pipes(t_pipex *data, int index)
 			perror("pipe");
 			data->l[index]->pipes[i][0] = -1;
 			data->l[index]->pipes[i][1] = -1;
-			error_code(data);
+			er_c(data);
 		}
 	}
 }
@@ -48,7 +48,7 @@ void	create_buf_pipe(t_pipex *data, int index_1, int index_2)
 	if (pipe(data->l[index_1]->buf_pipes[index_2]) == -1)
 	{
 		perror("pipe");
-		error_code(data);
+		er_c(data);
 	}
 }
 

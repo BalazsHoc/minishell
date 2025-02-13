@@ -92,7 +92,7 @@ int	main(int argc, char **argv, char **env)
 		signal_change(data, 0);
 		if (!data->line)
 			return (printf("exit\n"), errno = data->last_exit_status,
-				error_code(data), 0);
+				er_c(data), 0);
 		if (data->line[0] != '\0')
 		{
 			data->line = ft_strtrim(data->line, " \n\t\v\f\r\b", data);
