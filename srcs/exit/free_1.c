@@ -49,6 +49,9 @@ void	free_line_continue(t_pipex *data, int index)
 
 void	free_line(t_pipex *data, int index)
 {
+	int	i;
+
+	i = -1;
 	close_everything(data, index);
 	if (!data || !data->l || !data->l[index])
 		return ;
@@ -59,7 +62,11 @@ void	free_line(t_pipex *data, int index)
 	if (data->l[index]->paths)
 		free_list(data->l[index]->paths);
 	if (data->l[index]->input)
-		free_list(data->l[index]->input);
+	{
+		while (++i < data->l[index]->cmnd_count)
+			free(data->l[index]->input[i]);
+		free(data->l[index]->input);
+	}
 	if (data->l[index]->red_cmnd)
 		free_list_int(data->l[index]->red_cmnd, data->l[index]->cmnd_count);
 	if (data->l[index]->pos_in_line)

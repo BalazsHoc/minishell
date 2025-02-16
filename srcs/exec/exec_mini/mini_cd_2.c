@@ -101,8 +101,8 @@ void	update_env(t_pipex *data, int index_1, int index_2)
 		}
 	}
 	buf = ft_calloc(sizeof(char), (500 * 100), data);
-	if (!getcwd(buf, 500 * 100) &&
-		errno == ENOENT && write(2, "cd: error retrieving \
+	if (!getcwd(buf, 500 * 100)
+		&& errno == ENOENT && write(2, "cd: error retrieving \
 current directory: getcwd: cannot access parent directories: No such file \
 or directory\n", 109))
 		exit_child(data, index_1, index_2, 0);

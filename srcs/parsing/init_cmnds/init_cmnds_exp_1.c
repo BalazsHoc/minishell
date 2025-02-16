@@ -33,7 +33,6 @@ void	ex_1_1(t_pipex *data, char **elem, int open, int *i)
 void	ex_1_2(t_pipex *data, char **elem, int open, int *i)
 {
 	*elem = get_val(data, data->line + *i + 1);
-	// printf("VAL: %s\n", *elem);
 	if (check_key(data, data->line + *i + 1))
 		*i += check_key(data, data->line + *i + 1) + 1;
 	else
@@ -58,10 +57,8 @@ int	expand_it_1(t_pipex *data, int i, int open, char **new)
 	elem = NULL;
 	*new = ft_calloc(sizeof(char), (count_ex(data, i, open, 0) + 1), data);
 	data->buf_str = *new;
-	// printf("START EXPANSION\n");
 	while (data->line[i])
 	{
-		// printf("EXPANSION1: %s | OPEN: %d\n", data->line + i, open);
 		if (open != 1 && data->line[i] == '$' && data->line[i + 1] == '$')
 			return (ex_1_0(data, &*new), 1);
 		if (open != 1 && data->line[i] == '$' && (data->line[i + 1] == '?'))
@@ -72,7 +69,6 @@ int	expand_it_1(t_pipex *data, int i, int open, char **new)
 			data->buf_str = data->buf_str + ft_strlen_2(elem);
 		if (ex_1_3(data, &elem, i, open))
 			break ;
-		// printf("EXPANSION1: %s | OPEN: %d\n", data->line + i, open);
 		if (handle_open(data, i, &open) && !open && ex_1_4(data, i))
 			break ;
 		if (ex_1_5(data, i, open))
@@ -80,6 +76,5 @@ int	expand_it_1(t_pipex *data, int i, int open, char **new)
 		if (ex_1_6(data, i, open))
 			i++;
 	}
-	// printf("NEW: %s\n", *new);
 	return (data->buf_str = NULL, 1);
 }

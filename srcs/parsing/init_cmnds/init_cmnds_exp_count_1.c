@@ -61,7 +61,6 @@ int	count_ex(t_pipex *data, int i, int open, int count)
 	elem = NULL;
 	while (data->line && data->line[i])
 	{
-		// printf("THIS: %s\n", data->line + i);
 		if (c_e_0(data, i, open))
 			c_e_1(data, &elem, &i, open);
 		else if (c_e_2(data, i, open))
@@ -79,6 +78,5 @@ int	count_ex(t_pipex *data, int i, int open, int count)
 					&& is_delim_front(data->line, i + 1))))
 			i++;
 	}
-	// printf("COUNT: %d\n", count);
 	return (count);
 }

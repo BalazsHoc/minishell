@@ -83,9 +83,8 @@ int	is_delim_front(char *line, int i)
 			open = 0;
 		i++;
 	}
-	// printf("FRONT: %s | %d\n", data->line + i, open);
 	if (!open && (!line[i] || line[i] == '\n' || is_space(line[i])
-		|| is_red_clean(line, i) || is_real_pipe(line, i)))
+			|| is_red_clean(line, i) || is_real_pipe(line, i)))
 		return (1);
 	return (0);
 }
@@ -93,28 +92,19 @@ int	is_delim_front(char *line, int i)
 int	d_in_if_1(t_pipex *data, int j, int *open)
 {
 	if (handle_open(data, j, open) && (!*open && (
-			(is_d_b(data->line, j, *open))
-				// || (is_delim_front(data->line, j + 1))
+				(is_d_b(data->line, j, *open))
+				|| (is_delim_front(data->line, j + 1))
 				|| (is_real_pipe(data->line, j + 1))
 				|| ((is_red_1(data->line[j]))
 					&& !is_red_1(data->line[j + 1]))
 				|| ((is_red_1(data->line[j + 1]))
 					&& !is_space(data->line[j]) && !is_red_1(data->line[j]))
 				|| ((is_space(data->line[j]) && is_quote(data->line[j + 1])))
-				// || ((is_space(data->line[j]) && data->line[j + 1] && data->line[j + 2]
-				// || (printf("FUCK2\n") && is_delim_front(data->line, j + 1))
-				// || (printf("FUCK3\n") && is_real_pipe(data->line, j + 1))
-				// || (printf("FUCK4\n") && (is_red_1(data->line[j]))
-				// 	&& !is_red_1(data->line[j + 1]))
-				// || (printf("FUCK5\n") && (is_red_1(data->line[j + 1]))
-				// 	&& !is_space(data->line[j]) && !is_red_1(data->line[j]))
-				// || (printf("FUCK6\n") && (is_space(data->line[j]) && is_quote(data->line[j + 1])))
-				// || (printf("FUCK7\n") && (is_space(data->line[j]) && data->line[j + 1] && data->line[j + 2]
-				// 	&& (is_space(data->line[j + 2])
-				// 		|| data->line[j + 2] == '\n')
-				// 	&& is_quote(data->line[j + 1])))
-					)))
-		// return (printf("HERE\n"), 1);
+				|| ((is_space(data->line[j]) && data->line[j + 1]
+						&& data->line[j + 2]
+						&& (is_space(data->line[j + 2])
+							|| data->line[j + 2] == '\n')
+						&& is_quote(data->line[j + 1]))))))
 		return (1);
 	return (0);
 }
@@ -126,7 +116,6 @@ int	d_in(t_pipex *data, int j, int open)
 	check = 0;
 	while (data->line[j])
 	{
-		// printf("DOLLAR1: %s | OPEN %d | CHECK %d\n", data->line + j, open, check);
 		if (open == 1 && is_quote_one(data->line[j])
 			&& is_delim_front(data->line, j + 1))
 			break ;
@@ -137,13 +126,11 @@ int	d_in(t_pipex *data, int j, int open)
 			check = 1;
 		if (d_in_if_1(data, j, &open))
 			break ;
-		// printf("DOLLAR2: %s | OPEN %d | CHECK %d\n", data->line + j, open, check);
 		if (open != 1 && data->line[j] == '$' && data->line[j + 1]
 			&& (is_char(data->line[j + 1]) || data->line[j + 1] == '?'
 				|| data->line[j + 1] == '$') && (!is_space(data->line[j + 1])
 				&& !(open == 2 && is_q_2(data->line[j + 1]))))
 			return (j);
-			// return (printf("________________DOLLAR IN: %d\n", j), j);
 		j++;
 	}
 	return (-1);

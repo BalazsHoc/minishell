@@ -43,7 +43,7 @@ int	is_overflow_continue(char *str, int sign)
 	while (str[i] >= '0' && str[i] <= '9')
 	{
 		if ((result > 100000000000000000 && str[i + 1])
-			|| (result > 922337203685477590)
+			|| (result > 922337203685477580)
 			|| (result == 922337203685477580 && (str[i] == '8'
 					|| str[i] == '9') && sign == 1)
 			|| (result == 922337203685477580 && str[i] == '9' && sign == -1))
@@ -55,6 +55,25 @@ int	is_overflow_continue(char *str, int sign)
 	return (0);
 }
 
+char	*ft_strtrim_3(char *s1, char const *set, t_pipex *data)
+{
+	int		i;
+	int		j;
+
+	if (!s1 || !*s1 || !set || !*set)
+		return (0);
+	i = 0;
+	while (s1[i] && ft_strchr(set, s1[i]))
+		i++;
+	j = 0;
+	while (!is_space(s1[i + j]))
+		j++;
+	j--;
+	while (j != 0 && ft_strchr(set, s1[j]))
+		j--;
+	return (ft_substr(s1, i, j + 1, data));
+}
+
 int	is_overflow(t_pipex *data, int index_1, int index_2)
 {
 	int		i;
@@ -63,10 +82,9 @@ int	is_overflow(t_pipex *data, int index_1, int index_2)
 
 	i = 0;
 	sign = 1;
+	data->l[index_1]->ops[index_2][1]
+		= ft_strtrim_3(data->l[index_1]->ops[index_2][1], " /t/b/v/f/r", data);
 	nptr = data->l[index_1]->ops[index_2][1];
-	while (nptr[i] == ' ' || nptr[i] == '\f' || nptr[i] == '\n'
-		|| nptr[i] == '\r' || nptr[i] == '\t' || nptr[i] == '\v')
-		i++;
 	if (nptr[i] == '-' || nptr[i] == '+')
 	{
 		if (nptr[i] == '-')
