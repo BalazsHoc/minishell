@@ -16,8 +16,8 @@ int	is_valid_cwd(t_pipex *data)
 {
 	char	*buf;
 
-	buf = ft_calloc(sizeof(char), (BUF_SIZE_ENV * 100), data);
-	getcwd(buf, BUF_SIZE_ENV * 100);
+	buf = ft_calloc(sizeof(char), (500 * 100), data);
+	getcwd(buf, 500 * 100);
 	if (!buf)
 		return (perror("getcwd() failed!"), -1);
 	if (!*buf)
