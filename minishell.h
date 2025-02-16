@@ -27,10 +27,6 @@
 # include <sys/wait.h>
 # include <sys/ioctl.h>
 
-# ifndef BUF_SIZE_ENV
-#  define BUF_SIZE_ENV 5000
-# endif
-
 typedef struct lines_s
 {
 	char	***cmnds;
@@ -274,6 +270,8 @@ int			is_red_clean(char *str, int index);
 void		init_rest(t_pipex *data, int i);
 void		init_paths_2(t_pipex *data, int i);
 
+int			set_err_old(t_pipex *data);
+
 //	parsing.c
 
 void		parsing(t_pipex *data, int i);
@@ -289,7 +287,7 @@ void		check_folder_utils_3(t_pipex *data, int index, int i);
 
 int			is_real_pipe(char *line, int index);
 int			check_reds(t_pipex *data, int index_1, int i, int j);
-int			check_open(char *line);
+int			check_open(t_pipex *data, char *line);
 int			syntax_check(t_pipex *data, int i, int count);
 
 //						execute/
@@ -378,7 +376,6 @@ int			bigger_one(char *s1, char *s2);
 //	start_exec_utils_1.c
 
 int			find_key(t_pipex *data, int index_1, int index_2, int index_3);
-int			get_input_2(t_pipex *data, int index_1, int i);
 
 char		*get_val(t_pipex *data, char *cur);
 char		*join_this(char *s1, char *s2, t_pipex *data);
@@ -413,6 +410,10 @@ int			check_cmnd_as_dir(t_pipex *data, int index, int i);
 int			is_valid_in(t_pipex *data, int index_1, int index_2);
 int			is_red_inline(t_pipex *data, int index_1, int index_2);
 
+//	start_exec_utils_6.c
+
+int			get_input_2(t_pipex *data, int index_1, int i);
+
 //	start_exec.c
 
 void		start_exec(t_pipex *data, int index, int i, int status);
@@ -441,6 +442,7 @@ void		ft_bzero(void *s, size_t n);
 size_t		ft_strlen(const char *str);
 
 char		*ft_strtrim(char *s1, char const *set, t_pipex *data);
+char		*ft_strtrim_2(char *s1, t_pipex *data);
 char		*ft_strdup_2(t_pipex *data, const char *s);
 char		*ft_strdup(t_pipex *data, const char *s);
 

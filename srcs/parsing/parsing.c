@@ -42,6 +42,7 @@
 // 				printf("OP:   %d:%d | |%s|\n", i,
 // 					j, data->l[index_1]->ops[i][j]);
 // 		}
+// 		if (data->l[index_1]->input)
 // 		printf("PATH: |%s|\n", data->l[index_1]->paths[i]);
 // 	}
 // }
@@ -94,11 +95,8 @@ void	init_paths(t_pipex *d, int i_1, int i_2)
 	}
 }
 
-void	init_lines(t_pipex *data)
+void	init_lines(t_pipex *data, int i)
 {
-	int	i;
-
-	i = -1;
 	data->chars_in_line = -1;
 	data->line_count = 1;
 	while (data->line[++data->chars_in_line])
@@ -107,6 +105,8 @@ void	init_lines(t_pipex *data)
 			&& data->line[data->chars_in_line + 1])
 			data->line_count++;
 	}
+	while (data->chars_in_line && is_space(data->line[data->chars_in_line - 1]))
+		data->chars_in_line--;
 	data->l = ft_calloc(sizeof(t_lines *), (data->line_count + 1), data);
 	while (++i < data->line_count)
 	{
@@ -122,7 +122,7 @@ void	init_lines(t_pipex *data)
 	}
 }
 
-void	init_line(t_pipex *data, int i)
+int	init_line(t_pipex *data, int i)
 {
 	data->l[i]->cmnd_count = count_cmnds(data->line + data->here_2);
 	data->l[i]->exit_codes = ft_calloc(sizeof(int),
@@ -135,32 +135,34 @@ void	init_line(t_pipex *data, int i)
 	init_cmnds(data, i, -1);
 	handle_here(data, i, -1, 0);
 	init_pipes_pids(data, i);
+	return (1);
 }
 
 void	parsing(t_pipex *data, int i)
 {
-	init_lines(data);
+	init_lines(data, -1);
 	make_history(data);
-	if (!syntax_check(data, -1, 0))
-		return (write(2, "bash: syntax error near unexpected token `|'\n", 46),
-			data->last_exit_status = 2,
-			free_lines(data));
-	if (check_open(data->line))
-		return (write(2, "bash: syntax error: open quotes \n", 34),
-			data->last_exit_status = 2,
-			free_lines(data));
 	while (data->l[++i] && data->here_2_old < data->chars_in_line)
 	{
 		signal_change(NULL, 2);
-		init_line(data, i);
-		if (!check_reds(data, i, -1, -1))
+		if (!syntax_check(data, data->here_2_old, 0)
+			&& write(2, "bash: syntax error near unexpected token `|'\n", 46)
+			&& set_err_old(data))
+			continue ;
+		else if (check_open(data, data->line)
+			&& write(2, "bash: syntax error: open quotes \n", 34))
+			continue ;
+		else if (init_line(data, i))
 		{
-			if (data->here_2_old >= data->chars_in_line)
-				return (free_lines(data));
-			else if (set_here(data, i))
-				continue ;
+			if (!check_reds(data, i, -1, -1))
+			{
+				if (data->here_2_old >= data->chars_in_line)
+					return (free_lines(data));
+				else if (set_here(data, i))
+					continue ;
+			}
+			init_rest(data, i);
 		}
-		init_rest(data, i);
 	}
 	free_lines(data);
 }

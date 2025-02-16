@@ -12,12 +12,12 @@
 
 #include "../../minishell.h"
 
-int	check_open(char *line)
+int	check_open(t_pipex *data, char *line)
 {
 	int	open;
 	int	i;
 
-	i = -1;
+	i = data->here_2_old -1;
 	open = 0;
 	while (line[++i])
 	{
@@ -39,10 +39,13 @@ int	syntax_check(t_pipex *data, int i, int count)
 
 	word = 0;
 	open = 0;
-	while (data->line[++i])
+	if (i == 0 || (data->line[i] != '\n'))
+		i--;
+	while (data->line[++i] && data->line[i] != '\n')
 	{
 		handle_open(data, i, &open);
-		if (!open && (i == 0 || !data->line[i + 1]) && data->line[i] == '|')
+		if (!open && (i == data->here_2_old
+				|| !data->line[i + 1]) && data->line[i] == '|')
 			return (0);
 		else if (!open && !is_real_pipe(data->line, i)
 			&& !is_space(data->line[i]) && ++word)

@@ -50,6 +50,7 @@ int	count_elem(t_pipex *data, int i, int j)
 	data->count_elem = 0;
 	while (data->line[++j] && data->line[j] != '\n' && i >= 0)
 	{
+		// printf("ELEM COUNT1: %s | COUNT: %d | OPEN: %d\n", data->line + j, data->count_elem, open);
 		if (k != 0)
 			handle_open(data, j, &open);
 		if (k == 0)
@@ -66,6 +67,7 @@ int	count_elem(t_pipex *data, int i, int j)
 			&& data->line[j] == '|' && --i != INT_MIN)
 			k++;
 	}
+	// printf("ELEM COUNT: %d\n", data->count_elem);
 	return (data->count_elem);
 }
 

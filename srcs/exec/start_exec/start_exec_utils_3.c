@@ -27,9 +27,11 @@ int	exec_cmnds_util_1(t_pipex *data, int index, int i)
 
 int	exec_cmnds_util_2(t_pipex *data, int index, int i)
 {
-	if (data->here_2_old < find_key(data, index, i,
-			is_red_inline(data, index, i) + 1)
-		&& get_input_2(data, index, 0))
+	if ((data->here_2_old < find_key(data, index, i,
+				is_red_inline(data, index, i) + 1)
+			|| find_key(data, index, i,
+				is_red_inline(data, index, i) + 1) == 0)
+		&& get_input_2(data, index, i))
 		return (1);
 	return (0);
 }

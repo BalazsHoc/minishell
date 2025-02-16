@@ -42,7 +42,11 @@ int	set_here_util_2(t_pipex *data, int index_1, int i)
 				index_1]->cmnd_count - 1][last_one(data->l[
 						index_1]->cmnds[data->l[
 								index_1]->cmnd_count - 1])] + i]
-			&& data->line[data->l[index_1]->pos_in_line[
+			&& (((size_t)i <= ft_strlen(data->l[index_1]->cmnds[data->l[
+								index_1]->cmnd_count - 1][
+									last_one(data->l[index_1]->cmnds[
+					data->l[index_1]->cmnd_count - 1])])
+					&& data->line[data->l[index_1]->pos_in_line[
 					data->l[index_1]->cmnd_count - 1][
 					last_one(data->l[index_1]->cmnds[
 					data->l[index_1]->cmnd_count - 1])] + i]
@@ -50,6 +54,10 @@ int	set_here_util_2(t_pipex *data, int index_1, int i)
 								index_1]->cmnd_count - 1][
 									last_one(data->l[index_1]->cmnds[
 					data->l[index_1]->cmnd_count - 1])][i])
+						|| data->line[data->l[index_1]->pos_in_line[
+					data->l[index_1]->cmnd_count - 1][
+					last_one(data->l[index_1]->cmnds[
+					data->l[index_1]->cmnd_count - 1])] + i] != '\n'))
 		return (1);
 	return (0);
 }
@@ -76,6 +84,10 @@ void	set_here_continue(t_pipex *data, int index_1, int i, int check)
 	}
 	else if (check >= 0 && data->l[index_1]->cmnd_count)
 		data->here_2_old = find_key(data, index_1, i, check + 1);
+	while (data->here_2 && data->line[data->here_2 - 1]
+		&& data->line[data->here_2]
+		&& data->line[data->here_2] == '\n' && ++data->here_2)
+		data->here_2_old++;
 }
 
 int	set_here(t_pipex *data, int index_1)

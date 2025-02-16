@@ -88,6 +88,7 @@ void	fill_cmnds(t_pipex *d, int i_1, int i, int j)
 	d->i_2 = -1;
 	while (if_1(d, &j))
 	{
+		// printf("FILL CMNDS: %s | OPEN: %d\n", d->line + j, d->open);
 		if (d->k < 0)
 			handle_open(d, j, &d->open);
 		if (if_2(d, j) && set_pos(&d->l[i_1]->pos_in_line[i][d->i_2], j))
@@ -96,6 +97,7 @@ void	fill_cmnds(t_pipex *d, int i_1, int i, int j)
 			d->l[i_1]->red_cmnd[i][d->i_2] = 2;
 		if (if_4(d, j))
 		{
+			// printf("\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++TRUE: %s\n", d->line + j);
 			if (d_in(d, j, d->open) >= 0 && if_5(d, i, i_1)
 				&& expand_it_1(d, j, d->open, &d->l[i_1]->cmnds[i][++d->i_2]))
 				d->i_2 += expand_it_2(d, i_1, i, d->i_2);

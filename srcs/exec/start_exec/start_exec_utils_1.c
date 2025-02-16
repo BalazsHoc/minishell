@@ -33,7 +33,7 @@ char	*join_this(char *s1, char *s2, t_pipex *data)
 		i++;
 	}
 	j = 0;
-	while (s2 && s2[j])
+	while (s2 && s2[j] && s2[j])
 		new[i++] = s2[j++];
 	free_str(&s1);
 	return (new);
@@ -58,31 +58,6 @@ char	*get_val(t_pipex *data, char *cur)
 			return (ft_strdup(data, data->cur_env[i] + j + 1));
 	}
 	return (NULL);
-}
-
-int	get_input_2(t_pipex *data, int index_1, int i)
-{
-	int		k;
-	int		j;
-	char	*new;
-	char	*buf;
-
-	k = 0;
-	j = 2;
-	while (data->line[data->here_2 - j]
-		&& !is_d_b(data->line, data->here_2 - j, 0))
-		j++;
-	new = ft_calloc(sizeof(char), (((data->here_2 - (j + 1)
-						- data->here_2_old) + 1) + 1), data);
-	while (k < (data->here_2 - (j + 1) - data->here_2_old) + 1)
-	{
-		new[k] = data->line[data->here_2_old + k];
-		k++;
-	}
-	buf = ft_strjoin(new, "\n", data);
-	free_str(&new);
-	data->l[index_1]->input[i] = buf;
-	return (1);
 }
 
 char	*get_input(t_pipex *data, int index_1, int index_2, int index_3)
@@ -130,12 +105,11 @@ int	find_key(t_pipex *data, int index_1, int index_2, int index_3)
 			&& data->line[i + j] == data->l[
 					index_1]->cmnds[index_2][index_3][j])
 			j++;
-		printf("J: %d\n", j);
 		if (!data->l[index_1]->cmnds[index_2][index_3][j]
 			&& (i == 0 || (data->line[i - 1] == '\n'))
 			&& (!data->line[i + j] || data->line[i + j] == '\n'
 				|| is_space(data->line[i + j])))
 			return (data->here_2 = i + j + 1, i + j + 1);
 	}
-	return (data->here_2_old);
+	return (data->here_2 = i, i);
 }

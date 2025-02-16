@@ -44,8 +44,8 @@ void	*ft_calloc(size_t nmemb, size_t size, t_pipex *data)
 {
 	void	*buffer;
 
-	if (!nmemb || !size)
-		return (er_c(data), NULL);
+	if (!nmemb)
+		return (NULL);
 	if (size > SIZE_MAX / nmemb)
 		return (er_c(data), NULL);
 	buffer = (void *)malloc(size * nmemb);

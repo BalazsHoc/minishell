@@ -19,9 +19,10 @@ int	ex_1_4(t_pipex *data, int i)
 		|| is_red_clean(data->line, i)
 		|| (data->line[i + 1] && is_space(data->line[i])
 			&& is_quote(data->line[i + 1]))
-		|| (data->line[i + 1] && (!data->line[i + 2]
-				|| is_space(data->line[i + 2])
-				|| data->line[i + 2] == '\n') && is_quote(data->line[i + 1])))
+		// || (data->line[i + 1] && (!data->line[i + 2]
+		// 		|| is_space(data->line[i + 2])
+		// 		|| data->line[i + 2] == '\n') && is_quote(data->line[i + 1]))
+				)
 		return (1);
 	return (0);
 }

@@ -71,6 +71,7 @@ void	mini_parent(t_pipex *data, int index_1, int index_2)
 
 void	parent_child(t_pipex *data, int index_1, int index_2)
 {
+	errno = 0;
 	if (!ft_strncmp(data->l[index_1]->ops[index_2][0], "export", 7)
 		&& !data->l[index_1]->ops[index_2][1])
 		export_display(data);
@@ -82,6 +83,7 @@ void	parent_child(t_pipex *data, int index_1, int index_2)
 
 void	mini_child(t_pipex *data, int index_1, int index_2)
 {
+	errno = 0;
 	if (!ft_strncmp(data->l[index_1]->ops[index_2][0], "cd", 3))
 		cd_cmnd(data->l[index_1]->ops[index_2], data, index_1, index_2);
 	else if (!ft_strncmp(data->l[index_1]->ops[index_2][0], "export", 7)

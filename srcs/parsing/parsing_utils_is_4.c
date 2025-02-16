@@ -25,7 +25,9 @@ void	init_paths_2(t_pipex *data, int i)
 		{
 			if (!access(data->l[i]->ops[j][k], X_OK)
 				&& !one_of_those(data->l[i]->ops[j][k])
-				&& !ft_strncmp(data->l[i]->ops[j][0], "env", 4)
+				&& (!ft_strncmp(data->l[i]->ops[j][0], "env", 4)
+				|| !ft_strncmp(data->l[i]->ops[j][0], "/bin/env", 9)
+				|| !ft_strncmp(data->l[i]->ops[j][0], "/usr/bin/env", 13))
 				&& (!ft_strncmp(data->l[i]->ops[j][k], "../", 3)
 					|| !ft_strncmp(data->l[i]->ops[j][k], "./", 2)))
 			{
@@ -46,4 +48,11 @@ void	init_rest(t_pipex *data, int i)
 	init_paths_2(data, i);
 	check_folder(data, i, -1, -1);
 	start_exec(data, i, -1, 0);
+}
+
+int	set_err_old(t_pipex *data)
+{
+	data->last_exit_status = 2;
+	data->here_2_old = count_nl(data, data->here_2_old);
+	return (1);
 }

@@ -12,6 +12,19 @@
 
 #include "minishell.h"
 
+char	*ft_strtrim_2(char *str, t_pipex *data)
+{
+	char	*new;
+	int		i;
+
+	i = 0;
+	while (is_space(str[i]))
+		i++;
+	new = ft_strdup(data, str + i);
+	free_str(&str);
+	return (new);
+}
+
 void	init_env(t_pipex *data, char **env)
 {
 	int	i;
@@ -24,7 +37,7 @@ void	init_env(t_pipex *data, char **env)
 		if (!ft_strncmp(env[i], "_=", 2))
 			data->cur_env[i] = ft_strdup(data, "_=/usr/bin/env");
 		else if (!ft_strncmp(env[i], "SHLVL=", 6))
-			data->cur_env[i] = ft_strdup(data, "SHLVL=0");
+			data->cur_env[i] = ft_strdup(data, "SHLVL=1");
 		else
 			data->cur_env[i] = ft_strdup(data, env[i]);
 	}
@@ -49,7 +62,7 @@ void	init_export(t_pipex *data)
 	while (data->cur_env[++i])
 	{
 		if (!ft_strncmp(data->cur_env[i], "SHLVL=", 6))
-			data->export[count++] = ft_strdup(data, "SHLVL=1");
+			data->export[count++] = ft_strdup(data, "SHLVL=2");
 		else if (ft_strncmp(data->cur_env[i], "_=", 2))
 			data->export[count++]
 				= malloc_cpy_export(data, data->cur_env[i], 0, -1);
@@ -95,7 +108,7 @@ int	main(int argc, char **argv, char **env)
 				er_c(data), 0);
 		if (data->line[0] != '\0')
 		{
-			data->line = ft_strtrim(data->line, " \n\t\v\f\r\b", data);
+			data->line = ft_strtrim_2(data->line, data);
 			parsing(data, -1);
 		}
 		else

@@ -37,10 +37,37 @@ int	bigger_one(char *s1, char *s2)
 	return (j);
 }
 
+char	**sort_this(char **arr, int size)
+{
+	char	*buf;
+	int		i;
+	int		j;
+
+	i = -1;
+	while (++i < size - 1)
+	{
+		j = -1;
+		while (++j < size - 1 - i)
+		{
+			if (ft_strncmp(arr[j], arr[j + 1], ft_strlen(arr[j])) > 0)
+			{
+				buf = arr[j];
+				arr[j] = arr[j + 1];
+				arr[j + 1] = buf;
+			}
+		}
+	}
+	return (arr);
+}
+
 void	export_display(t_pipex *data)
 {
 	int	i;
 
+	i = 0;
+	while (data->export[i])
+		i++;
+	data->export = sort_this(data->export, i);
 	i = -1;
 	while (data->export[++i])
 		printf("declare -x %s\n", data->export[i]);

@@ -30,6 +30,8 @@ int	count_nl(t_pipex *data, int i)
 {
 	while (data->line[++i] && data->line[i] != '\n')
 		i++;
+	while (data->line[i] && data->line[i] == '\n')
+		i++;
 	return (i);
 }
 
