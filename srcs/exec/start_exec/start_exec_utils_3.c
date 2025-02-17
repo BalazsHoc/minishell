@@ -78,11 +78,6 @@ void	exec_cmnds(t_pipex *data, int index, int i)
 		data->l[index]->fd_ou[i] = open_out(data, index, i);
 		if (exec_cmnds_util_1(data, index, i))
 		{
-			if (check_here_doc(data, index, i))
-			{
-				if (exec_cmnds_util_2(data, index, i))
-					exec_cmnds_util_3(data, index, i);
-			}
 			if (!ft_strncmp(data->l[index]->paths[i], "minicmnds", 10))
 				exec_mini(data, index, i);
 			else

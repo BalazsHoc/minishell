@@ -28,7 +28,7 @@ void	set_old(t_pipex *data, int index_1, int index_2, int index_3)
 
 int	count_nl(t_pipex *data, int i)
 {
-	while (data->line[++i] && data->line[i] != '\n')
+	while (data->line[i] && data->line[i] != '\n')
 		i++;
 	while (data->line[i] && data->line[i] == '\n')
 		i++;

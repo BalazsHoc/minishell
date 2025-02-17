@@ -59,6 +59,7 @@ char	*ft_strtrim_3(char *s1, char const *set, t_pipex *data)
 {
 	int		i;
 	int		j;
+	int		k;
 
 	if (!s1 || !*s1 || !set || !*set)
 		return (0);
@@ -68,7 +69,10 @@ char	*ft_strtrim_3(char *s1, char const *set, t_pipex *data)
 	j = 0;
 	while (s1[i + j] && !is_space(s1[i + j]))
 		j++;
-	if (s1[i + j])
+	k = 0;
+	while (s1[i + j + k] && is_space(s1[i + j + k]))
+		k++;
+	if (k && s1[i + j + k])
 		return (s1);
 	j--;
 	while (j != 0 && ft_strchr(set, s1[j]))

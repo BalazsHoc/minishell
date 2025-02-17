@@ -44,10 +44,8 @@ int	here_doc_util_3(t_pipex *data, int index_1, int index_2, int i)
 
 int	here_doc(t_pipex *data, int index_1, int index_2, int i)
 {
-	char	*infile;
-
 	signal_change(NULL, 1);
-	infile = NULL;
+	data->buf_str = NULL;
 	while (data->l[index_1]->cmnds[++index_2])
 	{
 		i = -1;
@@ -55,14 +53,14 @@ int	here_doc(t_pipex *data, int index_1, int index_2, int i)
 		{
 			if (here_doc_util_1(data, index_1, index_2, i))
 			{
-				infile = get_input(data, index_1, index_2, i);
-				if (!infile && g_signal)
+				data->buf_str = get_input(data, index_1, index_2, i);
+				if (!data->buf_str  && g_signal ) 
 					return (signal_change(NULL, 2), 0);
 				if (here_doc_util_2(data, index_1, index_2, i))
-					free_str(&infile);
-				else if (infile)
-					data->l[index_1]->input[index_2] = infile;
-				infile = NULL;
+					free_str(&data->buf_str );
+				else if (data->buf_str )
+					data->l[index_1]->input[index_2] = data->buf_str ;
+				data->buf_str  = NULL;
 			}
 			else if (here_doc_util_3(data, index_1, index_2, i))
 				data->here_2_old = find_key(data, index_1, index_2, i + 1);

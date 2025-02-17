@@ -20,7 +20,7 @@ char	*handle_no_eof_continue(t_pipex *data, int i_1, int i_2, int i)
 	buf_1 = NULL;
 	buf_2 = NULL;
 	buf_1 = get_input(data, i_1, i_2, i - 1);
-	if (*buf_1)
+	if (buf_1 && *buf_1)
 	{
 		buf_2 = ft_strjoin(data->l[i_1]->input[i_2], buf_1, data);
 		free_str(&buf_1);

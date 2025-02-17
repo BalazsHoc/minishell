@@ -47,6 +47,7 @@ void	init_rest(t_pipex *data, int i)
 	init_paths(data, i, -1);
 	init_paths_2(data, i);
 	check_folder(data, i, -1, -1);
+	// print_that_shit(data, i);
 	start_exec(data, i, -1, 0);
 }
 
@@ -54,5 +55,6 @@ int	set_err_old(t_pipex *data)
 {
 	data->last_exit_status = 2;
 	data->here_2_old = count_nl(data, data->here_2_old);
+	data->here_2 = data->here_2_old;
 	return (1);
 }

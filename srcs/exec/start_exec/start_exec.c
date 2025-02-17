@@ -70,8 +70,18 @@ void	update_input(t_pipex *data, int index_1, int index_2)
 void	handle_expansion_here_doc(t_pipex *data, int index_1)
 {
 	int	i;
+	int j;
 
 	i = -1;
+	j = -1;
+	while (data->l[index_1]->cmnds[++j])
+	{
+		if (check_here_doc(data, index_1, j))
+		{
+			if (exec_cmnds_util_2(data, index_1, j))
+				exec_cmnds_util_3(data, index_1, j);
+		}
+	}
 	while (++i < data->l[index_1]->cmnd_count)
 	{
 		if (data->l[index_1]->input[i] && !data->l[index_1]->red_cmnd[i][
@@ -82,13 +92,17 @@ void	handle_expansion_here_doc(t_pipex *data, int index_1)
 
 void	start_exec(t_pipex *data, int index, int i, int status)
 {
+	int check_here;
 	if (!here_doc(data, index, -1, -1))
 		return ;
 	handle_expansion_here_doc(data, index);
+	check_here = 0;
 	exec_cmnds(data, index, i);
 	close_pipes_array(data, index);
 	while (++i < data->l[index]->cmnd_count)
 	{
+		if (check_here_doc(data, index, i))
+			check_here = 1;
 		if (!data->l[index]->exit_codes[i])
 		{
 			waitpid(data->pid[i], &status, 0);
@@ -99,7 +113,8 @@ void	start_exec(t_pipex *data, int index, int i, int status)
 			}
 		}
 	}
-	set_here(data, index);
+	if (!check_here)
+		set_here(data, index);
 	data->last_exit_status = data->l[index]->exit_codes[data->l[
 		index]->cmnd_count - 1];
 }
