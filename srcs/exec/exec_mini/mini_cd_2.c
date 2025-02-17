@@ -64,7 +64,7 @@ void	update_env_continue(t_pipex *d, int index_1, int index_2, char *buf)
 		if (!ft_strncmp(d->cur_env[d->buf_int], "PWD=", 4))
 		{
 			if (!ft_strncmp(d->l[index_1]->ops[index_2][1], ".", 1)
-				&& !*buf)
+				&& buf && !*buf)
 			{
 				if (free_this(&buf) && cur_pwd[ft_strlen(cur_pwd) - 1] != '/')
 					buf = ft_strjoin("/", d->l[index_1]->ops[index_2][1], d);
@@ -75,7 +75,7 @@ void	update_env_continue(t_pipex *d, int index_1, int index_2, char *buf)
 				d->cur_env[d->buf_int] = ft_strjoin("PWD=", cur_pwd, d);
 				free_str(&cur_pwd);
 			}
-			else if (free_this(&d->cur_env[d->buf_int]) && *buf)
+			else if (free_this(&d->cur_env[d->buf_int]) && buf && *buf)
 				d->cur_env[d->buf_int] = ft_strjoin("PWD=", buf, d);
 			free_str(&buf);
 		}
@@ -101,11 +101,10 @@ void	update_env(t_pipex *data, int index_1, int index_2)
 		}
 	}
 	buf = ft_calloc(sizeof(char), (500 * 100), data);
-	if (!getcwd(buf, 500 * 100)
-		&& errno == ENOENT && write(2, "cd: error retrieving \
-current directory: getcwd: cannot access parent directories: No such file \
-or directory\n", 109))
-		exit_child(data, index_1, index_2, 0);
+	if (!getcwd(buf, 500 * 100) && errno == ENOENT
+		&& write(2, "cd: error retrieving current directory: getcwd: cannot \
+access parent directories: No such file or directory\n", 109))
+		data->l[index_1]->exit_codes[index_2] = 0;
 	update_env_continue(data, index_1, index_2, buf);
 	if (!data->cur_env || !*data->cur_env || !get_pwd(data))
 		free_str(&buf);
