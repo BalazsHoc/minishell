@@ -70,7 +70,7 @@ void	update_input(t_pipex *data, int index_1, int index_2)
 void	handle_expansion_here_doc(t_pipex *data, int index_1)
 {
 	int	i;
-	int j;
+	int	j;
 
 	i = -1;
 	j = -1;
@@ -92,17 +92,16 @@ void	handle_expansion_here_doc(t_pipex *data, int index_1)
 
 void	start_exec(t_pipex *data, int index, int i, int status)
 {
-	int check_here;
 	if (!here_doc(data, index, -1, -1))
 		return ;
 	handle_expansion_here_doc(data, index);
-	check_here = 0;
+	data->buf_int = 0;
 	exec_cmnds(data, index, i);
 	close_pipes_array(data, index);
 	while (++i < data->l[index]->cmnd_count)
 	{
 		if (check_here_doc(data, index, i))
-			check_here = 1;
+			data->buf_int = 1;
 		if (!data->l[index]->exit_codes[i])
 		{
 			waitpid(data->pid[i], &status, 0);
@@ -113,8 +112,9 @@ void	start_exec(t_pipex *data, int index, int i, int status)
 			}
 		}
 	}
-	if (!check_here)
+	if (!data->buf_int)
 		set_here(data, index);
 	data->last_exit_status = data->l[index]->exit_codes[data->l[
 		index]->cmnd_count - 1];
+	data->buf_int = 0;
 }
