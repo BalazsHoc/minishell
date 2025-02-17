@@ -79,7 +79,6 @@ typedef struct pipex_s
 extern int	g_signal;
 
 int			main(int argc, char **argv, char **env);
-// void		print_that_shit(t_pipex *data, int index_1);
 
 //								srcs/
 

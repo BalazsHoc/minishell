@@ -17,6 +17,8 @@ void	print_list(char **arr)
 	int	i;
 
 	i = 0;
+	if (!arr || !*arr)
+		return ;
 	while (arr[i])
 		printf("%s\n", arr[i++]);
 }

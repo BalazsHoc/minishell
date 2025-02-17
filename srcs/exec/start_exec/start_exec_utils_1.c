@@ -60,6 +60,14 @@ char	*get_val(t_pipex *data, char *cur)
 	return (NULL);
 }
 
+void	here_doc_err_msg(char *key)
+{
+	write(2, "bash: warning: here-document delimited\
+by end-of-file (wanted `", 63);
+	write(2, key, ft_strlen(key));
+	write(2, "')\n", 4);
+}
+
 char	*get_input(t_pipex *data, int index_1, int index_2, int index_3)
 {
 	char	*buf;
@@ -82,8 +90,7 @@ char	*get_input(t_pipex *data, int index_1, int index_2, int index_3)
 	if (g_signal)
 		return (free_str(&buf), free_str(&input), NULL);
 	if (!buf)
-		return (printf("bash: warning: here-document delimited\
-by end-of-file (wanted `%s')\n", key), input);
+		return (here_doc_err_msg(key), input);
 	if (!input)
 		return (free_str(&buf), ft_strdup(data, ""));
 	return (input);

@@ -71,8 +71,12 @@ int	open_out_util_1(t_pipex *data, int index_1, int index_2)
 
 void	open_out_util_2(t_pipex *data, int index_1, int index_2, int i)
 {
-	printf("bash: %s: %s\n", data->l[index_1]->cmnds[index_2][i + 1],
-		strerror(errno));
+	write(2, "bash: ", 7);
+	write(2, data->l[index_1]->cmnds[index_2][i + 1],
+		ft_strlen(data->l[index_1]->cmnds[index_2][i + 1]));
+	write(2, ": ", 3);
+	write(2, strerror(errno), ft_strlen(strerror(errno)));
+	write(2, "\n", 2);
 	exit_child(data, index_1, index_2, 1);
 }
 

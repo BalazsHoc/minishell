@@ -42,9 +42,11 @@ void	close_pipes_array(t_pipex *data, int index_1)
 			close_pipe(data, &data->l[index_1]->pipes[i][0]);
 		if (data->l[index_1]->pipes[i][1] > 0)
 			close_pipe(data, &data->l[index_1]->pipes[i][1]);
-		if (data->l[index_1]->buf_pipes[i][0] > 0)
+		if (data->l[index_1]->buf_pipes
+			&& data->l[index_1]->buf_pipes[i][0] > 0)
 			close_pipe(data, &data->l[index_1]->buf_pipes[i][0]);
-		if (data->l[index_1]->buf_pipes[i][1] > 0)
+		if (data->l[index_1]->buf_pipes
+			&& data->l[index_1]->buf_pipes[i][1] > 0)
 			close_pipe(data, &data->l[index_1]->buf_pipes[i][1]);
 	}
 }

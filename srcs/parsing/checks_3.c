@@ -14,14 +14,17 @@
 
 void	check_folder_utils_4(t_pipex *data, int index, int i)
 {
-	printf("bash: %s: Permission denied\n", data->l[index]->ops[i][0]);
+	write(2, "bash: ", 7);
+	write(2, data->l[index]->ops[i][0], ft_strlen(data->l[index]->ops[i][0]));
+	write(2, ": Permission denied\n", 21);
 	exit_child(data, index, i, 126);
 }
 
 void	check_folder_utils_5(t_pipex *data, int index, int i)
 {
-	printf("bash: %s: No such file or directory\n",
-		data->l[index]->ops[i][0]);
+	write(2, "bash: ", 7);
+	write(2, data->l[index]->ops[i][0], ft_strlen(data->l[index]->ops[i][0]));
+	write(2, ": No such file or directory\n", 29);
 	exit_child(data, index, i, 127);
 }
 

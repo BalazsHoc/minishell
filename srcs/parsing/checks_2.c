@@ -78,6 +78,8 @@ int	check_folder_utils_2(t_pipex *data, int index, int i, int j)
 
 void	check_folder_utils_3(t_pipex *data, int index, int i)
 {
-	printf("bash: %s: Is a directory\n", data->l[index]->ops[i][0]);
+	write(2, "bash: ", 7);
+	write(2, data->l[index]->ops[i][0], ft_strlen(data->l[index]->ops[i][0]));
+	write(2, ": Is a directory\n", 18);
 	exit_child(data, index, i, 126);
 }

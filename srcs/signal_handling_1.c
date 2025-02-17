@@ -47,7 +47,7 @@ void	signal_exec_cmnd(int sig)
 	}
 	if (sig == SIGQUIT)
 	{
-		printf("Quit (core dumped)\n");
+		write(2, "Quit (core dumped)\n", 20);
 		g_signal = 3;
 	}
 }

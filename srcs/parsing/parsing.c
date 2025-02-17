@@ -12,41 +12,6 @@
 
 #include "../../minishell.h"
 
-// void	print_that_shit(t_pipex *data, int index_1)
-// {
-// 	int	i;
-// 	int	j;
-
-// 	// i = -1;
-// 	printf("|\n");
-// 	// while (data->cur_env[++i])
-// 	// 	printf("%s\n", data->cur_env[i]);
-// 	i = -1;
-// 	while (data->l[index_1]->cmnds[++i])
-// 	{
-// 		j = -1;
-// 		while (data->l[index_1]->cmnds[i][++j])
-// 		{
-// 			if (data->l[index_1]->cmnds[i][j])
-// 				printf("ELEM: %d:%d | |%s| ", i,
-// 					j, data->l[index_1]->cmnds[i][j]);
-// 			if (data->l[index_1]->red_cmnd[i][j])
-// 				printf("X\n");
-// 			else
-// 				printf("\n");
-// 		}
-// 		j = -1;
-// 		if (data->l[index_1]->ops && data->l[index_1]->ops[i])
-// 		{
-// 			while (data->l[index_1]->ops[i][++j])
-// 				printf("OP:   %d:%d | |%s|\n", i,
-// 					j, data->l[index_1]->ops[i][j]);
-// 		}
-// 		if (data->l[index_1]->input)
-// 		printf("PATH: |%s|\n", data->l[index_1]->paths[i]);
-// 	}
-// }
-
 void	init_ops(t_pipex *data, int index_1)
 {
 	int	i;
