@@ -112,7 +112,7 @@ void	start_exec(t_pipex *data, int index, int i, int status)
 			}
 		}
 	}
-	if (!data->buf_int)
+	if (skip_nl(data) && !data->buf_int)
 		set_here(data, index);
 	data->last_exit_status = data->l[index]->exit_codes[data->l[
 		index]->cmnd_count - 1];

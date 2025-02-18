@@ -12,11 +12,15 @@
 
 #include "../../../minishell.h"
 
-void	ex_1_0(t_pipex *data, char **new)
+void	ex_1_0(t_pipex *data, char **elem, int open, int *i)
 {
-	free_str(&*new);
-	data->buf_str = NULL;
-	*new = get_pid(data);
+	if (i && open != 1)
+	{
+		*elem = get_pid(data);
+		data->buf_int = open;
+		ft_strncpy(data->buf_str, *elem, ft_strlen_2(*elem));
+		*i += 2;
+	}
 }
 
 void	ex_1_1(t_pipex *data, char **elem, int open, int *i)
@@ -50,31 +54,31 @@ int	ex_1_3(t_pipex *data, char **elem, int i, int open)
 	return (0);
 }
 
-int	expand_it_1(t_pipex *data, int i, int open, char **new)
+int	expand_it_1(t_pipex *d, int i, int open, char **new)
 {
 	char	*elem;
 
 	elem = NULL;
-	*new = ft_calloc(sizeof(char), (count_ex(data, i, open, 0) + 1), data);
-	data->buf_str = *new;
-	while (data->line[i])
+	*new = ft_calloc(sizeof(char), (count_ex(d, i, open, 0) + 1), d);
+	d->buf_str = *new;
+	while (d->line[i])
 	{
-		if (open != 1 && data->line[i] == '$' && data->line[i + 1] == '$')
-			return (ex_1_0(data, &*new), 1);
-		if (open != 1 && data->line[i] == '$' && (data->line[i + 1] == '?'))
-			ex_1_1(data, &elem, open, &i);
-		else if (open != 1 && data->line[i] == '$' && data->line[i + 1] != '?')
-			ex_1_2(data, &elem, open, &i);
+		if (open != 1 && d->line[i] == '$' && d->line[i + 1] == '$')
+			ex_1_0(d, &elem, open, &i);
+		else if (open != 1 && d->line[i] == '$' && (d->line[i + 1] == '?'))
+			ex_1_1(d, &elem, open, &i);
+		else if (open != 1 && d->line[i] == '$' && d->line[i + 1] != '?')
+			ex_1_2(d, &elem, open, &i);
 		if (elem && ft_strlen_2(elem) >= 0)
-			data->buf_str = data->buf_str + ft_strlen_2(elem);
-		if (ex_1_3(data, &elem, i, open))
+			d->buf_str = d->buf_str + ft_strlen_2(elem);
+		if (ex_1_3(d, &elem, i, open))
 			break ;
-		if (handle_open(data, i, &open) && !open && ex_1_4(data, i))
+		if (handle_open(d, i, &open) && !open && ex_1_4(d, i))
 			break ;
-		if (ex_1_5(data, i, open))
-			*(data->buf_str)++ = data->line[i];
-		if (ex_1_6(data, i, open))
+		if (ex_1_5(d, i, open))
+			*(d->buf_str)++ = d->line[i];
+		if (ex_1_6(d, i, open))
 			i++;
 	}
-	return (data->buf_str = NULL, 1);
+	return (d->buf_str = NULL, 1);
 }

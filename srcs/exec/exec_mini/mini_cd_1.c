@@ -111,7 +111,7 @@ void	cd_cmnd(char **argv, t_pipex *data, int index_1, int index_2)
 		return (update_env(data, index_1, index_2));
 	if (!ft_strncmp(argv[1], "-", 2))
 		return (update_env_2(data, index_1, index_2));
-	if ((!argv[1] || !ft_strncmp(argv[1], "~", 2)))
+	if (!argv[1])
 	{
 		if (chdir(home_dir) == -1)
 			print_cd_err(errno, argv[1]);

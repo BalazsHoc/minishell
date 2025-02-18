@@ -101,7 +101,13 @@ void	handle_parent_child(t_pipex *d, int i_1, int i_2)
 
 void	exec_cmnd(t_pipex *data, int index_1, int index_2)
 {
-	signal_change(NULL, 2);
+	int	check_cat;
+
+	check_cat = 0;
+	if (check_cat_inline(data, index_1))
+		signal_change(NULL, 3);
+	else
+		signal_change(NULL, 2);
 	if ((check_here_doc(data, index_1, index_2)
 			&& data->l[index_1]->pipes[index_2][1])
 		|| data->l[index_1]->fd_ou[index_2] == -2)

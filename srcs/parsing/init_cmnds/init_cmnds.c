@@ -92,9 +92,9 @@ void	fill_cmnds(t_pipex *d, int i_1, int i, int j)
 			handle_open(d, j, &d->open);
 		if (if_2(d, j) && set_pos(&d->l[i_1]->pos_in_line[i][d->i_2], j))
 			fill_for_empty(d, i_1, i, d->i_2);
-		if (if_3(d, j, i_1, i))
+		if (check_home(d, &j, i_1, i) && if_3(d, j, i_1, i))
 			d->l[i_1]->red_cmnd[i][d->i_2] = 2;
-		if (if_4(d, j))
+		if (d->line[j] && if_4(d, j))
 		{
 			if (d_in(d, j, d->open) >= 0 && if_5(d, i, i_1)
 				&& expand_it_1(d, j, d->open, &d->l[i_1]->cmnds[i][++d->i_2]))

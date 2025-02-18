@@ -46,6 +46,18 @@ void	signal_exec_cmnd(int sig)
 		return ;
 	}
 	if (sig == SIGQUIT)
+		return ;
+}
+
+void	signal_exec_cmnd_2(int sig)
+{
+	if (sig == SIGINT)
+	{
+		g_signal = 2;
+		printf("\n");
+		return ;
+	}
+	if (sig == SIGQUIT)
 	{
 		write(2, "Quit (core dumped)\n", 20);
 		g_signal = 3;
@@ -73,5 +85,10 @@ void	signal_change(t_pipex *data, int flag)
 	{
 		signal(SIGINT, signal_exec_cmnd);
 		signal(SIGQUIT, signal_exec_cmnd);
+	}
+	if (flag == 3)
+	{
+		signal(SIGINT, signal_exec_cmnd_2);
+		signal(SIGQUIT, signal_exec_cmnd_2);
 	}
 }

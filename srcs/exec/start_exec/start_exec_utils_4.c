@@ -85,8 +85,9 @@ void	set_here_continue(t_pipex *data, int index_1, int i, int check)
 	else if (check >= 0 && data->l[index_1]->cmnd_count)
 		data->here_2_old = find_key(data, index_1, i, check + 1);
 	while (data->here_2 && data->line[data->here_2 - 1]
-		&& data->line[data->here_2]
-		&& data->line[data->here_2] == '\n' && ++data->here_2)
+		&& data->line[data->here_2] && data->here_2 < data->chars_in_line
+		&& (data->line[data->here_2] == '\n'
+			|| is_space(data->line[data->here_2])) && ++data->here_2)
 		data->here_2_old++;
 }
 

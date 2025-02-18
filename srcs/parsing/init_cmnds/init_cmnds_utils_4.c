@@ -14,6 +14,8 @@
 
 int	handle_open(t_pipex *data, int j, int *open)
 {
+	if (!data->line[j])
+		return (1);
 	if (is_quote_one(data->line[j]) && !*open)
 	{
 		*open = 1;

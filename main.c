@@ -93,7 +93,8 @@ int	main(int argc, char **argv, char **env)
 {
 	t_pipex	*data;
 
-	(void)argc;
+	if (argc > 1)
+		return (write(2, "Only 1 argc is accepted.\n", 26), 1);
 	(void)argv;
 	data = ft_calloc(sizeof(t_pipex), 1, NULL);
 	init_data(data, env);

@@ -25,7 +25,10 @@ char	*handle_no_eof_continue(t_pipex *data, int i_1, int i_2, int i)
 		buf_2 = ft_strjoin(data->l[i_1]->input[i_2], buf_1, data);
 		free_str(&buf_1);
 		buf_2 = ft_strtrim(buf_2, "\n", data);
-		buf_1 = ft_strjoin(buf_2, "\n", data);
+		if (buf_2[ft_strlen(buf_2) - 1] != '\n')
+			buf_1 = ft_strjoin(buf_2, "\n", data);
+		else
+			buf_1 = ft_strdup(data, buf_2);
 		free_str(&data->l[i_1]->input[i_2]);
 	}
 	else if (free_this(&buf_1))

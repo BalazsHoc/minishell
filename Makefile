@@ -44,7 +44,7 @@ OBJ_PARSING		= $(PATH_PARSING:.c=.o)
 #	EXEC
 
 DIR_EXEC		= srcs/exec/
-SRCS_EXEC		= exec.c exec_utils.c exec_mini/mini_cd_1.c exec_mini/mini_cd_2.c exec_mini/mini_exit_1.c exec_mini/mini_exit_2.c exec_mini/mini_export_1.c exec_mini/mini_export_2.c exec_mini/mini_export_3.c exec_mini/mini_export_4.c exec_mini/mini_export_5.c exec_mini/mini_unset_1.c exec_mini/mini_unset_2.c  exec_mini/start_mini_exec_1.c exec_mini/start_mini_exec_2.c start_exec/start_exec_utils_1.c start_exec/start_exec_utils_2.c start_exec/start_exec_utils_3.c start_exec/start_exec_utils_4.c start_exec/start_exec_utils_5.c  start_exec/start_exec_utils_6.c start_exec/start_exec_utils_7.c start_exec/start_exec.c
+SRCS_EXEC		= exec.c exec_utils_1.c exec_utils_2.c exec_mini/mini_cd_1.c exec_mini/mini_cd_2.c exec_mini/mini_exit_1.c exec_mini/mini_exit_2.c exec_mini/mini_export_1.c exec_mini/mini_export_2.c exec_mini/mini_export_3.c exec_mini/mini_export_4.c exec_mini/mini_export_5.c exec_mini/mini_unset_1.c exec_mini/mini_unset_2.c  exec_mini/start_mini_exec_1.c exec_mini/start_mini_exec_2.c start_exec/start_exec_utils_1.c start_exec/start_exec_utils_2.c start_exec/start_exec_utils_3.c start_exec/start_exec_utils_4.c start_exec/start_exec_utils_5.c  start_exec/start_exec_utils_6.c start_exec/start_exec_utils_7.c start_exec/start_exec_utils_8.c start_exec/start_exec.c
 PATH_EXEC		= $(addprefix $(DIR_EXEC), $(SRCS_EXEC))
 OBJ_EXEC		= $(PATH_EXEC:.c=.o)
 

@@ -137,6 +137,7 @@ int			expand_it_1(t_pipex *data, int i, int open, char **new);
 
 //	init_cmnds_exp_2.c
 
+int			check_home(t_pipex *data, int *i, int i_1, int i_2);
 int			ex_1_4(t_pipex *data, int i);
 int			ex_1_5(t_pipex *data, int i, int open);
 int			ex_1_6(t_pipex *data, int i, int open);
@@ -412,9 +413,13 @@ int			check_cmnd_as_dir(t_pipex *data, int index, int i);
 int			is_valid_in(t_pipex *data, int index_1, int index_2);
 int			is_red_inline(t_pipex *data, int index_1, int index_2);
 
-//	start_exec_utils_6.c
+//	start_exec_utils_7.c
 
 int			get_input_2(t_pipex *data, int index_1, int i);
+
+//	start_exec_utils_7.c
+
+int			skip_nl(t_pipex *data);
 
 //	start_exec.c
 
@@ -427,13 +432,17 @@ void		exec_mini(t_pipex *data, int index_1, int index_2);
 
 int			check_here_doc(t_pipex *data, int index_1, int index_2);
 
-//	exec_utils.c
+//	exec_utils_1.c
 
 int			open_this_write(t_pipex *data, char *str);
 int			open_this_read(t_pipex *data, char *str);
 int			is_in_inline(t_pipex *data, int index_1, int index_2);
 int			check_here_doc(t_pipex *data, int index_1, int index_2);
 int			check_infile(t_pipex *data, int index_1, int index_2);
+
+//	exec_utils_2.c
+
+int			check_cat_inline(t_pipex *data, int i_1);
 
 //						libft/
 

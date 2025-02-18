@@ -20,7 +20,7 @@ char	*get_pid(t_pipex *data)
 	if (pid < 0)
 		return (perror("fork() failed!"), er_c(data), NULL);
 	if (pid == 0)
-		exit(EXIT_SUCCESS);
+		return (data->buf_str = NULL, er_c(data), exit(EXIT_SUCCESS), NULL);
 	if (wait(NULL) == -1)
 		return (perror("wait() failed!"), er_c(data), NULL);
 	return (ft_itoa(pid, data));

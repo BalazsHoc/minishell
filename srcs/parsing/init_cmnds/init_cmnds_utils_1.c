@@ -14,6 +14,8 @@
 
 int	if_1(t_pipex *data, int *j)
 {
+	if (*j > 0 && !data->line[*j])
+		return (0);
 	if (data->line[++*j] && ((*j > 0 && !data->open
 				&& is_real_pipe(data->line, *j)
 				&& ++data->k <= 0) || (data->line[*j] != '\n' && data->k <= 0)))
@@ -23,6 +25,8 @@ int	if_1(t_pipex *data, int *j)
 
 int	if_2(t_pipex *data, int j)
 {
+	if (!data->line[j])
+		return (0);
 	if (!data->open && data->k == 0 && check_for_empty(data, j)
 		&& is_quote(data->line[j])
 		&& is_quote(data->line[j + 1]) && ++data->i_2 != INT_MIN)
@@ -32,6 +36,8 @@ int	if_2(t_pipex *data, int j)
 
 int	if_3(t_pipex *data, int j, int i_1, int i)
 {
+	if (!data->line[j])
+		return (0);
 	if (data->k == 0 && d_in(data, j, data->open) != -1
 		&& !count_ex(data, j, data->open, 0)
 		&& is_red_basic(data, i_1, i, data->i_2))
@@ -70,6 +76,8 @@ int	if_4(t_pipex *data, int j)
 
 int	if_5(t_pipex *data, int i, int i_1)
 {
+	if (!data->line[i])
+		return (0);
 	if (data->i_2 == -1
 		|| (data->i_2 >= 0
 			&& ft_strncmp(data->l[i_1]->cmnds[i][data->i_2], "<<", 3)))

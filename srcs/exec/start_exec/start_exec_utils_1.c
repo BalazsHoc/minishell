@@ -114,8 +114,7 @@ int	find_key(t_pipex *data, int index_1, int index_2, int index_3)
 			j++;
 		if (!data->l[index_1]->cmnds[index_2][index_3][j]
 			&& (i == 0 || (data->line[i - 1] == '\n'))
-			&& (!data->line[i + j] || data->line[i + j] == '\n'
-				|| is_space(data->line[i + j])))
+			&& (!data->line[i + j] || data->line[i + j] == '\n'))
 			return (data->here_2 = i + j + 1, i + j + 1);
 	}
 	return (data->here_2 = i, i);
