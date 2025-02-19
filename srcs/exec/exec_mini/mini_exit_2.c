@@ -14,10 +14,12 @@
 
 void	mini_exit_close_childs(t_pipex *d, int i_1, int i_2)
 {
-	close_pipe(d, &d->fd_out_2);
-	close_pipe(d, &d->fd_out);
+	printf("CLOSE: %d\n", i_2);
+	write(2, "CLOSE: \n", 9);
 	close_children_pipe(d, &d->fd_in);
 	close_children_pipe(d, &d->fd_in_2);
+	close_pipe(d, &d->fd_out_2);
+	close_pipe(d, &d->fd_out);
 	cl_chi_pipes(d, i_1, i_2);
 	er_c(d);
 }

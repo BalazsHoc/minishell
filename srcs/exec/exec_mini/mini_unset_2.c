@@ -58,11 +58,51 @@ int	count_unset_env(t_pipex *data, int index_1, int index_2)
 	return (j - k);
 }
 
+int	count_unset_export(t_pipex *data, int index_1, int index_2)
+{
+	int		i;
+	int		j;
+	int		k;
+	char	*key;
+
+	i = -1;
+	k = 0;
+	while (data->l[index_1]->ops[index_2][++i + 1])
+	{
+		j = 0;
+		while (data->cur_env[j])
+		{
+			key = key_this(data, data->cur_env[j]);
+			if (ft_strncmp(data->l[index_1]->ops[index_2][i + 1], "_", 2)
+				&& !ft_strncmp(data->l[index_1]->ops[index_2][i + 1], key,
+					bigger_one(data->l[index_1]->ops[index_2][i + 1], key)))
+				k++;
+			j++;
+			free_this(&key);
+		}
+	}
+	if (k == 0)
+		return (-1);
+	return (j - k);
+}
+
 char	**malloc_unset(t_pipex *data, int index_1, int index_2)
 {
 	int	count;
 
 	count = count_unset_env(data, index_1, index_2);
+	if (!data->l[index_1]->ops[index_2][1])
+		return (NULL);
+	if (count == -1)
+		return (NULL);
+	return (ft_calloc(sizeof(char *), (count + 1), data));
+}
+
+char	**malloc_unset_export(t_pipex *data, int index_1, int index_2)
+{
+	int	count;
+
+	count = count_unset_export(data, index_1, index_2);
 	if (!data->l[index_1]->ops[index_2][1])
 		return (NULL);
 	if (count == -1)

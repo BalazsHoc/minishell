@@ -360,6 +360,8 @@ void		unset_cmnd(t_pipex *data, int index_1, int index_2, int i);
 
 char		*key_this(t_pipex *data, char *s);
 char		**malloc_unset(t_pipex *data, int index_1, int index_2);
+char		**malloc_unset_export(t_pipex *data, int index_1, int index_2);
+
 
 //	start_mini_exec_1.c
 
@@ -397,6 +399,7 @@ int			if_th(t_pipex *data, int index_1, int index_2, int i);
 void		exec_cmnds_util_3(t_pipex *data, int index, int i);
 void		exec_cmnds(t_pipex *data, int index, int i);
 
+int			exec_cmnds_util_1(t_pipex *data, int index, int i);
 int			exec_cmnds_util_2(t_pipex *data, int index, int i);
 
 //	start_exec_utils_4.c
@@ -448,8 +451,9 @@ int			check_infile(t_pipex *data, int index_1, int index_2);
 
 //	exec_utils_2.c
 
-int		handle_mini_child_u_2(t_pipex *d, int i_1, int i_2);
+void		close_in_out_2(t_pipex *d);
 
+int			handle_mini_child_u_2(t_pipex *d, int i_1, int i_2);
 int			check_cat_inline(t_pipex *data, int i_1);
 
 //						libft/

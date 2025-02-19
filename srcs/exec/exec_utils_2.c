@@ -12,6 +12,17 @@
 
 #include "../../minishell.h"
 
+void close_in_out_2(t_pipex *d)
+{
+	close_pipe(d, &d->fd_out);
+	close_pipe(d, &d->fd_out_2);
+	close_pipe(d, &d->fd_in_2);
+	close_pipe(d, &d->fd_in);
+	d->fd_in = -2;
+	d->fd_out = -2;
+	d->fd_out_2 = -2;
+}
+
 int	check_cat_inline(t_pipex *data, int i_1)
 {
 	int	i;

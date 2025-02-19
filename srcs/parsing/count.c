@@ -37,7 +37,6 @@ int	count_cmnds(char *line)
 		if (!line[i])
 			break ;
 	}
-	printf("COUN: %d\n", count);
 	return (count);
 }
 

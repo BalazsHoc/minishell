@@ -80,14 +80,14 @@ void	handle_child(t_pipex *d, int i_1, int i_2)
 void	handle_mini_child(t_pipex *d, int i_1, int i_2)
 {
 	if (handle_mini_child_u_2(d, i_1, i_2) && d->l[i_1]->fd_infiles[i_2] != -1)
-		d->fd_in = dup2(d->l[i_1]->fd_infiles[i_2], STDIN_FILENO);
+		dup2(d->l[i_1]->fd_infiles[i_2], STDIN_FILENO);
 	else if (d->l[i_1]->pipes[i_2][1] != -1 && d->l[i_1]->fd_infiles[i_2] == -1
 		&& !check_here_doc(d, i_1, i_2) && i_2 > 0)
-		d->fd_in = dup2(d->l[i_1]->pipes[i_2][0], STDIN_FILENO);
+		dup2(d->l[i_1]->pipes[i_2][0], STDIN_FILENO);
 	else if (d->l[i_1]->buf_pipes[i_2][1] != -1
 		&& d->l[i_1]->fd_infiles[i_2] == -1
 		&& check_here_doc(d, i_1, i_2))
-		d->fd_in = dup2(d->l[i_1]->buf_pipes[i_2][0], STDIN_FILENO);
+		dup2(d->l[i_1]->buf_pipes[i_2][0], STDIN_FILENO);
 	if (i_2 < d->l[i_1]->cmnd_count - 1
 		&& d->l[i_1]->fd_ou[i_2] == -1 && d->l[i_1]->pipes[i_2 + 1][1] != -1)
 		d->fd_out = dup2(d->l[i_1]->pipes[i_2 + 1][1], STDOUT_FILENO);
@@ -96,10 +96,12 @@ void	handle_mini_child(t_pipex *d, int i_1, int i_2)
 	else if (d->l[i_1]->fd_ou[i_2] == -2
 		&& d->l[i_1]->buf_pipes[i_2][1] != -1)
 		d->fd_out = dup2(d->l[i_1]->buf_pipes[i_2][1], STDOUT_FILENO);
-	if (d->fd_out == -1 || d->fd_in == -1)
-		return (perror("error dup2"), cl_chi_pipes(d, i_1, i_2), er_c(d));
-	return (mini_child(d, i_1, i_2), 
-		close_pipe(d, &d->fd_out), close_pipe(d, &d->fd_out_2), close_children_pipe(d, &d->fd_in_2),
+	if (i_2 < d->l[i_1]->cmnd_count - 1 && !exec_cmnds_util_1(d, i_1, i_2 + 1))
+		close_in_out_2(d);
+	if (d->fd_out == -1)
+		return (perror("Error dup2"), cl_chi_pipes(d, i_1, i_2), er_c(d));
+	return (mini_child(d, i_1, i_2), close_pipe(d, &d->fd_out_2),
+		close_pipe(d, &d->fd_out), close_children_pipe(d, &d->fd_in_2),
 		close_children_pipe(d, &d->fd_in), cl_chi_pipes(d, i_1, i_2), er_c(d));
 }
 

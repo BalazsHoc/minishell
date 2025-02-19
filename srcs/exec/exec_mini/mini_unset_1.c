@@ -65,7 +65,7 @@ void	unset_export(t_pipex *data, int index_1, int index_2, int i)
 	int		check;
 	char	*key;
 
-	data->buf_array = malloc_unset(data, index_1, index_2);
+	data->buf_array = malloc_unset_export(data, index_1, index_2);
 	if (!data->buf_array)
 		return ;
 	while ((++i < 1 || (i > 0 && free_this(&data->buf_str))) && data->export[i])
