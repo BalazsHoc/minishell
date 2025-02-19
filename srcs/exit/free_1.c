@@ -64,7 +64,7 @@ void	free_line(t_pipex *data, int index)
 	if (data->l[index]->input)
 	{
 		while (++i < data->l[index]->cmnd_count)
-			free(data->l[index]->input[i]);
+			free_str(&data->l[index]->input[i]);
 		free(data->l[index]->input);
 	}
 	if (data->l[index]->red_cmnd)

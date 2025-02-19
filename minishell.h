@@ -71,6 +71,8 @@ typedef struct pipex_s
 	int					open;
 	int					k;
 	int					i_2;
+	int					fd_in_2;
+	int					fd_out_2;
 
 	pid_t				*pid;
 
@@ -446,7 +448,7 @@ int			check_infile(t_pipex *data, int index_1, int index_2);
 
 //	exec_utils_2.c
 
-void		handle_mini_child_u_2(t_pipex *d, int i_1, int i_2);
+int		handle_mini_child_u_2(t_pipex *d, int i_1, int i_2);
 
 int			check_cat_inline(t_pipex *data, int i_1);
 

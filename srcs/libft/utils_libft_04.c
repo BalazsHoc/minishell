@@ -72,7 +72,7 @@ static void	ft_merror(char **new)
 	i = 0;
 	while (new[i])
 	{
-		free(new[i]);
+		free_str(&new[i]);
 		new[i] = NULL;
 		i++;
 	}

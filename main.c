@@ -82,7 +82,9 @@ void	init_data(t_pipex *data, char **env)
 	data->here_2 = 0;
 	data->last_exit_status = 0;
 	data->fd_out = 0;
+	data->fd_out_2 = 0;
 	data->fd_in = -1;
+	data->fd_in_2 = -1;
 	data->buf_int = 0;
 	data->count_elem = 0;
 	init_env(data, env);

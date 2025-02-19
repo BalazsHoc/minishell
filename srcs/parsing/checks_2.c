@@ -55,6 +55,8 @@ int	syntax_check(t_pipex *data, int i, int count)
 		if (count >= 2)
 			return (0);
 	}
+	if (count)
+		return (0);
 	return (1);
 }
 
