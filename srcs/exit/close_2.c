@@ -14,7 +14,7 @@
 
 int	cl_chi_pipes(t_pipex *data, int index_1, int index_2)
 {
-	close_pipes_array(data, index_1);
+	close_childs_p_a(data, index_1);
 	close_pipes(data, index_1, index_2);
 	close_pipe(data, &data->fd_in);
 	return (1);

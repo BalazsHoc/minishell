@@ -64,8 +64,21 @@ int	u_ex_util_1(t_pipex *data, int index_1, int index_2, int j)
 
 void	u_ex_util_2(t_pipex *data, char *str)
 {
+	int		i;
+	char	*new;
+
+	i = -1;
+	new = NULL;
+	new = ft_calloc(sizeof(char), ft_strlen(str) + 2 + 1, data);
 	data->buf_str = data->buf_array[is_there_2(data, str)];
-	data->buf_array[is_there_2(data, str)] = ft_strdup(data, str);
+	while (str[++i] && str[i] != '=')
+		new[i] = str[i];
+	new[i] = '=';
+	new[++i] = 34;
+	while (str[++i - 1])
+		new[i] = str[i - 1];
+	new[i] = 34;
+	data->buf_array[is_there_2(data, str)] = new;
 	free_str(&data->buf_str);
 }
 

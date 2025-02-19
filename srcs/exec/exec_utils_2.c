@@ -27,3 +27,12 @@ int	check_cat_inline(t_pipex *data, int i_1)
 		return (1);
 	return (0);
 }
+
+void	handle_mini_child_u_2(t_pipex *d, int i_1, int i_2)
+{
+	d->fd_out = dup(STDOUT_FILENO);
+	d->fd_in = dup(STDIN_FILENO);
+	if (check_infile(d, i_1, i_2))
+		d->l[i_1]->fd_infiles[i_2] = open_this_read(d,
+				d->l[i_1]->cmnds[i_2][is_red_inline(d, i_1, i_2) + 1]);
+}

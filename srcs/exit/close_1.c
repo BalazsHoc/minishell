@@ -12,6 +12,29 @@
 
 #include "../../minishell.h"
 
+void	close_childs_p_a(t_pipex *data, int index_1)
+{
+	int	i;
+
+	i = -1;
+	if (!data->l[index_1] || !data->l[index_1]->pipes
+		|| !data->l[index_1]->pipes[0])
+		return ;
+	while (++i < data->l[index_1]->cmnd_count && data->l[index_1]->pipes[i])
+	{
+		if (data->l[index_1]->pipes[i][0] >= 0)
+			close_children_pipe(data, &data->l[index_1]->pipes[i][0]);
+		if (data->l[index_1]->pipes[i][1] >= 0)
+			close_children_pipe(data, &data->l[index_1]->pipes[i][1]);
+		if (data->l[index_1]->buf_pipes
+			&& data->l[index_1]->buf_pipes[i][0] >= 0)
+			close_children_pipe(data, &data->l[index_1]->buf_pipes[i][0]);
+		if (data->l[index_1]->buf_pipes
+			&& data->l[index_1]->buf_pipes[i][1] >= 0)
+			close_children_pipe(data, &data->l[index_1]->buf_pipes[i][1]);
+	}
+}
+
 void	close_buf_pipes(t_pipex *data, int index_1, int index_2)
 {
 	if (data->l[index_1]->buf_pipes[index_2][0] > 0)

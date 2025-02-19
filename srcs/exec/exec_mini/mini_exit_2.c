@@ -12,6 +12,14 @@
 
 #include "../../../minishell.h"
 
+void	mini_exit_close_childs(t_pipex *d, int i_1, int i_2)
+{
+	close_pipe(d, &d->fd_out);
+	close_children_pipe(d, &d->fd_in);
+	cl_chi_pipes(d, i_1, i_2);
+	er_c(d);
+}
+
 int	only_dec(char *str)
 {
 	int	i;

@@ -53,7 +53,8 @@ void	init_paths(t_pipex *d, int i_1, int i_2)
 		}
 		else if ((!ft_strncmp(d->l[i_1]->ops[i_2][0], ".", 2)
 			|| !one_of_those(d->l[i_1]->ops[i_2][0]))
-				&& check_executable(d, i_1, i_2))
+				&& check_executable(d, i_1, i_2)
+					&& !one_of_those_2(d->l[i_1]->ops[i_2][0], 0))
 			d->l[i_1]->paths[i_2] = ft_strdup(d, d->l[i_1]->ops[i_2][0]);
 		else
 			d->l[i_1]->paths[i_2] = ft_strdup(d, "pathnfound");

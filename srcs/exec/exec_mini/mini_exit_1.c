@@ -67,27 +67,31 @@ void	exit_cmnd(t_pipex *data, int index_1, int index_2)
 		return (data->last_exit_status = errno, er_c(data));
 }
 
-void	exit_cmnd_child(t_pipex *data, int index_1, int index_2)
+void	exit_cmnd_child(t_pipex *d, int i_1, int i_2)
 {
 	long long	i;
 
 	i = 0;
-	if (data->l[index_1]->ops[index_2][1])
+	if (!d->l[i_1]->ops || !d->l[i_1]->ops[i_2])
+		return ;
+	if (d->l[i_1]->ops[i_2][1])
 	{
-		i = ft_atoi(data->l[index_1]->ops[index_2][1]);
-		if (is_overflow(data, index_1, index_2)
-			|| !only_dec(data->l[index_1]->ops[index_2][1]))
+		i = ft_atoi(d->l[i_1]->ops[i_2][1]);
+		if (is_overflow(d, i_1, i_2)
+			|| !only_dec(d->l[i_1]->ops[i_2][1]))
 			return (write(2, "bash: exit: ", 13),
-				write(2, data->l[index_1]->ops[index_2][1],
-				ft_strlen(data->l[index_1]->ops[index_2][1])),
+				write(2, d->l[i_1]->ops[i_2][1],
+				ft_strlen(d->l[i_1]->ops[i_2][1])),
 				write(2, ": numeric argument required\n", 29),
-				errno = 2, er_c(data));
+				errno = 2, mini_exit_close_childs(d, i_1, i_2));
 		if (i > 255 || i < 0)
 			i = i % 256;
 		errno = i;
 	}
-	if (data->l[index_1]->ops[index_2][2])
+	if (d->l[i_1]->ops[i_2]
+		&& d->l[i_1]->ops[i_2][1]
+		&& d->l[i_1]->ops[i_2][2])
 		return (write(2, "bash: exit: too many arguments\n", 32),
-			errno = 1, er_c(data));
-	return (data->last_exit_status = errno, er_c(data));
+			errno = 1, mini_exit_close_childs(d, i_1, i_2));
+	return (d->last_exit_status = errno, mini_exit_close_childs(d, i_1, i_2));
 }

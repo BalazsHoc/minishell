@@ -85,9 +85,11 @@ int			main(int argc, char **argv, char **env);
 //						exit/
 
 //	close_1.c
+
 void		close_everything(t_pipex *data, int index_1);
 void		create_buf_pipe(t_pipex *data, int index_1, int index_2);
 void		create_pipes(t_pipex *data, int index);
+void		close_childs_p_a(t_pipex *data, int index_1);
 
 int			cl_chi_pipes(t_pipex *data, int index_1, int index_2);
 
@@ -316,6 +318,8 @@ void		exit_cmnd(t_pipex *data, int index_1, int index_2);
 
 //	mini_exit_2.c
 
+void		mini_exit_close_childs(t_pipex *d, int i_1, int i_2);
+
 int			is_overflow(t_pipex *data, int index_1, int index_2);
 int			is_overflow_continue(char *str, int sign);
 int			only_dec(char *str);
@@ -441,6 +445,8 @@ int			check_here_doc(t_pipex *data, int index_1, int index_2);
 int			check_infile(t_pipex *data, int index_1, int index_2);
 
 //	exec_utils_2.c
+
+void		handle_mini_child_u_2(t_pipex *d, int i_1, int i_2);
 
 int			check_cat_inline(t_pipex *data, int i_1);
 

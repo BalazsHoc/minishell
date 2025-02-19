@@ -41,29 +41,63 @@ void	handle_child(t_pipex *d, int i_1, int i_2)
 		return (perror("execve"), er_c(d));
 }
 
+// void	handle_mini_child(t_pipex *d, int i_1, int i_2)
+// {
+// 	d->fd_out = dup(STDOUT_FILENO);
+// 	d->fd_in = dup(STDIN_FILENO);
+// 	if (check_infile(d, i_1, i_2))
+// 		d->l[i_1]->fd_infiles[i_2] = open_this_read(d,
+// 				d->l[i_1]->cmnds[i_2][is_red_inline(d, i_1, i_2) + 1]);
+// 	if (d->l[i_1]->fd_infiles[i_2] != -1)
+// 		d->fd_in = dup2(d->l[i_1]->fd_infiles[i_2], STDIN_FILENO);
+// 	else if (d->l[i_1]->pipes[i_2][1] != -1 && d->l[i_1]->fd_infiles[i_2] == -1
+// 		&& !check_here_doc(d, i_1, i_2) && i_2 > 0)
+// 		d->fd_in = dup2(d->l[i_1]->pipes[i_2][0], STDIN_FILENO);
+// 	else if (d->l[i_1]->buf_pipes[i_2][1] != -1
+// 		&& d->l[i_1]->fd_infiles[i_2] == -1
+// 		&& check_here_doc(d, i_1, i_2))
+// 		d->fd_in = dup2(d->l[i_1]->buf_pipes[i_2][0], STDIN_FILENO);
+// 	if (i_2 < d->l[i_1]->cmnd_count - 1
+// 		&& d->l[i_1]->fd_ou[i_2] == -1
+// 		&& d->l[i_1]->pipes[i_2 + 1][1] != -1)
+// 		dup2(d->l[i_1]->pipes[i_2 + 1][1], buf);
+// 	else if (d->l[i_1]->fd_ou[i_2] >= 0)
+// 		d->fd_out = dup2(d->l[i_1]->fd_ou[i_2], STDOUT_FILENO);
+// 	else if (d->l[i_1]->fd_ou[i_2] == -2
+// 		&& d->l[i_1]->buf_pipes[i_2][1] != -1)
+// 		d->fd_out = dup2(d->l[i_1]->buf_pipes[i_2][1], STDOUT_FILENO);
+// 	if (d->fd_out == -1 || d->fd_in == -1)
+// 		return (perror("error dup2"), cl_chi_pipes(d, i_1, i_2), er_c(d));
+// 	if (!i_2)
+// 	{
+// 		// close(d->l[i_1]->pipes[i_2 + 1][1]);
+// 		close(buf);
+// 	}
+// 	return (mini_child(d, i_1, i_2), close_pipe(d, &d->fd_out),
+// 		close_children_pipe(d, &d->fd_in), cl_chi_pipes(d, i_1, i_2), er_c(d));
+// }
+
 void	handle_mini_child(t_pipex *d, int i_1, int i_2)
 {
-	if (check_infile(d, i_1, i_2))
-		d->l[i_1]->fd_infiles[i_2] = open_this_read(d,
-				d->l[i_1]->cmnds[i_2][is_red_inline(d, i_1, i_2) + 1]);
+	handle_mini_child_u_2(d, i_1, i_2);
 	if (d->l[i_1]->fd_infiles[i_2] != -1)
-		d->fd_in = dup2(d->l[i_1]->fd_infiles[i_2], STDIN_FILENO);
+		dup2(d->l[i_1]->fd_infiles[i_2], STDIN_FILENO);
 	else if (d->l[i_1]->pipes[i_2][1] != -1 && d->l[i_1]->fd_infiles[i_2] == -1
 		&& !check_here_doc(d, i_1, i_2) && i_2 > 0)
-		d->fd_in = dup2(d->l[i_1]->pipes[i_2][0], STDIN_FILENO);
+		dup2(d->l[i_1]->pipes[i_2][0], STDIN_FILENO);
 	else if (d->l[i_1]->buf_pipes[i_2][1] != -1
 		&& d->l[i_1]->fd_infiles[i_2] == -1
 		&& check_here_doc(d, i_1, i_2))
-		d->fd_in = dup2(d->l[i_1]->buf_pipes[i_2][0], STDIN_FILENO);
+		dup2(d->l[i_1]->buf_pipes[i_2][0], STDIN_FILENO);
 	if (i_2 < d->l[i_1]->cmnd_count - 1
 		&& d->l[i_1]->fd_ou[i_2] == -1
 		&& d->l[i_1]->pipes[i_2 + 1][1] != -1)
-		d->fd_out = dup2(d->l[i_1]->pipes[i_2 + 1][1], STDOUT_FILENO);
+		dup2(d->l[i_1]->pipes[i_2 + 1][1], STDOUT_FILENO);
 	else if (d->l[i_1]->fd_ou[i_2] >= 0)
-		d->fd_out = dup2(d->l[i_1]->fd_ou[i_2], STDOUT_FILENO);
+		dup2(d->l[i_1]->fd_ou[i_2], STDOUT_FILENO);
 	else if (d->l[i_1]->fd_ou[i_2] == -2
 		&& d->l[i_1]->buf_pipes[i_2][1] != -1)
-		d->fd_out = dup2(d->l[i_1]->buf_pipes[i_2][1], STDOUT_FILENO);
+		dup2(d->l[i_1]->buf_pipes[i_2][1], STDOUT_FILENO);
 	if (d->fd_out == -1 || d->fd_in == -1)
 		return (perror("error dup2"), cl_chi_pipes(d, i_1, i_2), er_c(d));
 	return (mini_child(d, i_1, i_2), close_pipe(d, &d->fd_out),

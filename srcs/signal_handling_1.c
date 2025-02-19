@@ -42,7 +42,6 @@ void	signal_exec_cmnd(int sig)
 	if (sig == SIGINT)
 	{
 		g_signal = 2;
-		printf("\n");
 		return ;
 	}
 	if (sig == SIGQUIT)
