@@ -111,7 +111,7 @@ void	parsing(t_pipex *data, int i)
 	while (data->l[++i] && data->here_2_old < data->chars_in_line)
 	{
 		signal_change(NULL, 2);
-		if (!syntax_check(data, data->here_2_old, 0)
+		if (syntax_check(data, data->here_2_old, 0)
 			&& write(2, "bash: syntax error near unexpected token `|'\n", 46)
 			&& set_err_old(data))
 			continue ;

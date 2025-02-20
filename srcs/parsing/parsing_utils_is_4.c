@@ -12,40 +12,7 @@
 
 #include "../../minishell.h"
 
-void    print_that_shit(t_pipex *data, int index_1)
-{
-    int    i;
-    int    j;
 
-    // i = -1;
-    printf("|\n");
-    // while (data->cur_env[++i])
-    //     printf("%s\n", data->cur_env[i]);
-    i = -1;
-    while (data->l[index_1]->cmnds[++i])
-    {
-        j = -1;
-        while (data->l[index_1]->cmnds[i][++j])
-        {
-            if (data->l[index_1]->cmnds[i][j])
-                printf("ELEM: %d:%d | |%s| ", i,
-                    j, data->l[index_1]->cmnds[i][j]);
-            if (data->l[index_1]->red_cmnd[i][j])
-                printf("X\n");
-            else
-                printf("\n");
-        }
-        j = -1;
-        if (data->l[index_1]->ops && data->l[index_1]->ops[i])
-        {
-            while (data->l[index_1]->ops[i][++j])
-                printf("OP:   %d:%d | |%s|\n", i,
-                    j, data->l[index_1]->ops[i][j]);
-        }
-        if (data->l[index_1]->input)
-        printf("PATH: |%s|\n", data->l[index_1]->paths[i]);
-    }
-}
 
 void	init_paths_2(t_pipex *data, int i)
 {
@@ -81,13 +48,24 @@ void	init_rest(t_pipex *data, int i)
 	init_ops(data, i);
 	init_paths(data, i, -1);
 	init_paths_2(data, i);
-	// print_that_shit(data, i);
 	check_folder(data, i, -1, -1);
 	start_exec(data, i, -1, 0);
 }
 
+void	do_nonesense_here_doc(t_pipex *data)
+{
+	int i;
+
+	i = data->here_2_old;
+	while (data->line[++i])
+	{
+		if ()
+	}
+}
+
 int	set_err_old(t_pipex *data)
 {
+	do_nonesense_here_doc(data);
 	data->last_exit_status = 2;
 	data->here_2_old = count_nl(data, data->here_2_old);
 	data->here_2 = data->here_2_old;

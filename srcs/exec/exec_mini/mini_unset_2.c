@@ -70,9 +70,9 @@ int	count_unset_export(t_pipex *data, int index_1, int index_2)
 	while (data->l[index_1]->ops[index_2][++i + 1])
 	{
 		j = 0;
-		while (data->cur_env[j])
+		while (data->export[j])
 		{
-			key = key_this(data, data->cur_env[j]);
+			key = key_this(data, data->export[j]);
 			if (ft_strncmp(data->l[index_1]->ops[index_2][i + 1], "_", 2)
 				&& !ft_strncmp(data->l[index_1]->ops[index_2][i + 1], key,
 					bigger_one(data->l[index_1]->ops[index_2][i + 1], key)))
