@@ -62,8 +62,8 @@ int	check_reds(t_pipex *d, int i_1, int i, int syn_c)
 	{
 		d->buf_int = -1;
 		// printf("THAT1: %d\n", d->l[i_1]->pos[i][d->buf_int + 1]);
-		while (d->l[i_1]->pos[i][++d->buf_int] < syn_c
-			&& d->l[i_1]->cmnds[i][d->buf_int])
+		while (d->l[i_1]->cmnds[i][++d->buf_int]
+			&& d->l[i_1]->pos[i][d->buf_int] < syn_c)
 		{
 			if (is_red_basic(d, i_1, i, d->buf_int) && d->l[
 					i_1]->red_cmnd[i][d->buf_int] == 2)
