@@ -71,9 +71,7 @@ void	handle_here_2(t_pipex *data, int index_1, int check, int check_2)
 	{
 		data->buf_int = data->here_2_old;
 		if (data->here_2 && ++this)
-		{
 			set_old(data, index_1, check_2, check);
-		}
 		find_key(data, index_1, check_2, check + 1);
 		data->buf_int = 0;
 		if (!this)

@@ -138,15 +138,15 @@ void	print_that_shit(t_pipex *data, int index_1)
 			else
 				printf("\n");
 		}
-		// j = -1;
-		// if (data->l[index_1]->ops && data->l[index_1]->ops[i])
-		// {
-		// 	while (data->l[index_1]->ops[i][++j])
-		// 		printf("OP:   %d:%d | |%s|\n", i,
-		// 			j, data->l[index_1]->ops[i][j]);
-		// }
-		// if (data->l[index_1]->input)
-		// printf("PATH: |%s|\n", data->l[index_1]->paths[i]);
+		j = -1;
+		if (data->l[index_1]->ops && data->l[index_1]->ops[i])
+		{
+			while (data->l[index_1]->ops[i][++j])
+				printf("OP:   %d:%d | |%s|\n", i,
+					j, data->l[index_1]->ops[i][j]);
+		}
+		if (data->l[index_1]->input)
+		printf("PATH: |%s|\n", data->l[index_1]->paths[i]);
 	}
 }
 
@@ -217,6 +217,7 @@ void	do_nonesense_here_doc(t_pipex *d, int check)
 			buf = readline("> ");
 			while (buf && !g_signal && (!ft_strcmp_2(buf, key)) && free_this(&buf))
 				buf = readline("> ");
+			free_this(&key);
 		}
 	}
 	if (g_signal)
@@ -281,7 +282,7 @@ void	parsing(t_pipex *data, int i)
 			set_err_old(data);
 			continue ;
 		}
-		if (syntax_redir_check_init(data, i) != -1 ||  data->l[i]->cmnds[0][0]
+		if (syntax_redir_check_init(data, i) != -1 || !data->l[i]->cmnds[0][0]
 			|| !data->l[i]->cmnds[0][0][0])
 			continue ;
 			// if (check_reds(data, i, -1, check))

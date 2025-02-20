@@ -59,32 +59,31 @@ int	unset_export_utils_1(char *str, char *key)
 	return (0);
 }
 
-void	unset_export(t_pipex *data, int index_1, int index_2, int i)
+void	unset_export(t_pipex *d, int index_1, int index_2, int i)
 {
 	int		j;
 	int		check;
 	char	*key;
 
-	data->buf_array = malloc_unset_export(data, index_1, index_2);
-	if (!data->buf_array)
+	d->buf_array = malloc_unset_export(d, index_1, index_2);
+	if (!d->buf_array)
 		return ;
-	while ((++i < 1 || (i > 0 && free_this(&data->buf_str))) && data->export[i])
+	while ((++i < 1 || (i > 0 && free_this(&d->buf_str))) && d->export[i])
 	{
 		j = -1;
 		check = 0;
-		key = key_this(data, data->export[i]);
-		while (data->l[index_1]->ops[index_2][++j + 1])
+		key = key_this(d, d->export[i]);
+		while (d->l[index_1]->ops[index_2][++j + 1])
 		{
 			if (unset_export_utils_1(
-					data->l[index_1]->ops[index_2][j + 1], key))
+					d->l[index_1]->ops[index_2][j + 1], key))
 				check = 1;
 		}
 		if (free_this(&key) && !check)
-			data->buf_array[data->buf_int++] = data->export[i];
-		else
-			free_this(&data->export[i]);
+			d->buf_array[d->buf_int++] = ft_strdup(d, d->export[i]);
 	}
-	data->export = data->buf_array;
+	free_list(d->export);
+	d->export = d->buf_array;
 }
 
 void	unset_cmnd(t_pipex *data, int index_1, int index_2, int i)

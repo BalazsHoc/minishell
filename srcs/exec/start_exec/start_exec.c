@@ -95,9 +95,9 @@ void	start_exec(t_pipex *data, int index, int i, int status)
 	if (!here_doc(data, index, -1, -1))
 		return ;
 	handle_expansion_here_doc(data, index);
-	data->buf_int = 0;
 	exec_cmnds(data, index, i);
 	close_pipes_array(data, index);
+	data->buf_int = 0;
 	while (++i < data->l[index]->cmnd_count)
 	{
 		if (check_here_doc(data, index, i))

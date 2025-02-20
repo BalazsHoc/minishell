@@ -42,7 +42,7 @@ void	handle_child(t_pipex *d, int i_1, int i_2)
 	// printf("PATH: %s, %s, %s\n", path, args[0], args[1]);
 	// printf("PATH: %s, %s, %s\n", d->l[i_1]->paths[i_2], d->l[i_1]->ops[i_2][0], d->l[i_1]->ops[i_2][1]);
 	// if (execve(path, args, NULL) == -1)
-	if (execve(d->l[i_1]->paths[i_2], d->l[i_1]->ops[i_2], NULL) == -1)
+	if (execve(d->l[i_1]->paths[i_2], d->l[i_1]->ops[i_2], d->cur_env) == -1)
 		return (perror("execve"), er_c(d));
 }
 
@@ -69,6 +69,8 @@ void	handle_mini_child(t_pipex *d, int i_1, int i_2)
 	else if (d->l[i_1]->fd_ou[i_2] == -2
 		&& d->l[i_1]->buf_pipes[i_2][1] != -1)
 		d->fd_out = dup2(d->l[i_1]->buf_pipes[i_2][1], STDOUT_FILENO);
+	// close_childs_p_a(d, i_1);
+	// close_children_pipe(d, &d->l[i_1]->pipes[i_2 + 1][1]);
 	if (d->fd_out == -1 || d->fd_in == -1)
 		return (perror("error dup2"), cl_chi_pipes(d, i_1, i_2), er_c(d));
 	return (mini_child(d, i_1, i_2), close_pipe(d, &d->fd_out),
