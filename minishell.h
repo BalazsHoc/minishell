@@ -44,6 +44,7 @@ typedef struct lines_s
 
 	int		cmnd_count;
 	int		ex;
+	int		limit;
 	int		*fd_infiles;
 	int		*fd_ou;
 
@@ -204,8 +205,8 @@ int			count_chars_utils_1(t_pipex *data, int i, int open, int count);
 
 //	count.c
 
-int			count_cmnds(char *line);
-int			count_elem(t_pipex *data, int i, int j);
+int			count_cmnds(char *line, int limit);
+int			count_elem(t_pipex *data, int i_1, int i, int j);
 int			count_chars(t_pipex *data, int i, int open, int count);
 int			count_chars_2(t_pipex *data, int i);
 

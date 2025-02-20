@@ -104,7 +104,7 @@ int	find_key(t_pipex *data, int index_1, int index_2, int index_3)
 	i = data->here_2_old;
 	if (i == 0 || !data->line[i - 1] || !data->line[i] || !data->line[i + 1])
 		return (i);
-	while (data->line[++i])
+	while (data->line[++i] && i < data->l[index_1]->limit)
 	{
 		j = 0;
 		while (data->line[i + j] && data->l[

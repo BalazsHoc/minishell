@@ -19,7 +19,7 @@ void	init_cmnds(t_pipex *d, int index_1, int i)
 	d->l[index_1]->cmnds[d->l[index_1]->cmnd_count] = NULL;
 	while (++i < d->l[index_1]->cmnd_count)
 	{
-		if (!count_elem(d, i, d->here_2 - 1)
+		if (!count_elem(d, index_1, i, d->here_2 - 1)
 			&& d_in(d, 0, 0) != -1)
 		{
 			d->l[index_1]->cmnds[i] = ft_calloc(sizeof(char *), (1 + 1), d);
@@ -28,7 +28,7 @@ void	init_cmnds(t_pipex *d, int index_1, int i)
 		else
 		{
 			d->l[index_1]->cmnds[i] = ft_calloc(sizeof(char *),
-					(count_elem(d, i, d->here_2 - 1) + 1), d);
+					(count_elem(d, index_1, i, d->here_2 - 1) + 1), d);
 			fill_cmnds(d, index_1, i, d->here_2 - 1);
 		}
 	}
@@ -45,7 +45,7 @@ void	init_red_cmnds(t_pipex *data, int index_1)
 	while (++j < data->l[index_1]->cmnd_count)
 	{
 		count = 0;
-		while (count < count_elem(data, j, data->here_2 - 1))
+		while (count < count_elem(data, index_1, j, data->here_2 - 1))
 			count++;
 		data->l[index_1]->red_cmnd[j] = ft_calloc(sizeof(int), (count), data);
 	}
@@ -62,7 +62,7 @@ void	init_pos_in_line(t_pipex *data, int index_1)
 	while (++j < data->l[index_1]->cmnd_count)
 	{
 		count = 0;
-		while (count < count_elem(data, j, data->here_2 - 1))
+		while (count < count_elem(data, index_1, j, data->here_2 - 1))
 			count++;
 		data->l[index_1]->pos[j] = ft_calloc(sizeof(int),
 				(count), data);

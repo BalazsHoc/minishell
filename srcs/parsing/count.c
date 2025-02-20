@@ -12,7 +12,7 @@
 
 #include "../../minishell.h"
 
-int	count_cmnds(char *line)
+int	count_cmnds(char *line, int limit)
 {
 	int	count;
 	int	i;
@@ -23,7 +23,7 @@ int	count_cmnds(char *line)
 	open = 0;
 	if (!line || !*line)
 		return (0);
-	while (line && line[++i] && line[i] != '\n')
+	while (line && ++i < limit && line[i] && line[i] != '\n')
 	{
 		if (is_quote_one(line[i]) && !open)
 			open = 1;
@@ -37,36 +37,38 @@ int	count_cmnds(char *line)
 		if (!line[i])
 			break ;
 	}
+	// printf("CMND: COUNT: %d\n", count);
 	return (count);
 }
 
-int	count_elem(t_pipex *data, int i, int j)
+int	count_elem(t_pipex *d, int i_1, int i, int j)
 {
 	int	k;
 	int	open;
 
 	k = -i;
 	open = 0;
-	data->count_elem = 0;
-	while (data->line[++j] && data->line[j] != '\n' && i >= 0)
+	d->count_elem = 0;
+	while (d->line[++j] && j < d->l[i_1]->limit &&  d->line[j] != '\n' && i >= 0)
 	{
 		if (k != 0)
-			handle_open(data, j, &open);
+			handle_open(d, j, &open);
 		if (k == 0)
 		{
-			if (data->line[j] == '|' && is_real_pipe(data->line, j) && !open)
+			if (d->line[j] == '|' && is_real_pipe(d->line, j) && !open)
 				break ;
-			if (!open && check_for_empty(data, j)
-				&& is_quote(data->line[j + 1]) && is_quote(data->line[j]))
-				data->count_elem++;
-			if (if_count_elem_1(data, j, &open))
-				data->count_elem++;
+			if (!open && check_for_empty(d, j)
+				&& is_quote(d->line[j + 1]) && is_quote(d->line[j]))
+				d->count_elem++;
+			if (if_count_elem_1(d, j, &open))
+				d->count_elem++;
 		}
-		else if (!open && is_real_pipe(data->line, j)
-			&& data->line[j] == '|' && --i != INT_MIN)
+		else if (!open && is_real_pipe(d->line, j)
+			&& d->line[j] == '|' && --i != INT_MIN)
 			k++;
 	}
-	return (data->count_elem);
+	// printf("COUNT ELEM: %d\n", d->count_elem);
+	return (d->count_elem);
 }
 
 int	count_chars(t_pipex *data, int i, int open, int count)

@@ -57,7 +57,7 @@ int	syntax_check(t_pipex *data, int i, int count)
 	}
 	if (count)
 		return (count_nl(data, i));
-	return (0);
+	return (-1);
 }
 
 int	check_folder_utils_1(t_pipex *data, int index, int i)
