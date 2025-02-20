@@ -67,14 +67,14 @@ void	update_input(t_pipex *data, int index_1, int index_2)
 	data->l[index_1]->input[index_2] = buf;
 }
 
-void	handle_expansion_here_doc(t_pipex *data, int index_1)
+int	handle_expansion_here_doc(t_pipex *data, int index_1)
 {
 	int	i;
 	int	j;
 
 	i = -1;
 	j = -1;
-	while (data->l[index_1]->cmnds[++j])
+	while (data->l[index_1]->cmnds[++j]&& !g_signal)
 	{
 		if (check_here_doc(data, index_1, j))
 		{
@@ -82,19 +82,23 @@ void	handle_expansion_here_doc(t_pipex *data, int index_1)
 				exec_cmnds_util_3(data, index_1, j);
 		}
 	}
-	while (++i < data->l[index_1]->cmnd_count)
+	while (++i < data->l[index_1]->cmnd_count && !g_signal)
 	{
 		if (data->l[index_1]->input[i] && !data->l[index_1]->red_cmnd[i][
 			is_red_inline(data, index_1, i) + 1])
 			update_input(data, index_1, i);
 	}
+	if (g_signal)
+		return (0);
+	return (1);
 }
 
 void	start_exec(t_pipex *data, int index, int i, int status)
 {
 	if (!here_doc(data, index, -1, -1))
 		return ;
-	handle_expansion_here_doc(data, index);
+	if (!handle_expansion_here_doc(data, index))
+		return ;
 	exec_cmnds(data, index, i);
 	close_pipes_array(data, index);
 	data->buf_int = 0;

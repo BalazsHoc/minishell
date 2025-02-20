@@ -206,7 +206,7 @@ void	do_nonesense_here_doc(t_pipex *d, int check)
 	key = NULL;
 	buf = NULL;
 	// printf("NEW: %d OLD: %d\n", d->here_2, d->here_2_old);
-	while (free_this(&buf) && ++i < check)
+	while (free_this(&buf) && ++i < check && !g_signal)
 	{
 		// printf("THIS: %s | I: %d\n",d->line + i, i);
 		if (d->line[i] == '<' && d->line[i + 1] && d->line[i + 1] == '<'
@@ -260,6 +260,7 @@ int	syntax_redir_check_init(t_pipex *data, int i)
 		check = red_check;
 	if (check != -1)
 	{
+		signal_change(NULL, 1);
 		do_nonesense_here_doc(data, check);
 		data->here_2_old = count_nl(data, i);
 		data->here_2 = data->here_2_old;
@@ -273,7 +274,7 @@ void	parsing(t_pipex *data, int i)
 {
 	init_lines(data, -1);
 	make_history(data);
-	while (data->l[++i] && data->here_2_old < data->chars_in_line)
+	while (data->l[++i] && data->here_2_old < data->chars_in_line && !g_signal)
 	{
 		signal_change(NULL, 2);
 		if (check_open(data, data->line))
