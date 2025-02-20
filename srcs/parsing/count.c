@@ -37,7 +37,6 @@ int	count_cmnds(char *line, int limit)
 		if (!line[i])
 			break ;
 	}
-	// printf("CMND: COUNT: %d\n", count);
 	return (count);
 }
 
@@ -67,7 +66,6 @@ int	count_elem(t_pipex *d, int i_1, int i, int j)
 			&& d->line[j] == '|' && --i != INT_MIN)
 			k++;
 	}
-	// printf("COUNT ELEM: %d\n", d->count_elem);
 	return (d->count_elem);
 }
 

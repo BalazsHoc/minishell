@@ -82,6 +82,7 @@ typedef struct pipex_s
 extern int	g_signal;
 
 int			main(int argc, char **argv, char **env);
+void	print_that_shit(t_pipex *data, int index_1);
 
 //								srcs/
 
@@ -274,6 +275,7 @@ int			is_red_clean(char *str, int index);
 
 void		init_rest(t_pipex *data, int i);
 void		init_paths_2(t_pipex *data, int i);
+void		init_paths_3(t_pipex *data, int i, int j, int k);
 
 int			set_err_old(t_pipex *data);
 

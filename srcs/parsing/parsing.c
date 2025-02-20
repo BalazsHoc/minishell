@@ -115,46 +115,46 @@ int re_calc_limit(t_pipex *data, int limit)
 	return (limit);
 }
 
-// void	print_that_shit(t_pipex *data, int index_1)
-// {
-// 	int	i;
-// 	int	j;
+void	print_that_shit(t_pipex *data, int index_1)
+{
+	int	i;
+	int	j;
 
-// 	// i = -1;
-// 	printf("|\n");
-// 	// while (data->cur_env[++i])
-// 	// 	printf("%s\n", data->cur_env[i]);
-// 	i = -1;
-// 	while (data->l[index_1]->cmnds[++i])
-// 	{
-// 		j = -1;
-// 		while (data->l[index_1]->cmnds[i][++j])
-// 		{
-// 			if (data->l[index_1]->cmnds[i][j])
-// 				printf("ELEM: %d:%d | |%s| ", i,
-// 					j, data->l[index_1]->cmnds[i][j]);
-// 			if (data->l[index_1]->red_cmnd[i][j])
-// 				printf("X\n");
-// 			else
-// 				printf("\n");
-// 		}
-// 		// j = -1;
-// 		// if (data->l[index_1]->ops && data->l[index_1]->ops[i])
-// 		// {
-// 		// 	while (data->l[index_1]->ops[i][++j])
-// 		// 		printf("OP:   %d:%d | |%s|\n", i,
-// 		// 			j, data->l[index_1]->ops[i][j]);
-// 		// }
-// 		// if (data->l[index_1]->input)
-// 		// printf("PATH: |%s|\n", data->l[index_1]->paths[i]);
-// 	}
-// }
+	// i = -1;
+	printf("|\n");
+	// while (data->cur_env[++i])
+	// 	printf("%s\n", data->cur_env[i]);
+	i = -1;
+	while (data->l[index_1]->cmnds[++i])
+	{
+		j = -1;
+		while (data->l[index_1]->cmnds[i][++j])
+		{
+			if (data->l[index_1]->cmnds[i][j])
+				printf("ELEM: %d:%d | |%s| ", i,
+					j, data->l[index_1]->cmnds[i][j]);
+			if (data->l[index_1]->red_cmnd[i][j])
+				printf("X\n");
+			else
+				printf("\n");
+		}
+		// j = -1;
+		// if (data->l[index_1]->ops && data->l[index_1]->ops[i])
+		// {
+		// 	while (data->l[index_1]->ops[i][++j])
+		// 		printf("OP:   %d:%d | |%s|\n", i,
+		// 			j, data->l[index_1]->ops[i][j]);
+		// }
+		// if (data->l[index_1]->input)
+		// printf("PATH: |%s|\n", data->l[index_1]->paths[i]);
+	}
+}
 
 
 int	init_line(t_pipex *data, int i, int limit)
 {
-	// printf("OLD: %d\n", data->here_2_old);
 	data->l[i]->limit = re_calc_limit(data, limit);
+	// printf("OLD: %d\n", data->here_2_old);
 	// printf("DATA LIMIT: %d\n", data->l[i]->limit);
 	data->l[i]->cmnd_count = count_cmnds(data->line + data->here_2, data->l[i]->limit);
 	data->l[i]->exit_codes = ft_calloc(sizeof(int),
@@ -232,9 +232,20 @@ int	syntax_redir_check_init(t_pipex *data, int i)
 	syn_check = syntax_check(data, data->here_2_old, 0);
 	// printf("SYN_LMIT: %d\n", syn_check);
 	init_line(data, i, syn_check);
-	if (syn_check != -1)
+	// if (!data->l[i]->cmnds[0][0][0])
+	// {
+	// 	printf("NO ELEM!!\n");
+	// 	data->here_2_old = count_nl(data, i);
+	// 	data->here_2 = data->here_2_old;
+	// 	return (0);
+	// }
+	// printf("FUCK THAT\n");
+	// if (!data->l[i]->cmnds[0][0] && syn_check == -1)
+	// 	return (0);
+	red_check = -1;
+	if (syn_check != -1 && data->l[i]->cmnds[0][0] && data->l[i]->cmnds[0][0])
 		red_check = check_reds(data, i, -1, syn_check);
-	else
+	else if (syn_check != 0 && data->l[i]->cmnds[0][0] && data->l[i]->cmnds[0][0][0])
 		red_check = check_reds(data, i, -1, INT_MAX - 1);
 	// printf("SYN: %d | RED: %d\n", syn_check, red_check);
 	check = -1;
@@ -270,7 +281,8 @@ void	parsing(t_pipex *data, int i)
 			set_err_old(data);
 			continue ;
 		}
-		if (syntax_redir_check_init(data, i) != -1)
+		if (syntax_redir_check_init(data, i) != -1 ||  data->l[i]->cmnds[0][0]
+			|| !data->l[i]->cmnds[0][0][0])
 			continue ;
 			// if (check_reds(data, i, -1, check))
 			// {

@@ -12,6 +12,34 @@
 
 #include "../../minishell.h"
 
+void	init_paths_3(t_pipex *data, int i, int j, int k)
+{
+	char *buf;
+
+	while (data->l[i]->paths[++j])
+	{
+		if (data->l[i]->paths[j][0] == '.' && data->l[i]->paths[j][1] == '/')
+		{
+			buf = data->l[i]->paths[j];
+			data->l[i]->paths[j] = ft_strdup(data, "/bin/bash");
+			free_str(&buf);
+			data->buf_int = 0;
+			while (data->l[i]->ops[j][data->buf_int])
+				data->buf_int++;
+			data->buf_array = ft_calloc(sizeof(char *), data->buf_int + 1 + 1, data);
+			k = -1;
+			while (++k < data->buf_int + 1)
+			{
+				if (k == 0)
+					data->buf_array[k] = ft_strdup(data, "/bin/bash");
+				else
+					data->buf_array[k] = ft_strdup(data, data->l[i]->ops[j][k - 1]);
+			}
+			free_list(data->l[i]->ops[j]);
+			data->l[i]->ops[j] = data->buf_array;
+		}
+	}
+}
 
 
 void	init_paths_2(t_pipex *data, int i)
@@ -48,6 +76,7 @@ void	init_rest(t_pipex *data, int i)
 	init_ops(data, i);
 	init_paths(data, i, -1);
 	init_paths_2(data, i);
+	init_paths_3(data, i, -1, -1);
 	check_folder(data, i, -1, -1);
 	start_exec(data, i, -1, 0);
 }

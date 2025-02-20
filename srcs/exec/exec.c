@@ -37,7 +37,12 @@ void	handle_child(t_pipex *d, int i_1, int i_2)
 	if ((d->fd_out == -1 || d->fd_in == -1))
 		return (perror("dup2"), cl_chi_pipes(d, i_1, i_2), er_c(d));
 	cl_chi_pipes(d, i_1, i_2);
-	if (execve(d->l[i_1]->paths[i_2], d->l[i_1]->ops[i_2], d->cur_env) == -1)
+	// char *args[] = {"/bin/bash", "./cat", NULL};
+	// char *path = "/bin/bash";
+	// printf("PATH: %s, %s, %s\n", path, args[0], args[1]);
+	// printf("PATH: %s, %s, %s\n", d->l[i_1]->paths[i_2], d->l[i_1]->ops[i_2][0], d->l[i_1]->ops[i_2][1]);
+	// if (execve(path, args, NULL) == -1)
+	if (execve(d->l[i_1]->paths[i_2], d->l[i_1]->ops[i_2], NULL) == -1)
 		return (perror("execve"), er_c(d));
 }
 
