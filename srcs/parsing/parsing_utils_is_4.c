@@ -52,20 +52,8 @@ void	init_rest(t_pipex *data, int i)
 	start_exec(data, i, -1, 0);
 }
 
-void	do_nonesense_here_doc(t_pipex *data)
-{
-	int i;
-
-	i = data->here_2_old;
-	while (data->line[++i])
-	{
-		if ()
-	}
-}
-
 int	set_err_old(t_pipex *data)
 {
-	do_nonesense_here_doc(data);
 	data->last_exit_status = 2;
 	data->here_2_old = count_nl(data, data->here_2_old);
 	data->here_2 = data->here_2_old;

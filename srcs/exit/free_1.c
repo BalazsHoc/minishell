@@ -69,8 +69,8 @@ void	free_line(t_pipex *data, int index)
 	}
 	if (data->l[index]->red_cmnd)
 		free_list_int(data->l[index]->red_cmnd, data->l[index]->cmnd_count);
-	if (data->l[index]->pos_in_line)
-		free_list_int(data->l[index]->pos_in_line, data->l[index]->cmnd_count);
+	if (data->l[index]->pos)
+		free_list_int(data->l[index]->pos, data->l[index]->cmnd_count);
 	free_line_continue(data, index);
 }
 

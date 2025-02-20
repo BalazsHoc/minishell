@@ -81,7 +81,7 @@ void	init_lines(t_pipex *data, int i)
 		data->l[i]->ops = NULL;
 		data->l[i]->paths = NULL;
 		data->l[i]->red_cmnd = NULL;
-		data->l[i]->pos_in_line = NULL;
+		data->l[i]->pos = NULL;
 		data->l[i]->pipes = NULL;
 		data->l[i]->exit_codes = NULL;
 		data->l[i]->cmnd_count = 0;
@@ -104,6 +104,82 @@ int	init_line(t_pipex *data, int i)
 	return (1);
 }
 
+int does_key_exist(char *line, int i)
+{
+	while (line[++i])
+	{
+		if (is_char(line[i]))
+			return (i);
+	}
+	return (0);
+}
+
+char *get_key(t_pipex *data, char *line, int i)
+{
+	int		j;
+	char	*key;
+
+	j = 0;
+	while (line[i + j] && !is_delim_front(line, i + j))
+		j++;
+	key = ft_calloc(sizeof(char), j + 1, data);
+	j = 0;
+	while (line[i + j] && !is_delim_front(line, i + j))
+		key[j] = line[i + j];
+	return (key);
+}
+
+void	do_nonesense_here_doc(t_pipex *d, int check)
+{
+	int i;
+	char *key;
+	char *buf;
+
+	i = d->here_2_old;
+	key = NULL;
+	buf = NULL;
+	while (free_this(&buf) && ++i < check)
+	{
+		if (d->line[i] == '<' && d->line[i + 1] && d->line[i + 1] == '<'
+			&& does_key_exist(d->line, i))
+		{
+			key = get_key(d, d->line, does_key_exist(d->line, i));
+			buf = readline("> ");
+			while (buf && !g_signal && (!ft_strcmp_2(buf, key)) && free_this(&buf))
+				buf = readline("> ");
+		}
+	}
+	if (g_signal)
+		return (free_str(&buf));
+}
+
+int	syntax_redir_check_init(t_pipex *data, int i)
+{
+	int syn_check;
+	int red_check;
+	int check;
+
+	syn_check = syntax_check(data, data->here_2_old, 0);
+	init_line(data, i);
+	if (syn_check)
+		red_check = check_reds(data, i, -1, syn_check);
+	else
+		red_check = check_reds(data, i, -1, INT_MAX - 1);
+	// printf("SYN: %d | RED: %d\n", syn_check, red_check);
+	check = 0;
+	if (syn_check && syn_check < red_check)
+	{
+		write(2, "bash: syntax error near unexpected token `|'\n", 46);
+		set_err_old(data);
+		check = syn_check;
+	}
+	else if (red_check)
+		check = red_check;
+	if (check)
+		do_nonesense_here_doc(data, check);
+	return (check);
+}
+
 void	parsing(t_pipex *data, int i)
 {
 	init_lines(data, -1);
@@ -111,24 +187,22 @@ void	parsing(t_pipex *data, int i)
 	while (data->l[++i] && data->here_2_old < data->chars_in_line)
 	{
 		signal_change(NULL, 2);
-		if (syntax_check(data, data->here_2_old, 0)
-			&& write(2, "bash: syntax error near unexpected token `|'\n", 46)
-			&& set_err_old(data))
-			continue ;
-		else if (check_open(data, data->line)
-			&& write(2, "bash: syntax error: open quotes \n", 34))
-			continue ;
-		else if (init_line(data, i))
+		if (check_open(data, data->line))
 		{
-			if (!check_reds(data, i, -1, -1))
-			{
-				if (data->here_2_old >= data->chars_in_line)
-					return (free_lines(data));
-				else if (set_here(data, i))
-					continue ;
-			}
-			init_rest(data, i);
+			write(2, "bash: syntax error: open quotes \n", 34);
+			set_err_old(data);
+			continue ;
 		}
+		if (syntax_redir_check_init(data, i))
+			continue ;
+			// if (check_reds(data, i, -1, check))
+			// {
+			// 	if (data->here_2_old >= data->chars_in_line)
+			// 		return (free_lines(data));
+			// 	else
+			// 		continue ;
+			// }
+		init_rest(data, i);
 	}
 	free_lines(data);
 }

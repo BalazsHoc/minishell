@@ -36,7 +36,7 @@ typedef struct lines_s
 	char	**input;
 
 	int		**red_cmnd;
-	int		**pos_in_line;
+	int		**pos;
 
 	pid_t	(*pipes)[2];
 	pid_t	(*buf_pipes)[2];

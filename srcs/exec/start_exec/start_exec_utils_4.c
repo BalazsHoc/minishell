@@ -38,7 +38,7 @@ int	set_here_util_2(t_pipex *data, int index_1, int i)
 {
 	if (!(is_quote_one(data->l[index_1]->cmnds[0][0][0])
 		&& is_quote_one(data->l[index_1]->cmnds[0][0][1] == 34))
-		&& data->line[data->l[index_1]->pos_in_line[data->l[
+		&& data->line[data->l[index_1]->pos[data->l[
 				index_1]->cmnd_count - 1][last_one(data->l[
 						index_1]->cmnds[data->l[
 								index_1]->cmnd_count - 1])] + i]
@@ -46,7 +46,7 @@ int	set_here_util_2(t_pipex *data, int index_1, int i)
 								index_1]->cmnd_count - 1][
 									last_one(data->l[index_1]->cmnds[
 					data->l[index_1]->cmnd_count - 1])])
-					&& data->line[data->l[index_1]->pos_in_line[
+					&& data->line[data->l[index_1]->pos[
 					data->l[index_1]->cmnd_count - 1][
 					last_one(data->l[index_1]->cmnds[
 					data->l[index_1]->cmnd_count - 1])] + i]
@@ -54,7 +54,7 @@ int	set_here_util_2(t_pipex *data, int index_1, int i)
 								index_1]->cmnd_count - 1][
 									last_one(data->l[index_1]->cmnds[
 					data->l[index_1]->cmnd_count - 1])][i])
-						|| data->line[data->l[index_1]->pos_in_line[
+						|| data->line[data->l[index_1]->pos[
 					data->l[index_1]->cmnd_count - 1][
 					last_one(data->l[index_1]->cmnds[
 					data->l[index_1]->cmnd_count - 1])] + i] != '\n'))
@@ -73,10 +73,10 @@ void	set_here_continue(t_pipex *data, int index_1, int i, int check)
 		i = 0;
 		while (set_here_util_2(data, index_1, i))
 			i++;
-		data->here_2 = data->l[index_1]->pos_in_line[data->l[
+		data->here_2 = data->l[index_1]->pos[data->l[
 			index_1]->cmnd_count - 1][last_one(data->l[
 				index_1]->cmnds[data->l[index_1]->cmnd_count - 1])] + i + 1;
-		data->here_2_old = data->l[index_1]->pos_in_line[data->l[
+		data->here_2_old = data->l[index_1]->pos[data->l[
 			index_1]->cmnd_count - 1][last_one(data->l[
 				index_1]->cmnds[data->l[index_1]->cmnd_count - 1])] + i + 1;
 		if (lol == data->here_2)

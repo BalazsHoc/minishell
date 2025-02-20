@@ -48,7 +48,7 @@ char	*handle_no_eof(t_pipex *data, int i_1, int i_2, char *input)
 		if (!ft_strncmp("<<", data->l[i_1]->cmnds[i_2][i], 3) && ++i)
 			break ;
 	}
-	j = data->l[i_1]->pos_in_line[i_2][i];
+	j = data->l[i_1]->pos[i_2][i];
 	j += ft_strlen(data->l[i_1]->cmnds[i_2][i]);
 	data->l[i_1]->input[i_2] = input;
 	while (data->line[++j])
@@ -77,7 +77,7 @@ int	is_eof(t_pipex *data, int i_1, int i_2)
 		if (!ft_strncmp("<<", data->l[i_1]->cmnds[i_2][i], 3) && ++i)
 			break ;
 	}
-	j = data->l[i_1]->pos_in_line[i_2][i];
+	j = data->l[i_1]->pos[i_2][i];
 	j += ft_strlen(data->l[i_1]->cmnds[i_2][i]);
 	while (++j == 0 || (data->line[j - 1] && data->line[j]))
 	{

@@ -46,17 +46,17 @@ int	syntax_check(t_pipex *data, int i, int count)
 		handle_open(data, i, &open);
 		if (!open && (i == data->here_2_old
 				|| !data->line[i + 1]) && data->line[i] == '|')
-			return (1);
+			return (i);
 		else if (!open && !is_real_pipe(data->line, i)
 			&& !is_space(data->line[i]) && ++word)
 			count = 0;
 		else if (!open && is_real_pipe(data->line, i))
 			count++;
 		if (count >= 2)
-			return (1);
+			return (i);
 	}
 	if (count)
-		return (1);
+		return (count_nl(data, i));
 	return (0);
 }
 

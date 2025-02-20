@@ -17,13 +17,13 @@ void	set_old(t_pipex *data, int index_1, int index_2, int index_3)
 	int	k;
 
 	k = 0;
-	while (data->line[data->l[index_1]->pos_in_line[index_2][index_3] + k]
+	while (data->line[data->l[index_1]->pos[index_2][index_3] + k]
 		&& data->line[data->l[
-				index_1]->pos_in_line[index_2][index_3] + k] != '\n')
+				index_1]->pos[index_2][index_3] + k] != '\n')
 		k++;
-	if (data->line[data->l[index_1]->pos_in_line[index_2][index_3] + k] == '\n')
+	if (data->line[data->l[index_1]->pos[index_2][index_3] + k] == '\n')
 		k++;
-	data->here_2_old = data->l[index_1]->pos_in_line[index_2][index_3] + k;
+	data->here_2_old = data->l[index_1]->pos[index_2][index_3] + k;
 }
 
 int	count_nl(t_pipex *data, int i)

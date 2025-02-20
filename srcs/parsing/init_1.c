@@ -57,14 +57,14 @@ void	init_pos_in_line(t_pipex *data, int index_1)
 	int	count;
 
 	j = -1;
-	data->l[index_1]->pos_in_line = ft_calloc(sizeof(int *),
+	data->l[index_1]->pos = ft_calloc(sizeof(int *),
 			(data->l[index_1]->cmnd_count + 1), data);
 	while (++j < data->l[index_1]->cmnd_count)
 	{
 		count = 0;
 		while (count < count_elem(data, j, data->here_2 - 1))
 			count++;
-		data->l[index_1]->pos_in_line[j] = ft_calloc(sizeof(int),
+		data->l[index_1]->pos[j] = ft_calloc(sizeof(int),
 				(count), data);
 	}
 }
