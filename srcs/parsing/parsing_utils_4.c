@@ -12,31 +12,32 @@
 
 #include "../../minishell.h"
 
-void	init_paths_3(t_pipex *data, int i, int j, int k)
+void	init_paths_3(t_pipex *d, int i, int j, int k)
 {
 	char *buf;
 
-	while (data->l[i]->paths[++j])
+	while (d->l[i]->paths[++j])
 	{
-		if (data->l[i]->paths[j][0] == '.' && data->l[i]->paths[j][1] == '/')
+		if (!d->l[i]->binary[j]
+			&& d->l[i]->paths[j][0] == '.' && d->l[i]->paths[j][1] == '/')
 		{
-			buf = data->l[i]->paths[j];
-			data->l[i]->paths[j] = ft_strdup(data, "/bin/bash");
+			buf = d->l[i]->paths[j];
+			d->l[i]->paths[j] = ft_strdup(d, "/bin/bash");
 			free_str(&buf);
-			data->buf_int = 0;
-			while (data->l[i]->ops[j][data->buf_int])
-				data->buf_int++;
-			data->buf_array = ft_calloc(sizeof(char *), data->buf_int + 1 + 1, data);
+			d->buf_int = 0;
+			while (d->l[i]->ops[j][d->buf_int])
+				d->buf_int++;
+			d->buf_array = ft_calloc(sizeof(char *), d->buf_int + 1 + 1, d);
 			k = -1;
-			while (++k < data->buf_int + 1)
+			while (++k < d->buf_int + 1)
 			{
 				if (k == 0)
-					data->buf_array[k] = ft_strdup(data, "/bin/bash");
+					d->buf_array[k] = ft_strdup(d, "/bin/bash");
 				else
-					data->buf_array[k] = ft_strdup(data, data->l[i]->ops[j][k - 1]);
+					d->buf_array[k] = ft_strdup(d, d->l[i]->ops[j][k - 1]);
 			}
-			free_list(data->l[i]->ops[j]);
-			data->l[i]->ops[j] = data->buf_array;
+			free_list(d->l[i]->ops[j]);
+			d->l[i]->ops[j] = d->buf_array;
 		}
 	}
 }
@@ -77,6 +78,7 @@ void	init_rest(t_pipex *data, int i)
 	init_paths(data, i, -1);
 	init_paths_2(data, i);
 	init_paths_3(data, i, -1, -1);
+	// print_that_shit(data, i);
 	check_folder(data, i, -1, -1);
 	start_exec(data, i, -1, 0);
 }

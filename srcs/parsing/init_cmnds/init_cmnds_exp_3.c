@@ -16,7 +16,7 @@ int	expand_it_2_utils_1(t_pipex *d, int index_1, int index_2, int index_3)
 {
 	if (d->count_elem <= index_3
 		+ count_elem_spaces(d, d->l[index_1]->cmnds[index_2][index_3])
-		|| count_elem_spaces(d, d->l[index_1]->cmnds[index_2][index_3]) < 2)
+		|| !count_elem_spaces(d, d->l[index_1]->cmnds[index_2][index_3]))
 		return (1);
 	return (0);
 }

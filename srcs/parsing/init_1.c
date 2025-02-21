@@ -82,6 +82,7 @@ void	init_fds(t_pipex *data, int index)
 		data->l[index]->pipes[i][0] = -1;
 		data->l[index]->buf_pipes[i][0] = -1;
 		data->l[index]->buf_pipes[i][1] = -1;
+		data->l[index]->binary[i] = 0;
 	}
 }
 

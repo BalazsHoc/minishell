@@ -127,6 +127,8 @@ int	d_in(t_pipex *data, int j, int open)
 		if (d_in_if_1(data, j, &open))
 			break ;
 		if (open != 1 && data->line[j] == '$' && data->line[j + 1]
+					&& (is_d_b(data->line, j - 1, open) || (check // this one not sure
+					&& !is_d_b(data->line, j - 1, open)))			// this one also not sure
 			&& (is_char(data->line[j + 1]) || data->line[j + 1] == '?'
 				|| data->line[j + 1] == '$') && (!is_space(data->line[j + 1])
 				&& !(open == 2 && is_q_2(data->line[j + 1]))))

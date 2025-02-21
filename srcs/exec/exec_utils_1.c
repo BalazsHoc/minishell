@@ -30,6 +30,9 @@ int	is_in_inline(t_pipex *data, int index_1, int index_2)
 
 	i = -1;
 	check = -1;
+	if (!data->l[index_1]->cmnds[index_2]
+		|| !data->l[index_1]->cmnds[index_2][0])
+		return (-1);
 	while (data->l[index_1]->cmnds[index_2]
 		&& data->l[index_1]->cmnds[index_2][++i])
 	{

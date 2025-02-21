@@ -43,26 +43,25 @@ int	count_cmnds(char *line, int limit)
 int	count_elem(t_pipex *d, int i_1, int i, int j)
 {
 	int	k;
-	int	open;
 
 	k = -i;
-	open = 0;
+	d->open = 0;
 	d->count_elem = 0;
 	while (d->line[++j] && j < d->l[i_1]->limit &&  d->line[j] != '\n' && i >= 0)
 	{
 		if (k != 0)
-			handle_open(d, j, &open);
+			handle_open(d, j, &d->open);
 		if (k == 0)
 		{
-			if (d->line[j] == '|' && is_real_pipe(d->line, j) && !open)
+			if (d->line[j] == '|' && is_real_pipe(d->line, j) && !d->open)
 				break ;
-			if (!open && check_for_empty(d, j)
-				&& is_quote(d->line[j + 1]) && is_quote(d->line[j]))
+			if (elem_spaces(d, j) || (!d->open && check_for_empty(d, j) 
+				&& is_quote(d->line[j + 1]) && is_quote(d->line[j])))
 				d->count_elem++;
-			if (if_count_elem_1(d, j, &open))
+			if (if_count_elem_1(d, j))
 				d->count_elem++;
 		}
-		else if (!open && is_real_pipe(d->line, j)
+		else if (!d->open && is_real_pipe(d->line, j)
 			&& d->line[j] == '|' && --i != INT_MIN)
 			k++;
 	}

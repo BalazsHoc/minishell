@@ -23,8 +23,8 @@ int	count_elem_spaces(t_pipex *data, char *elem)
 		return (0);
 	while (elem[++i])
 	{
-		if ((i > 0 && is_space(elem[i]) && !is_space(elem[i - 1]))
-			|| (is_space(elem[i]) && i == 0))
+		if ((i == 0 || (i > 0 && !is_space(elem[i - 1])))
+			&& is_space(elem[i]))
 		{
 			data->count_elem++;
 			count++;
@@ -36,7 +36,6 @@ int	count_elem_spaces(t_pipex *data, char *elem)
 void	c_e_3(t_pipex *data, char **elem, int *i)
 {
 	*elem = get_val(data, data->line + *i + 1);
-	count_elem_spaces(data, *elem);
 	if (check_key(data, data->line + *i + 1))
 		*i += check_key(data, data->line + *i + 1) + 1;
 	else

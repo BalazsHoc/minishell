@@ -36,7 +36,7 @@ OBJ_LIBFT		= $(PATH_LIBFT:.c=.o)
 #	PARSING
 
 DIR_PARSING		= srcs/parsing/
-SRCS_PARSING	= parsing.c init_1.c make_history.c one_of_those.c  init_paths.c init_ops.c parsing_utils_is_1.c parsing_utils_is_2.c parsing_utils_is_3.c parsing_utils_is_4.c checks_1.c checks_2.c checks_3.c count.c count_utils.c init_cmnds/init_cmnds.c init_cmnds/init_cmnds_exp_1.c init_cmnds/init_cmnds_exp_2.c init_cmnds/init_cmnds_exp_3.c init_cmnds/init_cmnds_exp_count_1.c init_cmnds/init_cmnds_exp_count_2.c init_cmnds/init_cmnds_utils_1.c init_cmnds/init_cmnds_utils_2.c init_cmnds/init_cmnds_utils_3.c init_cmnds/init_cmnds_utils_4.c
+SRCS_PARSING	= parsing.c init_1.c make_history.c one_of_those.c  init_paths.c init_ops.c parsing_utils_1.c parsing_utils_2.c parsing_utils_3.c parsing_utils_4.c parsing_utils_5.c checks_1.c checks_2.c checks_3.c count.c count_utils.c init_cmnds/init_cmnds.c init_cmnds/init_cmnds_exp_1.c init_cmnds/init_cmnds_exp_2.c init_cmnds/init_cmnds_exp_3.c init_cmnds/init_cmnds_exp_count_1.c init_cmnds/init_cmnds_exp_count_2.c init_cmnds/init_cmnds_utils_1.c init_cmnds/init_cmnds_utils_2.c init_cmnds/init_cmnds_utils_3.c init_cmnds/init_cmnds_utils_4.c
 PATH_PARSING	= $(addprefix $(DIR_PARSING), $(SRCS_PARSING))
 OBJ_PARSING		= $(PATH_PARSING:.c=.o)
 

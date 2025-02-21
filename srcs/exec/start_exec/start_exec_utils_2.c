@@ -66,7 +66,7 @@ int	here_doc(t_pipex *data, int index_1, int index_2, int i)
 				data->here_2_old = find_key(data, index_1, index_2, i + 1);
 		}
 	}
-	return (1); //signal_change(NULL, 2), printf("this?\n"), 
+	return (1);
 }
 
 int	if_th(t_pipex *data, int index_1, int index_2, int i)

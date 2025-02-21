@@ -14,9 +14,11 @@
 
 int	one_of_those_2(char *str, int count)
 {
+	if (!str || !*str)
+		return (0);
 	if (str[0] == '.')
 		count++;
-	if (*str && (str + 1 && !one_of_those_2(str + 1, count)))
+	if (*str && (*(str + 1) && !one_of_those_2(str + 1, count)))
 		return (0);
 	else if (count <= 2 && (!str[0]
 			|| str[0] == '.'

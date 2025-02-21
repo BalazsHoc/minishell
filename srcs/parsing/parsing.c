@@ -53,8 +53,8 @@ void	init_paths(t_pipex *d, int i_1, int i_2)
 		}
 		else if ((!ft_strncmp(d->l[i_1]->ops[i_2][0], ".", 2)
 			|| !one_of_those(d->l[i_1]->ops[i_2][0]))
-				&& check_executable(d, i_1, i_2)
-					&& !one_of_those_2(d->l[i_1]->ops[i_2][0], 0))
+				&& !one_of_those_2(d->l[i_1]->ops[i_2][0], 0)
+				&& check_executable(d, i_1, i_2))
 			d->l[i_1]->paths[i_2] = ft_strdup(d, d->l[i_1]->ops[i_2][0]);
 		else
 			d->l[i_1]->paths[i_2] = ft_strdup(d, "pathnfound");
@@ -135,18 +135,20 @@ void	print_that_shit(t_pipex *data, int index_1)
 					j, data->l[index_1]->cmnds[i][j]);
 			if (data->l[index_1]->red_cmnd[i][j])
 				printf("X\n");
+			else if (data->l[index_1]->binary[i])
+				printf("X\n");
 			else
 				printf("\n");
 		}
-		j = -1;
-		if (data->l[index_1]->ops && data->l[index_1]->ops[i])
-		{
-			while (data->l[index_1]->ops[i][++j])
-				printf("OP:   %d:%d | |%s|\n", i,
-					j, data->l[index_1]->ops[i][j]);
-		}
-		if (data->l[index_1]->input)
-		printf("PATH: |%s|\n", data->l[index_1]->paths[i]);
+		// j = -1;
+		// if (data->l[index_1]->ops && data->l[index_1]->ops[i])
+		// {
+		// 	while (data->l[index_1]->ops[i][++j])
+		// 		printf("OP:   %d:%d | |%s|\n", i,
+		// 			j, data->l[index_1]->ops[i][j]);
+		// }
+		// if (data->l[index_1]->input)
+		// printf("PATH: |%s|\n", data->l[index_1]->paths[i]);
 	}
 }
 
@@ -154,18 +156,17 @@ void	print_that_shit(t_pipex *data, int index_1)
 int	init_line(t_pipex *data, int i, int limit)
 {
 	data->l[i]->limit = re_calc_limit(data, limit);
-	// printf("OLD: %d\n", data->here_2_old);
-	// printf("DATA LIMIT: %d\n", data->l[i]->limit);
-	data->l[i]->cmnd_count = count_cmnds(data->line + data->here_2, data->l[i]->limit);
+	data->l[i]->cmnd_count
+		= count_cmnds(data->line + data->here_2, data->l[i]->limit);
 	data->l[i]->exit_codes = ft_calloc(sizeof(int),
 			(data->l[i]->cmnd_count), data);
 	data->l[i]->ex = INT_MAX;
 	init_red_cmnds(data, i);
 	data->l[i]->input = ft_calloc(sizeof(char *),
 			data->l[i]->cmnd_count + 1, data);
+	data->l[i]->binary = ft_calloc(sizeof(int), data->l[i]->cmnd_count, data);
 	init_pos_in_line(data, i);
 	init_cmnds(data, i, -1);
-	// print_that_shit(data, i);
 	handle_here(data, i, -1, 0);
 	init_pipes_pids(data, i);
 	return (1);
@@ -196,15 +197,35 @@ char *get_key(t_pipex *data, char *line, int i)
 	return (key);
 }
 
+int	do_nonesense_find_key(t_pipex *d, char *key, int *i)
+{
+	int j;
+	int k;
+
+	j = -1;
+	while (d->line[*i + ++j])
+	{
+		k = 0;
+		while (d->line[*i + j + k] == key[k])
+			k++;
+		if (!key[k] && d->line[*i + j - 1] == '\n'
+			&& (!d->line[*i + j + k] || d->line[*i + j + k] == '\n'))
+			return (*i + j + k);
+	}
+	return (0);
+}
+
 void	do_nonesense_here_doc(t_pipex *d, int check)
 {
 	int i;
 	char *key;
 	char *buf;
+	int	buf_here_2;
 
 	i = d->here_2 - 1;
 	key = NULL;
 	buf = NULL;
+	buf_here_2 = d->here_2_old;
 	// printf("NEW: %d OLD: %d\n", d->here_2, d->here_2_old);
 	while (free_this(&buf) && ++i < check && !g_signal)
 	{
@@ -213,10 +234,13 @@ void	do_nonesense_here_doc(t_pipex *d, int check)
 			&& does_key_exist(d->line, i))
 		{
 			key = get_key(d, d->line, does_key_exist(d->line, i));
-			// printf("KEY: %s\n", key);
-			buf = readline("> ");
-			while (buf && !g_signal && (!ft_strcmp_2(buf, key)) && free_this(&buf))
+			if (!do_nonesense_find_key(d, key, &buf_here_2))
+			{
 				buf = readline("> ");
+				while (buf && !g_signal && (!ft_strcmp_2(buf, key)) && free_this(&buf))
+					buf = readline("> ");
+			}
+			// printf("KEY: %s\n", key);
 			free_this(&key);
 		}
 	}
@@ -233,6 +257,7 @@ int	syntax_redir_check_init(t_pipex *data, int i)
 	syn_check = syntax_check(data, data->here_2_old, 0);
 	// printf("SYN_LMIT: %d\n", syn_check);
 	init_line(data, i, syn_check);
+	// print_that_shit(data, i);
 	// if (!data->l[i]->cmnds[0][0][0])
 	// {
 	// 	printf("NO ELEM!!\n");
@@ -258,14 +283,14 @@ int	syntax_redir_check_init(t_pipex *data, int i)
 	}
 	else if (red_check != -1)
 		check = red_check;
-	if (check != -1)
+	// printf("NEW: %d | OLD: %d\n", data->here_2, data->here_2_old);
+	if (check != -1 && data->here_2_old)
 	{
 		signal_change(NULL, 1);
 		do_nonesense_here_doc(data, check);
 		data->here_2_old = count_nl(data, i);
 		data->here_2 = data->here_2_old;
 	}
-	// printf("NEW: %d | OLD: %d\n", data->here_2, data->here_2_old);
 	// printf("CHECK: %d\n", check);
 	return (check);
 }
@@ -286,13 +311,6 @@ void	parsing(t_pipex *data, int i)
 		if (syntax_redir_check_init(data, i) != -1 || !data->l[i]->cmnds[0][0]
 			|| !data->l[i]->cmnds[0][0][0])
 			continue ;
-			// if (check_reds(data, i, -1, check))
-			// {
-			// 	if (data->here_2_old >= data->chars_in_line)
-			// 		return (free_lines(data));
-			// 	else
-			// 		continue ;
-			// }
 		init_rest(data, i);
 	}
 	free_lines(data);

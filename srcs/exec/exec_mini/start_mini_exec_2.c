@@ -72,7 +72,10 @@ void	export_display(t_pipex *data)
 	data->export = sort_this(data->export, i);
 	i = -1;
 	while (data->export[++i])
+	{
 		printf("declare -x %s\n", data->export[i]);
+		fflush(stdout);
+	}
 }
 
 void	print_pwd(t_pipex *data)

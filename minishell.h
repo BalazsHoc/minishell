@@ -40,13 +40,15 @@ typedef struct lines_s
 
 	pid_t	(*pipes)[2];
 	pid_t	(*buf_pipes)[2];
+
 	int		*exit_codes;
+	int		*binary;
+	int		*fd_infiles;
+	int		*fd_ou;
 
 	int		cmnd_count;
 	int		ex;
 	int		limit;
-	int		*fd_infiles;
-	int		*fd_ou;
 
 }	t_lines;
 
@@ -160,7 +162,7 @@ int			count_ex(t_pipex *data, int i, int open, int count);
 
 //	init_cmnds_exp_count_2.c
 
-void		c_e_3(t_pipex *data, char **elem, int *i);
+void		c_e_3(t_pipex *data, char **str, int *i);
 void		c_e_4(char **elem, int *count);
 
 int			count_elem_spaces(t_pipex *data, char *elem);
@@ -200,7 +202,7 @@ int			set_pos(int *to_set, int pos);
 
 //	count_utils.c
 
-int			if_count_elem_1(t_pipex *data, int j, int *open);
+int			if_count_elem_1(t_pipex *data, int j);
 int			count_chars_utils_2(t_pipex *data, int i, int open, int count);
 int			count_chars_utils_1(t_pipex *data, int i, int open, int count);
 
@@ -248,7 +250,7 @@ int			one_of_those(char *str);
 int			one_of_those_2(char *str, int count);
 int			one_of_those_3(char *str);
 
-//	parsing_utils_is_1.c
+//	parsing_utils_1.c
 
 int			is_or(char *cur);
 int			is_q_2(char c);
@@ -256,7 +258,7 @@ int			is_quote_one(char c);
 int			is_quote(char c);
 int			is_space(char c);
 
-//	parsing_utils_is_2.c
+//	parsing_utils_2.c
 
 int			is_red_in(char *str, int index);
 int			is_red_out(char *str, int index);
@@ -264,20 +266,24 @@ int			is_red(t_pipex *data, int index_1, int index_2, int index_3);
 int			is_red_basic(t_pipex *data, int index_1, int index_2, int index_3);
 int			is_red_1(char c);
 
-//	parsing_utils_is_3.c
+//	parsing_utils_3.c
 
 int			is_char(char c);
 int			check_executable(t_pipex *data, int index_1, int index_2);
 int			is_executable(t_pipex *data, int index_1, int index_2);
 int			is_red_clean(char *str, int index);
 
-//	parsing_utils_is_4.c
+//	parsing_utils_4.c
 
 void		init_rest(t_pipex *data, int i);
 void		init_paths_2(t_pipex *data, int i);
 void		init_paths_3(t_pipex *data, int i, int j, int k);
 
 int			set_err_old(t_pipex *data);
+
+//	parsing_utils_5.c
+
+int			elem_spaces(t_pipex *data, int i);
 
 //	parsing.c
 

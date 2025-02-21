@@ -19,30 +19,21 @@ void	free_str(char **str)
 	*str = NULL;
 }
 
+void	free_void(void *this)
+{
+	if (this)
+		free(this);
+	this = NULL;
+}
+
 void	free_line_continue(t_pipex *data, int index)
 {
-	if (data->l[index]->fd_infiles)
-	{
-		free(data->l[index]->fd_infiles);
-		data->l[index]->fd_infiles = NULL;
-	}
-	if (data->l[index]->fd_ou)
-	{
-		free(data->l[index]->fd_ou);
-		data->l[index]->fd_ou = NULL;
-	}
-	if (data->l[index]->pipes)
-	{
-		free(data->l[index]->pipes);
-		data->l[index]->pipes = NULL;
-	}
-	if (data->l[index]->buf_pipes)
-	{
-		free(data->l[index]->buf_pipes);
-		data->l[index]->buf_pipes = NULL;
-	}
-	if (data->l[index]->exit_codes)
-		free(data->l[index]->exit_codes);
+	free_void((data->l[index]->fd_infiles));
+	free_void(data->l[index]->binary);
+	free_void(data->l[index]->fd_ou);
+	free_void(data->l[index]->pipes);
+	free_void(data->l[index]->buf_pipes);
+	free_void(data->l[index]->exit_codes);
 	free(data->l[index]);
 	data->l[index] = NULL;
 }

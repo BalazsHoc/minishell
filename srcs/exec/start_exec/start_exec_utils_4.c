@@ -17,6 +17,8 @@ int	last_one(char **arr)
 	int	i;
 
 	i = 0;
+	if (!arr || !*arr)
+		return (0);
 	while (arr[i])
 		i++;
 	if (i > 0)

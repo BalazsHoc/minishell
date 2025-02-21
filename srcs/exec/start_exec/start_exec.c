@@ -95,9 +95,8 @@ int	handle_expansion_here_doc(t_pipex *data, int index_1)
 
 void	start_exec(t_pipex *data, int index, int i, int status)
 {
-	if (!here_doc(data, index, -1, -1))
-		return ;
-	if (!handle_expansion_here_doc(data, index))
+	if (!here_doc(data, index, -1, -1)
+		|| !handle_expansion_here_doc(data, index))
 		return ;
 	exec_cmnds(data, index, i);
 	close_pipes_array(data, index);

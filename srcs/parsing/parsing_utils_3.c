@@ -84,5 +84,6 @@ int	check_executable(t_pipex *data, int index_1, int index_2)
 		}
 		return (0);
 	}
+	data->l[index_1]->binary[index_2] = 1;
 	return (1);
 }

@@ -54,13 +54,13 @@ int	ex_1_3(t_pipex *data, char **elem, int i, int open)
 	return (0);
 }
 
-int	expand_it_1(t_pipex *d, int i, int open, char **new)
+int	expand_it_1(t_pipex *d, int i, int open, char **s)
 {
 	char	*elem;
 
 	elem = NULL;
-	*new = ft_calloc(sizeof(char), (count_ex(d, i, open, 0) + 1), d);
-	d->buf_str = *new;
+	*s = ft_calloc(sizeof(char), (count_ex(d, i, open, 0) + 1), d);
+	d->buf_str = *s;
 	while (d->line[i])
 	{
 		if (open != 1 && d->line[i] == '$' && d->line[i + 1] == '$')
@@ -71,14 +71,15 @@ int	expand_it_1(t_pipex *d, int i, int open, char **new)
 			ex_1_2(d, &elem, open, &i);
 		if (elem && ft_strlen_2(elem) >= 0)
 			d->buf_str = d->buf_str + ft_strlen_2(elem);
-		if (ex_1_3(d, &elem, i, open))
-			break ;
-		if (handle_open(d, i, &open) && !open && ex_1_4(d, i))
+		if (ex_1_3(d, &elem, i, open)
+			|| (handle_open(d, i, &open) && !open && ex_1_4(d, i)))
 			break ;
 		if (ex_1_5(d, i, open))
 			*(d->buf_str)++ = d->line[i];
 		if (ex_1_6(d, i, open))
 			i++;
 	}
-	return (d->buf_str = NULL, 1);
+	// printf("NEW: |%s|\n", *s);
+	d->buf_str = NULL;
+	return (elem = *s, 1);
 }
