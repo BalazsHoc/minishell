@@ -392,6 +392,8 @@ int			bigger_one(char *s1, char *s2);
 
 //	start_exec_utils_1.c
 
+void		here_doc_err_msg(char *key);
+
 int			find_key(t_pipex *data, int index_1, int index_2, int index_3);
 
 char		*get_val(t_pipex *data, char *cur);

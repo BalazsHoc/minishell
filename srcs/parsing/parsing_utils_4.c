@@ -42,6 +42,23 @@ void	init_paths_3(t_pipex *d, int i, int j, int k)
 	}
 }
 
+void	update_op_path(t_pipex *data, int i, int j, int k)
+{
+	int l;
+	char **arr;
+
+	free_str(&data->l[i]->paths[j]);
+	data->l[i]->paths[j] = ft_strdup(data, data->l[i]->ops[j][k]);
+	l = 0;
+	while (data->l[i]->ops[j][l])
+		l++;
+	arr = ft_calloc(sizeof(char *), l - k + 1, data);
+	l = -1;
+	while (data->l[i]->ops[j][k + ++l])
+		arr[l] = data->l[i]->ops[j][k + l];
+	free_str(data->l[i]->ops[j]);
+	data->l[i]->ops[j] = arr;
+}
 
 void	init_paths_2(t_pipex *data, int i)
 {
@@ -61,11 +78,7 @@ void	init_paths_2(t_pipex *data, int i)
 				|| !ft_strncmp(data->l[i]->ops[j][0], "/usr/bin/env", 13))
 				&& (!ft_strncmp(data->l[i]->ops[j][k], "../", 3)
 					|| !ft_strncmp(data->l[i]->ops[j][k], "./", 2)))
-			{
-				free_str(&data->l[i]->paths[j]);
-				data->l[i]->paths[j] = ft_strdup(data, data->l[i]->ops[j][k]);
-				return ;
-			}
+				return (update_op_path(data, i, j, k));
 			else
 				errno = data->last_exit_status;
 		}
@@ -75,9 +88,10 @@ void	init_paths_2(t_pipex *data, int i)
 void	init_rest(t_pipex *data, int i)
 {
 	init_ops(data, i);
+
 	init_paths(data, i, -1);
-	init_paths_2(data, i);
 	init_paths_3(data, i, -1, -1);
+	init_paths_2(data, i);
 	// print_that_shit(data, i);
 	check_folder(data, i, -1, -1);
 	start_exec(data, i, -1, 0);
