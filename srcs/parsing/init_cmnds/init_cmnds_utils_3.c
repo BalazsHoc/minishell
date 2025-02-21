@@ -111,9 +111,6 @@ int	d_in_if_1(t_pipex *data, int j, int *open)
 
 int	d_in(t_pipex *data, int j, int open)
 {
-	int	check;
-
-	check = 0;
 	while (data->line[j])
 	{
 		if (open == 1 && is_quote_one(data->line[j])
@@ -122,8 +119,6 @@ int	d_in(t_pipex *data, int j, int open)
 		if (open == 2 && is_q_2(data->line[j])
 			&& is_delim_front(data->line, j + 1))
 			break ;
-		if (j > 0 && is_d_b(data->line, j - 1, open))
-			check = 1;
 		if (d_in_if_1(data, j, &open))
 			break ;
 		if (open != 1 && data->line[j] == '$' && data->line[j + 1]

@@ -339,6 +339,8 @@ int			only_dec(char *str);
 
 void		export_update(t_pipex *data, int index_1, int index_2, int i);
 
+int			isv(t_pipex *data, int index_1, int index_2, int i);
+
 //	mini_export_2.c
 
 void		update_export(t_pipex *data, int index_1, int index_2, int count);

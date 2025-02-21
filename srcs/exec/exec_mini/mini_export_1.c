@@ -12,48 +12,46 @@
 
 #include "../../../minishell.h"
 
-int	ex_u_util_1(char *str, int j)
+int	isv(t_pipex *data, int index_1, int index_2, int i)
 {
-	if (str[j] && str[j] != '=')
-		return (1);
-	return (0);
-}
+	int j;
+	char *str;
 
-int	ex_u_util_2(char *str, int j, int enf_of_while)
-{
-	if (!enf_of_while)
+	j = -1;
+	str = data->l[index_1]->ops[index_2][i];
+	while (str[++j] && str[j] != '=')
 	{
-		if (j == 0 && !((str[j] >= 65 && str[j] <= 90)
+		if (!is_char(str[j]) ||
+			(j == 0 && !((str[j] >= 65 && str[j] <= 90)
 				|| (str[j] >= 97 && str[j] <= 122)
-				|| str[j] == '_'))
-			return (1);
-		else if (!is_char(str[j]))
-			return (1);
+				|| str[j] == '_' || str[j] == '$' || str[j] == '?')))
+			return (0);
 	}
-	else if (str[j] && j == 0)
-		return (1);
-	return (0);
+	if (str[j] && j == 0)
+		return (0);
+	return (1);
 }
 
-void	ex_u_util_3(t_pipex *data, int index_1, int index_2)
+
+void	ex_u_util_2(t_pipex *data, int index_1, int index_2, int i)
 {
 	write(2, "bash: export: `", 16);
-	write(2, data->l[index_1]->ops[index_2][1],
-		ft_strlen(data->l[index_1]->ops[index_2][1]));
+	write(2, data->l[index_1]->ops[index_2][i],
+		ft_strlen(data->l[index_1]->ops[index_2][i]));
 	write(2, "': not a valid identifier\n", 27);
 	exit_child(data, index_1, index_2, 1);
 }
 
-int	ex_u_util_4(t_pipex *data, char *str, int j)
+int	ex_u_util_1(t_pipex *data, char *str)
 {
-	if (str[j] && ft_strncmp(str, "_=", 2) && already_there(data, str) == -1)
+	if (has_equal(str) && ft_strncmp(str, "_=", 2)
+		&& already_there(data, str) == -1)
 		return (1);
 	return (0);
 }
 
 void	export_update(t_pipex *data, int index_1, int index_2, int i)
 {
-	int	j;
 	int	count;
 	int	count_export;
 
@@ -61,20 +59,20 @@ void	export_update(t_pipex *data, int index_1, int index_2, int i)
 	count_export = 0;
 	while (data->l[index_1]->ops[index_2][1 + ++i])
 	{
-		j = -1;
-		while (ex_u_util_1(data->l[index_1]->ops[index_2][1 + i], ++j))
+		if (isv(data, index_1, index_2, i + 1))
 		{
-			if (ex_u_util_2(data->l[index_1]->ops[index_2][1 + i], j, 0))
-				return (ex_u_util_3(data, index_1, index_2));
+			if (ex_u_util_1(data, data->l[index_1]->ops[index_2][1 + i]))
+				count++;
+			else if (ft_strncmp(data->l[index_1]->ops[index_2][1 + i], "_=", 2)
+				&& is_there_2(data, data->l[index_1]->ops[index_2][1 + i]) == -1)
+				count_export++;
 		}
-		if (ex_u_util_2(data->l[index_1]->ops[index_2][1 + i], j, 1))
-			return (ex_u_util_3(data, index_1, index_2));
-		else if (ex_u_util_4(data, data->l[index_1]->ops[index_2][1 + i], j))
-			count++;
-		else if (ft_strncmp(data->l[index_1]->ops[index_2][1 + i], "_=", 2)
-			&& is_there_2(data, data->l[index_1]->ops[index_2][1 + i]) == -1)
-			count_export++;
+		else
+			ex_u_util_2(data, index_1, index_2, 1 + i);
 	}
-	export_env(data, index_1, index_2, count);
-	update_export(data, index_1, index_2, count + count_export);
+	// printf("COUNT: %d | COUNT EXPORT: %d\n", count, count_export);
+	if (count)
+		export_env(data, index_1, index_2, count);
+	if (count + count_export)
+		update_export(data, index_1, index_2, count + count_export);
 }

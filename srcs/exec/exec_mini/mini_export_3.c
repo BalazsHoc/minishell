@@ -42,31 +42,31 @@ void	export_env_util_2(t_pipex *data, char *str)
 	free_str(&data->buf_str);
 }
 
-void	export_env(t_pipex *data, int index_1, int index_2, int count)
+void	export_env(t_pipex *d, int i_1, int i_2, int count)
 {
 	int		i;
 	int		rand;
 	char	**buf;
 
-	buf = ft_calloc(sizeof(char *), count + count_env(data->cur_env) + 1, data);
+	buf = ft_calloc(sizeof(char *), count + count_env(d->cur_env) + 1, d);
 	rand = 0;
 	i = -1;
-	data->buf_str = NULL;
-	while (data->l[index_1]->ops[index_2][++i + 1])
+	d->buf_str = NULL;
+	while (d->l[i_1]->ops[i_2][++i + 1])
 	{
-		if (!has_equal(data->l[index_1]->ops[index_2][i + 1]))
+		if (!has_equal(d->l[i_1]->ops[i_2][i + 1]) || !isv(d, i_1, i_2, i + 1))
 			continue ;
-		if (rand != rand_it(data, index_1, index_2, i))
-			rand = rand_it(data, index_1, index_2, i);
+		if (rand != rand_it(d, i_1, i_2, i))
+			rand = rand_it(d, i_1, i_2, i);
 		else
-			rand = rand_it_2(data, index_1, index_2, i);
-		if (export_env_util_1(data, index_1, index_2, i))
-			export_env_util_2(data, data->l[index_1]->ops[index_2][i + 1]);
-		else if (ft_strncmp(data->l[index_1]->ops[index_2][1 + i], "_=", 2)
-			&& is_it_last(data, index_1, index_2, i + 1))
-			buf[rand] = ft_strdup(data, data->l[index_1]->ops[index_2][i + 1]);
+			rand = rand_it_2(d, i_1, i_2, i);
+		if (export_env_util_1(d, i_1, i_2, i))
+			export_env_util_2(d, d->l[i_1]->ops[i_2][i + 1]);
+		else if (ft_strncmp(d->l[i_1]->ops[i_2][1 + i], "_=", 2)
+			&& is_it_last(d, i_1, i_2, i + 1))
+			buf[rand] = ft_strdup(d, d->l[i_1]->ops[i_2][i + 1]);
 	}
-	set_rest(data, buf);
-	free(data->cur_env);
-	data->cur_env = buf;
+	set_rest(d, buf);
+	free(d->cur_env);
+	d->cur_env = buf;
 }
