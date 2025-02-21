@@ -305,8 +305,8 @@ void	parsing(t_pipex *data, int i)
 		if (check_open(data, data->line))
 		{
 			write(2, "bash: syntax error: open quotes \n", 34);
-			set_err_old(data);
-			continue ;
+			data->last_exit_status = 1;
+			break ;
 		}
 		if (syntax_redir_check_init(data, i) != -1 || !data->l[i]->cmnds[0][0]
 			|| !data->l[i]->cmnds[0][0][0])
