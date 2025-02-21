@@ -23,7 +23,7 @@ int	first_invalid_in(t_pipex *data, int index_1, int index_2)
 	{
 		if (!ft_strncmp(data->l[index_1]->cmnds[index_2][i], "<", 2)
 			&& data->l[index_1]->cmnds[index_2][i + 1]
-			&& data->l[index_1]->red_cmnd[index_2][i] == 0)
+			&& !data->l[index_1]->red_cmnd[index_2][i])
 		{
 			close_pipe(data, &fd);
 			fd = open(data->l[index_1]->cmnds[index_2][i + 1], O_RDONLY);
@@ -47,7 +47,7 @@ int	first_invalid_out(t_pipex *data, int index_1, int index_2)
 		if ((!ft_strncmp(data->l[index_1]->cmnds[index_2][i], ">>", 3)
 			|| !ft_strncmp(data->l[index_1]->cmnds[index_2][i], ">", 2))
 			&& data->l[index_1]->cmnds[index_2][i + 1]
-				&& data->l[index_1]->red_cmnd[index_2][i] == 0)
+				&& !data->l[index_1]->red_cmnd[index_2][i])
 		{
 			close_pipe(data, &fd);
 			fd = open(data->l[index_1]->cmnds[index_2][i + 1],

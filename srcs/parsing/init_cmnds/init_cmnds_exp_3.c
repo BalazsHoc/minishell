@@ -18,6 +18,9 @@ int	expand_it_2_utils_1(t_pipex *d, int index_1, int index_2, int index_3)
 		+ count_elem_spaces(d, d->l[index_1]->cmnds[index_2][index_3])
 		|| !count_elem_spaces(d, d->l[index_1]->cmnds[index_2][index_3]))
 		return (1);
+	if (index_3 && is_red(d, index_1, index_2, index_3 - 1)
+		&& ft_strncmp(d->l[index_1]->cmnds[index_2][index_3 - 1], "<<", 3))
+		d->l[index_1]->red_cmnd[index_2][index_3 - 1] = 2;
 	return (0);
 }
 

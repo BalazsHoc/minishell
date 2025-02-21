@@ -209,8 +209,10 @@ int	do_nonesense_find_key(t_pipex *d, char *key, int *i)
 	while (d->line[*i + ++j])
 	{
 		k = 0;
-		while (d->line[*i + j + k] == key[k])
+		while (d->line[*i + j + k] && key[k] && d->line[*i + j + k] == key[k])
 			k++;
+		// if (k)
+			// printf("FUCK THIS:%s| K: %d\n",d->line + *i + j, k);
 		if (!key[k] && d->line[*i + j - 1] == '\n'
 			&& (!d->line[*i + j + k] || d->line[*i + j + k] == '\n'))
 		{
@@ -218,10 +220,11 @@ int	do_nonesense_find_key(t_pipex *d, char *key, int *i)
 			break ;
 		}
 	}
-	while (d->line[check] && d->line[check] == '\n')
+	while (check && d->line[check] && d->line[check] == '\n')
 		check++;
 	if (check)
 		d->here_2_old = check;
+	// printf("CHECK THIS OUT: %d\n", check);
 	return (check);
 }
 
@@ -232,11 +235,11 @@ void	do_nonesense_here_doc(t_pipex *d, int check)
 	char *buf;
 	int	buf_here_2;
 
+	// printf("NEW: %d OLD: %d\n", d->here_2, d->here_2_old);
 	i = d->here_2 - 1;
 	key = NULL;
 	buf = NULL;
 	buf_here_2 = d->here_2_old;
-	// printf("NEW: %d OLD: %d\n", d->here_2, d->here_2_old);
 	while (free_this(&buf) && ++i < check && !g_signal)
 	{
 		// printf("THIS: %s | I: %d\n",d->line + i, i);
@@ -244,7 +247,9 @@ void	do_nonesense_here_doc(t_pipex *d, int check)
 			&& does_key_exist(d->line, i))
 		{
 			key = get_key(d, d->line, does_key_exist(d->line, i));
-			if (d->here_2_old && !do_nonesense_find_key(d, key, &buf_here_2) && buf_here_2 != d->here_2_old)
+			// printf("KEY: %s\n", key);
+			// if (d->here_2_old && (!do_nonesense_find_key(d, key, &buf_here_2) && buf_here_2 != d->here_2_old))
+			if (d->here_2_old && (!do_nonesense_find_key(d, key, &buf_here_2)))
 			{
 				buf = readline("> ");
 				while (buf && !g_signal && (!ft_strcmp_2(buf, key)) && free_this(&buf))
@@ -252,14 +257,13 @@ void	do_nonesense_here_doc(t_pipex *d, int check)
 				if (!buf)
 					here_doc_err_msg(key);
 			}
-			// printf("KEY: %s\n", key);
 			free_this(&key);
 		}
 	}
 	if (g_signal)
 		return (free_str(&buf));
-	if (d->here_2_old == buf_here_2)
-		d->here_2_old = count_nl(d, d->here_2_old);
+	// if (d->here_2_old != buf_here_2)
+	// 	d->here_2_old = count_nl(d, d->here_2_old);
 }
 
 int	syntax_redir_check_init(t_pipex *data, int i)
@@ -289,6 +293,7 @@ int	syntax_redir_check_init(t_pipex *data, int i)
 	else if (syn_check != 0 && data->l[i]->cmnds[0][0] && data->l[i]->cmnds[0][0][0])
 		red_check = check_reds(data, i, -1, INT_MAX - 1);
 	// printf("SYN: %d | RED: %d\n", syn_check, red_check);
+	// printf("0NEW: %d | OLD: %d\n", data->here_2, data->here_2_old);
 	check = -1;
 	if (syn_check != -1 && ((red_check != -1 && syn_check < red_check) || red_check == -1))
 	{

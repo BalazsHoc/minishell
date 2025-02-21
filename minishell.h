@@ -437,8 +437,9 @@ int			is_red_inline(t_pipex *data, int index_1, int index_2);
 
 int			get_input_2(t_pipex *data, int index_1, int i);
 
-//	start_exec_utils_7.c
+//	start_exec_utils_8.c
 
+int			if_exec_cmnds_utils_4(t_pipex *data, int index, int i);
 int			skip_nl(t_pipex *data);
 
 //	start_exec.c
