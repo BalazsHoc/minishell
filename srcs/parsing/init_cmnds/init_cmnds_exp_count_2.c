@@ -17,14 +17,19 @@ int	count_elem_spaces(t_pipex *data, char *elem)
 	int	i;
 	int	count;
 
-	i = -1;
 	count = 0;
 	if (!elem)
 		return (0);
+	i = 0;
+	while (elem[i] && elem[i] == ' ')
+		i++;
+	if (!elem[i])
+		return (0);
+	i = -1;
+	data->count_elem++;
 	while (elem[++i])
 	{
-		if ((i == 0 || (i > 0 && !is_space(elem[i - 1])))
-			&& is_space(elem[i]))
+		if (elem[i + 1] && !is_space(elem[i + 1]) && is_space(elem[i]))
 		{
 			data->count_elem++;
 			count++;

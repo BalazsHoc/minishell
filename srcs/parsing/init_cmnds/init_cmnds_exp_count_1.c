@@ -78,5 +78,6 @@ int	count_ex(t_pipex *data, int i, int open, int count)
 					&& is_delim_front(data->line, i + 1))))
 			i++;
 	}
+	// printf("COUNT EXPANSION: %d\n", count);
 	return (count);
 }
