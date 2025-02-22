@@ -21,7 +21,7 @@ char	*get_old(t_pipex *data, int index_1, int index_2)
 	{
 		if (!ft_strncmp(data->cur_env[i], "OLDPWD=", 7)
 			&& printf("%s\n", data->cur_env[i] + 7))
-			return (data->cur_env[i]);
+			return (data->cur_env[i] + 7);
 	}
 	return (write(2, "bash: cd: OLDPWD not set\n", 26),
 		exit_child(data, index_1, index_2, 1), NULL);
@@ -46,7 +46,7 @@ void	update_env_continue(t_pipex *d, int index_1, int index_2, char *buf)
 
 	d->buf_int = -1;
 	cur_pwd = get_pwd(d);
-	while (d->cur_env[++d->buf_int] && d->buf_int < 100)
+	while (d->cur_env[++d->buf_int])
 	{
 		if (!ft_strncmp(d->cur_env[d->buf_int], "PWD=", 4))
 		{
@@ -100,7 +100,14 @@ void	update_cwd(t_pipex *d, int index_1, int index_2, char *buf)
 	free_str(&buf2);
 }
 
-void	update_env(t_pipex *data, int index_1, int index_2)
+void put_old_pwd(t_pipex *data)
+{
+	int i;
+
+	
+}
+
+void	update_env(t_pipex *d, int i_1, int index_2)
 {
 	int		i;
 	char	*buf;
@@ -108,23 +115,27 @@ void	update_env(t_pipex *data, int index_1, int index_2)
 
 	i = -1;
 	buf = NULL;
-	cur_pwd = get_pwd(data);
-	while (data->cur_env[++i] && i < 100)
+	cur_pwd = get_pwd_2(d);
+	while (d->cur_env[++i])
 	{
-		if (!ft_strncmp(data->cur_env[i], "OLDPWD=", 7))
+		if (!ft_strncmp(d->cur_env[i], "OLDPWD=", 7))
 		{
-			buf = data->cur_env[i];
-			data->cur_env[i] = ft_strjoin("OLDPWD=", cur_pwd, data);
-			free_str(&buf);
+			if (!cur_pwd && cut_out_old(d))
+				break ;
+			buf = d->cur_env[i];
+			d->cur_env[i] = ft_strjoin("OLDPWD=", cur_pwd, d);
 		}
 	}
-	buf = ft_calloc(sizeof(char), (500 * 100), data);
+	if (!cur_pwd && !buf)
+		return (put_old_pwd(d));
+	free_str(&buf);
+	buf = ft_calloc(sizeof(char), (500 * 100), d);
 	if (!getcwd(buf, 500 * 100) && errno == ENOENT
 		&& write(2, "cd: error retrieving current directory: getcwd: cannot \
 access parent directories: No such file or directory\n", 109))
-		data->l[index_1]->exit_codes[index_2] = 0;
-	update_cwd(data, index_1, index_2, buf);
-	update_env_continue(data, index_1, index_2, buf);
-	if (!data->cur_env || !*data->cur_env || !get_pwd(data))
+		d->l[i_1]->exit_codes[index_2] = 0;
+	update_cwd(d, i_1, index_2, buf);
+	update_env_continue(d, i_1, index_2, buf);
+	if (!d->cur_env || !*d->cur_env || !get_pwd(d))
 		free_str(&buf);
 }

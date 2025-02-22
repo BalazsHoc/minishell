@@ -316,6 +316,9 @@ void		cd_cmnd(char **argv, t_pipex *data, int index_1, int index_2);
 void		print_cd_err(int errnum, char *str);
 void		update_env_2(t_pipex *data, int index_1, int index_2);
 
+int			cut_out_old(t_pipex *data);
+char		*get_pwd_2(t_pipex *data);
+
 char		*get_pwd(t_pipex *data);
 
 //	mini_cd_2.c
