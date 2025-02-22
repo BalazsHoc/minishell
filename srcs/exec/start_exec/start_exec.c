@@ -83,6 +83,7 @@ int	handle_expansion_here_doc(t_pipex *data, int index_1)
 			// printf("1NEW: %d | OLD: %d\n", data->here_2, data->here_2_old);
 			exec_cmnds_util_2(data, index_1, j);
 			data->here_2_old = data->here_2;
+			skip_nl(data);
 				// exec_cmnds_util_3(data, index_1, j);
 		}
 		// printf("2NEW: %d | OLD: %d\n", data->here_2, data->here_2_old);

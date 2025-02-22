@@ -140,15 +140,15 @@ void	print_that_shit(t_pipex *data, int index_1)
 			else
 				printf("\n");
 		}
-		// j = -1;
-		// if (data->l[index_1]->ops && data->l[index_1]->ops[i])
-		// {
-		// 	while (data->l[index_1]->ops[i][++j])
-		// 		printf("OP:   %d:%d | |%s|\n", i,
-		// 			j, data->l[index_1]->ops[i][j]);
-		// }
-		// if (data->l[index_1]->input)
-		// printf("PATH: |%s|\n", data->l[index_1]->paths[i]);
+		j = -1;
+		if (data->l[index_1]->ops && data->l[index_1]->ops[i])
+		{
+			while (data->l[index_1]->ops[i][++j])
+				printf("OP:   %d:%d | |%s|\n", i,
+					j, data->l[index_1]->ops[i][j]);
+		}
+		if (data->l[index_1]->input)
+		printf("PATH: |%s|\n", data->l[index_1]->paths[i]);
 	}
 }
 
@@ -239,6 +239,7 @@ void	do_nonesense_here_doc(t_pipex *d, int check)
 	i = d->here_2 - 1;
 	key = NULL;
 	buf = NULL;
+	buf_here_2 = 0;
 	while (free_this(&buf) && ++i < check && !g_signal)
 	{
 		// printf("NEW: %d OLD: %d\n", d->here_2, d->here_2_old);
@@ -318,7 +319,6 @@ int	syntax_redir_check_init(t_pipex *data, int i)
 		// data->here_2 = count_nl(data, i);
 		data->here_2 = data->here_2_old;
 	}
-	// printf("2NEW: %d | OLD: %d\n", data->here_2, data->here_2_old);
 	// printf("CHECK: %d\n", check);
 	return (check);
 }
@@ -329,6 +329,7 @@ void	parsing(t_pipex *data, int i)
 	make_history(data);
 	while (data->l[++i] && data->here_2_old < data->chars_in_line && !g_signal)
 	{
+		// printf("2NEW: %d | OLD: %d\n", data->here_2, data->here_2_old);
 		signal_change(NULL, 2);
 		if (check_open(data, data->line))
 		{

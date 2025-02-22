@@ -130,6 +130,7 @@ int	get_input_2(t_pipex *data, int index_1, int i)
 
 	k = 0;
 	j = 2;
+	// buf = NULL;
 	while (data->line[data->here_2 - j]
 		&& !is_d_b(data->line, data->here_2 - j, 0))
 		j++;

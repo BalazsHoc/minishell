@@ -14,20 +14,25 @@
 
 char	*get_pwd(t_pipex *data)
 {
-	int	i;
 	char *buf;
 
-	buf = NULL;
-	i = -1;
-	if (!data->cur_env)
-		return (NULL);
-	while (data->cur_env[++i])
-	{
-		if (!ft_strncmp(data->cur_env[i], "PWD=", 4))
-			return (buf = data->cwd, data->cwd = ft_strdup(data, data->cur_env[i] + 4),
-				free_str(&buf),
-				data->cur_env[i] + 4);
-	}
+	buf = ft_calloc(500, 100, data);
+	getcwd(buf, 500 * 100);
+	if (!*buf)
+		return (data->cwd);
+	free_str(&data->cwd);
+	data->cwd = ft_strdup(data, buf);
+	free_str(&buf);
+	// i = -1;
+	// if (!data->cur_env)
+	// 	return (NULL);
+	// while (data->cur_env[++i])
+	// {
+	// 	if (!ft_strncmp(data->cur_env[i], "PWD=", 4))
+	// 		return (buf = data->cwd, data->cwd = ft_strdup(data, data->cur_env[i] + 4),
+	// 			free_str(&buf),
+	// 			data->cur_env[i] + 4);
+	// }
 	return (data->cwd);
 }
 

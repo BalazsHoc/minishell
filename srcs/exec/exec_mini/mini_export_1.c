@@ -62,9 +62,9 @@ void	export_update(t_pipex *data, int index_1, int index_2, int i)
 		if (isv(data, index_1, index_2, i + 1))
 		{
 			if (ex_u_util_1(data, data->l[index_1]->ops[index_2][1 + i])
-				&& is_it_last(data, index_1, index_1, i + 1))
+				&& is_it_last(data, index_1, index_2, i + 1))
 				count++;
-			else if (ft_strncmp(data->l[index_1]->ops[index_2][1 + i], "_=", 2)
+			if (ft_strncmp(data->l[index_1]->ops[index_2][1 + i], "_=", 2)
 				&& is_there_2(data, data->l[index_1]->ops[index_2][1 + i]) == -1)
 				count_export++;
 		}

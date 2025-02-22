@@ -80,7 +80,7 @@ void	export_display(t_pipex *data)
 
 void	print_pwd(t_pipex *data)
 {
-	if (!get_pwd(data))
+	if (!data->cwd)
 		return ;
-	printf("%s\n", get_pwd(data));
+	printf("%s\n", data->cwd);
 }
