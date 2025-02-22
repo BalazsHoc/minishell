@@ -25,6 +25,7 @@ int	exec_cmnds_util_1(t_pipex *data, int index, int i)
 
 int	exec_cmnds_util_2(t_pipex *data, int index, int i)
 {
+	// printf("HERE: NEW: %d | OLD: %d\n", data->here_2, data->here_2_old);
 	if ((data->here_2_old < find_key(data, index, i,
 				is_red_inline(data, index, i) + 1)
 			|| find_key(data, index, i,
@@ -55,11 +56,7 @@ int	exec_cmnds_util_4(t_pipex *data, int index, int i, char *path)
 	else if (((path && !(path[5])) || !path) && !ft_strncmp(data->l[
 				index]->paths[i], "pathnfound", 11)
 		&& !data->l[index]->exit_codes[i])
-		return (write(2, "bash: ", 6),
-			write(2, data->l[index]->ops[i][0],
-			ft_strlen(data->l[index]->ops[i][0])),
-					write(2, ": No such file or directory\n", 29),
-					exit_child(data, index, i, 127), 1);
+		return (if_exec_cmnds_utils_4(data, index, i));
 	return (0);
 }
 

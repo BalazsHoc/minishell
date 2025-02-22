@@ -12,6 +12,13 @@
 
 #include "minishell.h"
 
+void    make_prompt(t_pipex *data)
+{
+	free_str(&data->prompt);
+	if (data->cwd)
+		data->prompt = ft_strjoin(data->cwd, "$ ", data);
+}
+
 char	*ft_strtrim_2(char *str, t_pipex *data)
 {
 	char	*new;
@@ -40,6 +47,10 @@ void	init_env(t_pipex *data, char **env)
 			data->cur_env[i] = ft_strdup(data, "SHLVL=1");
 		else
 			data->cur_env[i] = ft_strdup(data, env[i]);
+		if (!ft_strncmp(env[i], "PWD=", 4))
+			data->cwd = ft_strdup(data, env[i] + 4);
+		if (!ft_strncmp(env[i], "HOME=", 5))
+			data->home = ft_strdup(data, env[i] + 5);
 	}
 }
 
@@ -73,11 +84,13 @@ void	init_data(t_pipex *data, char **env)
 {
 	data->l = NULL;
 	data->cur_env = NULL;
+	data->prompt = NULL;
 	data->export = NULL;
 	data->cur_env = NULL;
 	data->buf_array = NULL;
 	data->line = NULL;
 	data->pid = NULL;
+	data->cwd = NULL;
 	data->line_count = 0;
 	data->here_2 = 0;
 	data->last_exit_status = 0;
@@ -87,6 +100,7 @@ void	init_data(t_pipex *data, char **env)
 	data->fd_in_2 = -1;
 	data->buf_int = 0;
 	data->count_elem = 0;
+	data->home = NULL;
 	init_env(data, env);
 	init_export(data);
 }
@@ -103,8 +117,9 @@ int	main(int argc, char **argv, char **env)
 	g_signal = 0;
 	while (1)
 	{
+		make_prompt(data);
 		signal_change(NULL, 0);
-		data->line = readline("minishell$ ");
+		data->line = readline(data->prompt);
 		signal_change(data, 0);
 		if (!data->line)
 			return (printf("exit\n"), errno = data->last_exit_status,

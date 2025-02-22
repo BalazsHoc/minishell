@@ -61,6 +61,9 @@ typedef struct pipex_s
 
 	char				*line;
 	char				*buf_str;
+	char				*prompt;
+	char				*cwd;
+	char				*home;
 
 	int					line_count;
 	int					chars_in_line;
@@ -165,7 +168,7 @@ int			count_ex(t_pipex *data, int i, int open, int count);
 void		c_e_3(t_pipex *data, char **str, int *i);
 void		c_e_4(char **elem, int *count);
 
-int			count_elem_spaces(t_pipex *data, char *elem);
+int			count_elem_spaces(t_pipex *data, char *elem, int check);
 int			c_e_5(t_pipex *data, int i, int open);
 int			c_e_6(t_pipex *data, int i, int open);
 
@@ -320,7 +323,6 @@ char		*get_pwd(t_pipex *data);
 void		update_env(t_pipex *data, int index_1, int index_2);
 char		*get_path(t_pipex *data);
 char		*get_old(t_pipex *data, int index_1, int index_2);
-char		*get_home(t_pipex *data);
 
 //	mini_exit_1.c
 

@@ -49,7 +49,7 @@ int	elem_spaces(t_pipex *data, int i)
 		&& (!data->count_elem || (data->count_elem && check)))
 	{
 		expand_it_1(data, i, data->open, &elem);
-		check = count_elem_spaces(data, elem);
+		check = count_elem_spaces(data, elem, 0);
 		return (free_str(&elem), check);
 	}
 	free_str(&elem);

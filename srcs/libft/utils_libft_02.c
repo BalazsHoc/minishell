@@ -92,7 +92,8 @@ char	*ft_strjoin(char const *s1, char const *s2, t_pipex *data)
 	size_t	i;
 	size_t	j;
 
-	if (s1 == 0 && s2 == 0)
+	// if (s1 == 0 && s2 == 0)
+	if (!s1)
 		return (0);
 	i = ft_strlen(s1)
 		+ ft_strlen(s2);

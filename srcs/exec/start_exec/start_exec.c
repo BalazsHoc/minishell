@@ -74,13 +74,18 @@ int	handle_expansion_here_doc(t_pipex *data, int index_1)
 
 	i = -1;
 	j = -1;
+
 	while (data->l[index_1]->cmnds[++j]&& !g_signal)
 	{
+		// printf("0NEW: %d | OLD: %d\n", data->here_2, data->here_2_old);
 		if (check_here_doc(data, index_1, j))
 		{
-			if (exec_cmnds_util_2(data, index_1, j))
-				exec_cmnds_util_3(data, index_1, j);
+			// printf("1NEW: %d | OLD: %d\n", data->here_2, data->here_2_old);
+			exec_cmnds_util_2(data, index_1, j);
+			data->here_2_old = data->here_2;
+				// exec_cmnds_util_3(data, index_1, j);
 		}
+		// printf("2NEW: %d | OLD: %d\n", data->here_2, data->here_2_old);
 	}
 	while (++i < data->l[index_1]->cmnd_count && !g_signal)
 	{
@@ -93,8 +98,13 @@ int	handle_expansion_here_doc(t_pipex *data, int index_1)
 	return (1);
 }
 
+// cat << EOF | pwd
+// EOF
+// echo lol
+
 void	start_exec(t_pipex *data, int index, int i, int status)
 {
+	// printf("START EXEC: NEW: %d | OLD: %d\n", data->here_2, data->here_2_old);
 	if (!here_doc(data, index, -1, -1)
 		|| !handle_expansion_here_doc(data, index))
 		return ;

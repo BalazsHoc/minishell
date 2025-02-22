@@ -61,7 +61,8 @@ void	export_update(t_pipex *data, int index_1, int index_2, int i)
 	{
 		if (isv(data, index_1, index_2, i + 1))
 		{
-			if (ex_u_util_1(data, data->l[index_1]->ops[index_2][1 + i]))
+			if (ex_u_util_1(data, data->l[index_1]->ops[index_2][1 + i])
+				&& is_it_last(data, index_1, index_1, i + 1))
 				count++;
 			else if (ft_strncmp(data->l[index_1]->ops[index_2][1 + i], "_=", 2)
 				&& is_there_2(data, data->l[index_1]->ops[index_2][1 + i]) == -1)
@@ -70,9 +71,6 @@ void	export_update(t_pipex *data, int index_1, int index_2, int i)
 		else
 			ex_u_util_2(data, index_1, index_2, 1 + i);
 	}
-	// printf("COUNT: %d | COUNT EXPORT: %d\n", count, count_export);
-	if (count)
-		export_env(data, index_1, index_2, count);
-	if (count + count_export)
-		update_export(data, index_1, index_2, count + count_export);
+	export_env(data, index_1, index_2, count);
+	update_export(data, index_1, index_2, count + count_export);
 }

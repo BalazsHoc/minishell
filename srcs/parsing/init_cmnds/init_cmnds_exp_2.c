@@ -25,7 +25,7 @@ int	check_home(t_pipex *data, int *i, int i_1, int i_2)
 			|| (is_delim_front(data->line, j + 1)
 				&& !is_quote(data->line[j + 1]))))
 	{
-		buf = strdup(get_home(data));
+		buf = strdup(data->home);
 		if (data->line[j + 1] == '/')
 		{
 			buf_2 = fill_normal(data, j + 1, data->open);

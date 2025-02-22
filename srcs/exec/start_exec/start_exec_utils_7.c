@@ -33,8 +33,15 @@ char	*handle_no_eof_continue(t_pipex *data, int i_1, int i_2, int i)
 	}
 	else if (free_this(&buf_1))
 		buf_1 = data->l[i_1]->input[i_2];
+	// printf("INPUT2: %s\n", buf_1);
 	return (free_str(&buf_2), buf_1);
 }
+
+// cat << EOF1 | cat << EOF2
+// EOF2
+// echo lol
+// pwd
+
 
 char	*handle_no_eof(t_pipex *data, int i_1, int i_2, char *input)
 {
@@ -48,9 +55,11 @@ char	*handle_no_eof(t_pipex *data, int i_1, int i_2, char *input)
 		if (!ft_strncmp("<<", data->l[i_1]->cmnds[i_2][i], 3) && ++i)
 			break ;
 	}
-	j = data->l[i_1]->pos[i_2][i];
-	j += ft_strlen(data->l[i_1]->cmnds[i_2][i]);
+	j = data->here_2_old - 1;
+	// data->l[i_1]->pos[i_2][i];
+	// j += ft_strlen(data->l[i_1]->cmnds[i_2][i]);
 	data->l[i_1]->input[i_2] = input;
+	// printf("INPUT1: %s\n", input);
 	while (data->line[++j])
 	{
 		k = 0;
@@ -60,7 +69,7 @@ char	*handle_no_eof(t_pipex *data, int i_1, int i_2, char *input)
 			k++;
 		if (k > 0 && !data->l[i_1]->cmnds[i_2][i][k] && (!data->line[j + k]
 			|| data->line[j + k] == '\n'))
-			return (input);
+			return (data->here_2 = j + k, data->here_2_old = j + k, input);
 	}
 	return (handle_no_eof_continue(data, i_1, i_2, i));
 }
@@ -77,8 +86,9 @@ int	is_eof(t_pipex *data, int i_1, int i_2)
 		if (!ft_strncmp("<<", data->l[i_1]->cmnds[i_2][i], 3) && ++i)
 			break ;
 	}
-	j = data->l[i_1]->pos[i_2][i];
-	j += ft_strlen(data->l[i_1]->cmnds[i_2][i]);
+	j = data->here_2_old - 1;
+	// data->l[i_1]->pos[i_2][i];
+	// j += ft_strlen(data->l[i_1]->cmnds[i_2][i]);
 	while (++j == 0 || (data->line[j - 1] && data->line[j]))
 	{
 		k = 0;
@@ -89,8 +99,10 @@ int	is_eof(t_pipex *data, int i_1, int i_2)
 		if (k > 0 && !data->l[i_1]->cmnds[i_2][i][k] && (!data->line[j + k]
 			|| data->line[j + k] == '\n'))
 			return (1);
+			// return (printf("IS EOF\n"), 1);
 	}
 	return (0);
+	// return (printf("NO EOF\n"), 0);
 }
 
 char	*account_for_eof(t_pipex *data, int j)

@@ -15,16 +15,20 @@
 char	*get_pwd(t_pipex *data)
 {
 	int	i;
+	char *buf;
 
+	buf = NULL;
 	i = -1;
 	if (!data->cur_env)
 		return (NULL);
 	while (data->cur_env[++i])
 	{
 		if (!ft_strncmp(data->cur_env[i], "PWD=", 4))
-			return (data->cur_env[i]);
+			return (buf = data->cwd, data->cwd = ft_strdup(data, data->cur_env[i] + 4),
+				free_str(&buf),
+				data->cur_env[i] + 4);
 	}
-	return (NULL);
+	return (data->cwd);
 }
 
 void	print_cd_err(int errnum, char *str)
@@ -94,11 +98,11 @@ void	update_env_2(t_pipex *data, int index_1, int index_2)
 		buf_2 = ft_strjoin("OLDPWD", data->buf_str + j, data);
 	data->buf_str = NULL;
 	update_env_2_continue(data, buf_1, buf_2);
+	get_pwd(data);
 }
 
 void	cd_cmnd(char **argv, t_pipex *data, int index_1, int index_2)
 {
-	char	*home_dir;
 
 	if (data->l[index_1]->ops[index_2][0]
 		&& data->l[index_1]->ops[index_2][1]
@@ -106,14 +110,13 @@ void	cd_cmnd(char **argv, t_pipex *data, int index_1, int index_2)
 		return (write(2, "bash: cd: ", 11),
 			write(2, "too many arguments\n", 20),
 			exit_child(data, index_1, index_2, 1));
-	home_dir = get_home(data);
-	if (!ft_strncmp(argv[1], ".", 2) && home_dir)
+	if (!ft_strncmp(argv[1], ".", 2) && data->home)
 		return (update_env(data, index_1, index_2));
 	if (!ft_strncmp(argv[1], "-", 2))
 		return (update_env_2(data, index_1, index_2));
 	if (!argv[1])
 	{
-		if (chdir(home_dir) == -1)
+		if (chdir(data->home) == -1)
 			print_cd_err(errno, argv[1]);
 		else
 			update_env(data, index_1, index_2);

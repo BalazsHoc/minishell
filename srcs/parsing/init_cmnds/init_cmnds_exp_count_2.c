@@ -12,7 +12,7 @@
 
 #include "../../../minishell.h"
 
-int	count_elem_spaces(t_pipex *data, char *elem)
+int	count_elem_spaces(t_pipex *data, char *elem, int check)
 {
 	int	i;
 	int	count;
@@ -29,7 +29,9 @@ int	count_elem_spaces(t_pipex *data, char *elem)
 	data->count_elem++;
 	while (elem[++i])
 	{
-		if (elem[i + 1] && !is_space(elem[i + 1]) && is_space(elem[i]))
+		if (!is_space(elem[i]))
+			check++;
+		if (check && elem[i + 1] && !is_space(elem[i + 1]) && is_space(elem[i]))
 		{
 			data->count_elem++;
 			count++;

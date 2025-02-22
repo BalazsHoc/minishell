@@ -239,13 +239,14 @@ void	do_nonesense_here_doc(t_pipex *d, int check)
 	i = d->here_2 - 1;
 	key = NULL;
 	buf = NULL;
-	buf_here_2 = d->here_2_old;
 	while (free_this(&buf) && ++i < check && !g_signal)
 	{
+		// printf("NEW: %d OLD: %d\n", d->here_2, d->here_2_old);
 		// printf("THIS: %s | I: %d\n",d->line + i, i);
 		if (d->line[i] == '<' && d->line[i + 1] && d->line[i + 1] == '<'
 			&& does_key_exist(d->line, i))
 		{
+			buf_here_2 = d->here_2_old;
 			key = get_key(d, d->line, does_key_exist(d->line, i));
 			// printf("KEY: %s\n", key);
 			// if (d->here_2_old && (!do_nonesense_find_key(d, key, &buf_here_2) && buf_here_2 != d->here_2_old))
@@ -260,11 +261,17 @@ void	do_nonesense_here_doc(t_pipex *d, int check)
 			free_this(&key);
 		}
 	}
+	// printf("NEW: %d OLD: %d\n", d->here_2, d->here_2_old);
 	if (g_signal)
 		return (free_str(&buf));
-	// if (d->here_2_old != buf_here_2)
-	// 	d->here_2_old = count_nl(d, d->here_2_old);
+	if (d->here_2_old == buf_here_2)
+		d->here_2_old = count_nl(d, d->here_2_old);
 }
+
+// cat << EOF < <  ls
+// echo hi
+// EOF
+// pwd
 
 int	syntax_redir_check_init(t_pipex *data, int i)
 {

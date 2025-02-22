@@ -111,6 +111,9 @@ void	free_struct(t_pipex *data)
 			free(data->pid);
 			data->pid = NULL;
 		}
+		free_str(&data->home);
+		free_str(&data->cwd);
+		free_str(&data->prompt);
 		free(data);
 		data = NULL;
 	}

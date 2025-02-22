@@ -82,19 +82,28 @@ void	u_ex_util_2(t_pipex *data, char *str)
 	free_str(&data->buf_str);
 }
 
+int malloc_for_list(t_pipex *d, int count)
+{
+	int i;
+
+	i = 0;
+	while (d->export[i])
+		i++;
+	d->buf_array = ft_calloc(sizeof(char *), count + i + 1, d);
+	return (i);
+}
+
 void	update_export(t_pipex *d, int i_1, int i_2, int count)
 {
 	int	i;
 	int	j;
 
-	i = 0;
 	d->buf_str = NULL;
-	while (d->export[i])
-		i++;
-	d->buf_array = ft_calloc(sizeof(char *), count + i + 1, d);
-	count = i;
+	i = malloc_for_list(d, count);
+	j = i;
 	while (--i >= 0)
 		d->buf_array[i] = ft_strdup(d, d->export[i]);
+	i = j;
 	j = -1;
 	while (d->l[i_1]->ops[i_2][1 + ++j])
 	{
@@ -102,10 +111,10 @@ void	update_export(t_pipex *d, int i_1, int i_2, int count)
 			continue ;
 		if (u_ex_util_1(d, i_1, i_2, j))
 			u_ex_util_2(d, d->l[i_1]->ops[i_2][1 + j]);
-		else if ((ft_strlen(d->l[i_1]->ops[i_2][1 + j])
+		else if (count-- && (ft_strlen(d->l[i_1]->ops[i_2][1 + j])
 			|| ft_strncmp(d->l[i_1]->ops[i_2][1 + j], "_=", 2))
 				&& is_it_last(d, i_1, i_2, 1 + j))
-			d->buf_array[count++] = malloc_cpy_export(d,
+			d->buf_array[i++] = malloc_cpy_export(d,
 					d->l[i_1]->ops[i_2][1 + j], 0, -1);
 	}
 	free_list(d->export);

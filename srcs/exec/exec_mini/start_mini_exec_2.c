@@ -82,5 +82,5 @@ void	print_pwd(t_pipex *data)
 {
 	if (!get_pwd(data))
 		return ;
-	printf("%s\n", get_pwd(data) + 4);
+	printf("%s\n", get_pwd(data));
 }

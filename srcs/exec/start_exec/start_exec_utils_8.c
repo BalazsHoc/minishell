@@ -34,13 +34,16 @@ int if_exec_cmnds_utils_4(t_pipex *data, int index, int i)
 
 int	skip_nl(t_pipex *data)
 {
+	if (data->here_2 > data->here_2_old)
+		data->here_2_old = data->here_2;
+	else
+		data->here_2 = data->here_2_old;
 	while (data->here_2_old < data->chars_in_line
 		&& data->line[data->here_2_old]
 		&& (data->line[data->here_2_old] == '\n'
 			|| is_space(data->line[data->here_2_old])))
 	{
-		if (data->here_2 == data->here_2_old)
-			data->here_2++;
+		data->here_2++;
 		data->here_2_old++;
 	}
 	return (1);
