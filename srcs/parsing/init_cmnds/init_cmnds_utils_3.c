@@ -59,7 +59,7 @@ int	is_d_b(char *line, int i, int open)
 		i--;
 	}
 	if (!open && (i < 0 || is_space(line[i]) || is_red_1(line[i])
-			|| is_real_pipe(line, i)))
+			|| is_real_pipe(line, i) || line[i] == '|'))
 		return (1);
 	return (0);
 }

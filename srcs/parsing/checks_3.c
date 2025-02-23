@@ -21,8 +21,8 @@ int	is_real_pipe(char *line, int index)
 	if (line[index] == '|')
 	{
 		if ((index > 0 && line[index - 1] == '|')
-			|| (index > 1 && line[index - 1] == '>'
-				&& line[index - 2] != '>')
+			|| (index > 0 && line[index - 1] == '>'
+				&& (index < 2 || line[index - 2] != '>'))
 			|| (line[index + 1] && line[index + 1] == '|'))
 			return (0);
 		return (1);
