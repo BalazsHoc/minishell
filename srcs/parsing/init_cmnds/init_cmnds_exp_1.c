@@ -16,7 +16,7 @@ void	ex_1_0(t_pipex *data, char **elem, int open, int *i)
 {
 	if (i && open != 1)
 	{
-		*elem = get_pid(data);
+		*elem = ft_strdup(data, data->main_pid);
 		data->buf_int = open;
 		ft_strncpy(data->buf_str, *elem, ft_strlen_2(*elem));
 		*i += 2;

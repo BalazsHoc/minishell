@@ -64,6 +64,7 @@ typedef struct pipex_s
 	char				*prompt;
 	char				*cwd;
 	char				*home;
+	char				*main_pid;
 
 	int					line_count;
 	int					chars_in_line;

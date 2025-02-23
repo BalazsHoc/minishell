@@ -20,7 +20,7 @@ char	*get_pid(t_pipex *data)
 	if (pid < 0)
 		return (perror("fork() failed!"), er_c(data), NULL);
 	if (pid == 0)
-		return (data->buf_str = NULL, er_c(data), exit(EXIT_SUCCESS), NULL);
+		return (er_c(data), exit(EXIT_SUCCESS), NULL);
 	if (wait(NULL) == -1)
 		return (perror("wait() failed!"), er_c(data), NULL);
 	return (ft_itoa(pid, data));
@@ -42,7 +42,7 @@ void	c_e_1(t_pipex *data, char **elem, int *i, int open)
 	if (open != 1 && data->line[*i] == '$' && data->line[*i + 1] == '?')
 		*elem = ft_itoa(data->last_exit_status, data);
 	else
-		*elem = get_pid(data);
+		*elem = ft_strdup(data, data->main_pid);
 	*i += 2;
 }
 

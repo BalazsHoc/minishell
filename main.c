@@ -101,6 +101,7 @@ void	init_data(t_pipex *data, char **env)
 	data->buf_int = 0;
 	data->count_elem = 0;
 	data->home = NULL;
+	data->main_pid = get_pid(data);
 	init_env(data, env);
 	init_export(data);
 }
