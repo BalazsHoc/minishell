@@ -12,34 +12,6 @@
 
 #include "../../../minishell.h"
 
-char	*get_old(t_pipex *data, int index_1, int index_2)
-{
-	int	i;
-
-	i = -1;
-	while (data->cur_env[++i])
-	{
-		if (!ft_strncmp(data->cur_env[i], "OLDPWD=", 7)
-			&& printf("%s\n", data->cur_env[i] + 7))
-			return (data->cur_env[i] + 7);
-	}
-	return (write(2, "bash: cd: OLDPWD not set\n", 26),
-		exit_child(data, index_1, index_2, 1), NULL);
-}
-
-char	*get_path(t_pipex *data)
-{
-	int	i;
-
-	i = -1;
-	while (data->cur_env[++i])
-	{
-		if (!ft_strncmp(data->cur_env[i], "PATH=", 5))
-			return (data->cur_env[i]);
-	}
-	return (0);
-}
-
 void	update_env_continue(t_pipex *d, int index_1, int index_2, char *buf)
 {
 	char	*cur_pwd;
@@ -79,18 +51,12 @@ void	update_cwd(t_pipex *d, int index_1, int index_2, char *buf)
 		&& buf && !*buf)
 	{
 		buf2 = ft_strjoin("/", d->l[index_1]->ops[index_2][1], d);
+		buf = d->cwd;
 		if (d->cwd[ft_strlen(d->cwd) - 1] != '/')
-		{
-			buf = d->cwd;
 			d->cwd = ft_strjoin(d->cwd, buf2, d);
-			free_str(&buf);
-		}
 		else
-		{
-			buf = d->cwd;
 			d->cwd = ft_strjoin(d->cwd, d->l[index_1]->ops[index_2][1], d);
-			free_str(&buf);
-		}
+		free_str(&buf);
 	}
 	else if (buf && *buf)
 	{
@@ -128,6 +94,19 @@ void	put_old_pwd(t_pipex *data)
 	}
 }
 
+void	update_env_inbtween(t_pipex *d, int i_1, int index_2, char *buf)
+{
+	buf = ft_calloc(sizeof(char), (500 * 100), d);
+	if (!getcwd(buf, 500 * 100) && errno == ENOENT
+		&& write(2, "cd: error retrieving current directory: getcwd: cannot \
+access parent directories: No such file or directory\n", 109))
+		d->l[i_1]->exit_codes[index_2] = 0;
+	update_cwd(d, i_1, index_2, buf);
+	update_env_continue(d, i_1, index_2, buf);
+	get_pwd(d);
+	free_str(&buf);
+}
+
 void	update_env(t_pipex *d, int i_1, int index_2)
 {
 	int		i;
@@ -153,13 +132,5 @@ void	update_env(t_pipex *d, int i_1, int index_2)
 	if (!cur_pwd && !buf && i != -1)
 		put_old_pwd(d);
 	free_str(&buf);
-	buf = ft_calloc(sizeof(char), (500 * 100), d);
-	if (!getcwd(buf, 500 * 100) && errno == ENOENT
-		&& write(2, "cd: error retrieving current directory: getcwd: cannot \
-access parent directories: No such file or directory\n", 109))
-		d->l[i_1]->exit_codes[index_2] = 0;
-	update_cwd(d, i_1, index_2, buf);
-	update_env_continue(d, i_1, index_2, buf);
-	if (!d->cur_env || !*d->cur_env || !get_pwd(d))
-		free_str(&buf);
+	update_env_inbtween(d, i_1, index_2, NULL);
 }

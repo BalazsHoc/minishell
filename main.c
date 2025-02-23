@@ -19,19 +19,6 @@ void	make_prompt(t_pipex *data)
 		data->prompt = ft_strjoin(data->cwd, "$ ", data);
 }
 
-char	*ft_strtrim_2(char *str, t_pipex *data)
-{
-	char	*new;
-	int		i;
-
-	i = 0;
-	while (is_space(str[i]))
-		i++;
-	new = ft_strdup(data, str + i);
-	free_str(&str);
-	return (new);
-}
-
 void	init_env(t_pipex *data, char **env)
 {
 	int	i;

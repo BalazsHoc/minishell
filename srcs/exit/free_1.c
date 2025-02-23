@@ -19,13 +19,6 @@ void	free_str(char **str)
 	*str = NULL;
 }
 
-void	free_void(void *this)
-{
-	if (this)
-		free(this);
-	this = NULL;
-}
-
 void	free_line_continue(t_pipex *data, int index)
 {
 	free_void((data->l[index]->fd_infiles));

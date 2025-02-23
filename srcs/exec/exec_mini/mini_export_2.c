@@ -81,17 +81,6 @@ void	u_ex_util_2(t_pipex *data, char *str)
 	free_str(&data->buf_str);
 }
 
-int	malloc_for_list(t_pipex *d, int count)
-{
-	int	i;
-
-	i = 0;
-	while (d->export[i])
-		i++;
-	d->buf_array = ft_calloc(sizeof(char *), count + i + 1, d);
-	return (i);
-}
-
 void	update_export(t_pipex *d, int i_1, int i_2, int count)
 {
 	int	i;

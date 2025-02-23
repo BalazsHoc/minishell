@@ -130,6 +130,10 @@ void		free_list_int(int **arr, int cmnd_count);
 
 int			free_this(char **str);
 
+//	free_3.c
+
+void		free_void(void *this);
+
 //						parsing/
 
 //					init_cmnds/
@@ -344,7 +348,6 @@ char		*get_pwd(t_pipex *data);
 //	mini_cd_2.c
 
 void		update_env(t_pipex *data, int index_1, int index_2);
-char		*get_path(t_pipex *data);
 char		*get_old(t_pipex *data, int index_1, int index_2);
 
 //	mini_exit_1.c
@@ -387,6 +390,17 @@ int			env_count(t_pipex *data);
 //	mini_export_5.c
 
 void		set_rest(t_pipex *data, char **buf);
+void		print_cd_err(int errnum, char *str);
+
+char		*get_pwd_2(t_pipex *data);
+char		*get_pwd(t_pipex *data);
+
+int			malloc_for_list(t_pipex *d, int count);
+
+//	mini_export_6.c
+
+char		*get_old(t_pipex *data, int index_1, int index_2);
+char		*get_path(t_pipex *data);
 
 //	mini_unset_1.c
 
@@ -465,6 +479,10 @@ int			get_input_2(t_pipex *data, int index_1, int i);
 
 //	start_exec_utils_8.c
 
+char		*ft_strdup_3(t_pipex *data, char *str);
+char		*ft_strtrim_2(char *str, t_pipex *data);
+
+int			count_chars_3(char *str);
 int			if_exec_cmnds_utils_4(t_pipex *data, int index, int i);
 int			skip_nl(t_pipex *data);
 
