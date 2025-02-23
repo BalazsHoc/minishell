@@ -118,7 +118,6 @@ int	cut_out_old(t_pipex *data)
 
 	i = -1;
 	count = 0;
-	printf("CUT OUT OLD!\n");
 	while (data->cur_env[++i])
 	{
 		if (ft_strncmp(data->cur_env[i], "OLDPWD=", 7))
@@ -149,7 +148,7 @@ void	update_env_2(t_pipex *data, int index_1, int index_2)
 	if (!buf_1)
 		return ;
 	if (data->buf_str)
-		buf_2 = ft_strjoin("OLDPWD", data->buf_str, data);
+		buf_2 = ft_strjoin("OLDPWD=", data->buf_str, data);
 	else if (cut_out_old(data) && chdir(buf_1) == -1 && free_this(&buf_1))
 		return (print_cd_err(errno, data->buf_str + 7));
 	if (!data->buf_str && free_this(&buf_1) && get_pwd(data))
@@ -157,7 +156,7 @@ void	update_env_2(t_pipex *data, int index_1, int index_2)
 	if (chdir(buf_1) == -1 && free_this(&buf_1))
 		print_cd_err(errno, data->buf_str + 7);
 	data->buf_str = buf_1;
-	buf_1 = ft_strjoin("PWD", buf_1, data);
+	buf_1 = ft_strjoin("PWD=", buf_1, data);
 	free_str(&data->buf_str);
 	update_env_2_continue(data, buf_1, buf_2);
 	get_pwd(data);
