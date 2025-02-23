@@ -25,7 +25,6 @@ int	exec_cmnds_util_1(t_pipex *data, int index, int i)
 
 int	exec_cmnds_util_2(t_pipex *data, int index, int i)
 {
-	// printf("HERE: NEW: %d | OLD: %d\n", data->here_2, data->here_2_old);
 	if ((data->here_2_old < find_key(data, index, i,
 				is_red_inline(data, index, i) + 1)
 			|| find_key(data, index, i,

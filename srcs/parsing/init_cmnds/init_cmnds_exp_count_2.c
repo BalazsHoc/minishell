@@ -25,7 +25,6 @@ int	count_elem_spaces(t_pipex *data, char *elem)
 		i++;
 	i = -1;
 	data->count_elem++;
-	// printf("DATA COUNT1: %d\n", data->count_elem);
 	while (elem[++i])
 	{
 		if (elem[i] == '\n' && (i > 0 && elem[i + 1]))
@@ -33,8 +32,6 @@ int	count_elem_spaces(t_pipex *data, char *elem)
 		if (elem[i] == '\n')
 			count++;
 	}
-	// printf("DATA COUNT2: %d\n", data->count_elem);
-	// printf("COUNT ELEM SPACES %d \n", count);
 	return (count);
 }
 
@@ -54,7 +51,6 @@ void	c_e_4(char **elem, int *count)
 {
 	if (!*elem)
 		return ;
-	// printf("ELEM |%s|\n", *elem);
 	*count += ft_strlen_2(*elem);
 	free_str(&*elem);
 }

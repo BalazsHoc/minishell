@@ -14,16 +14,14 @@
 
 void	init_paths_3(t_pipex *d, int i, int j, int k)
 {
-	char *buf;
-
 	while (d->l[i]->paths[++j])
 	{
 		if (!d->l[i]->binary[j]
 			&& d->l[i]->paths[j][0] == '.' && d->l[i]->paths[j][1] == '/')
 		{
-			buf = d->l[i]->paths[j];
+			d->buf_str = d->l[i]->paths[j];
 			d->l[i]->paths[j] = ft_strdup(d, "/bin/bash");
-			free_str(&buf);
+			free_str(&d->buf_str);
 			d->buf_int = 0;
 			while (d->l[i]->ops[j][d->buf_int])
 				d->buf_int++;
@@ -44,8 +42,8 @@ void	init_paths_3(t_pipex *d, int i, int j, int k)
 
 void	update_op_path(t_pipex *data, int i, int j, int k)
 {
-	int l;
-	char **arr;
+	int		l;
+	char	**arr;
 
 	free_str(&data->l[i]->paths[j]);
 	data->l[i]->paths[j] = ft_strdup(data, data->l[i]->ops[j][k]);
@@ -88,11 +86,9 @@ void	init_paths_2(t_pipex *data, int i)
 void	init_rest(t_pipex *data, int i)
 {
 	init_ops(data, i);
-
 	init_paths(data, i, -1);
 	init_paths_3(data, i, -1, -1);
 	init_paths_2(data, i);
-	// print_that_shit(data, i);
 	check_folder(data, i, -1, -1);
 	start_exec(data, i, -1, 0);
 }

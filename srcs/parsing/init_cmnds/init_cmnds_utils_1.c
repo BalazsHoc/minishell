@@ -59,7 +59,6 @@ int	if_4(t_pipex *data, int j)
 								&& !is_q_2(data->line[j]))))
 					|| (!data->open && !is_real_pipe(data->line, j)
 						&& !is_real_pipe(data->line, j)
-						// && data->line[j] != '|'
 						&& !is_quote(data->line[j]) && !is_space(data->line[j])
 						&& is_d_b(data->line, j - 1, 0)
 						&& !is_red_1(data->line[j]))

@@ -47,17 +47,17 @@ int	count_elem(t_pipex *d, int i_1, int i, int j)
 	k = -i;
 	d->open = 0;
 	d->count_elem = 0;
-	while (d->line[++j] && j < d->l[i_1]->limit &&  d->line[j] != '\n' && i >= 0)
+	while (d->line[++j] && j < d->l[i_1]->limit
+		&& d->line[j] != '\n' && i >= 0)
 	{
-		// printf("HERE COUNT ELEM: %s | COUNT:%d\n", d->line + j, d->count_elem);
 		if (k != 0)
 			handle_open(d, j, &d->open);
 		if (k == 0)
 		{
 			if (d->line[j] == '|' && is_real_pipe(d->line, j) && !d->open)
 				break ;
-			if ((!d->open && check_for_empty(d, j) 
-				&& is_quote(d->line[j + 1]) && is_quote(d->line[j])))
+			if ((!d->open && check_for_empty(d, j)
+					&& is_quote(d->line[j + 1]) && is_quote(d->line[j])))
 				d->count_elem++;
 			if (!elem_spaces(d, j) && if_count_elem_1(d, j))
 				d->count_elem++;
@@ -66,7 +66,6 @@ int	count_elem(t_pipex *d, int i_1, int i, int j)
 			&& d->line[j] == '|' && --i != INT_MIN)
 			k++;
 	}
-	// printf("COUNT ELEM: %d\n", d->count_elem);
 	return (d->count_elem);
 }
 

@@ -53,9 +53,9 @@ void	ft_strncpy(char *dest, char *src, int size)
 
 int	ft_strlen_2(char *s)
 {
-	int		i;
-	int		count;
-	int 	k;
+	int	i;
+	int	count;
+	int	k;
 
 	i = 0;
 	count = 0;

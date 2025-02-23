@@ -175,6 +175,11 @@ int			count_elem_spaces(t_pipex *data, char *elem);
 int			c_e_5(t_pipex *data, int i, int open);
 int			c_e_6(t_pipex *data, int i, int open);
 
+//	init_cmnds_exp_count_3.c
+
+void		ft_strncpy_4(char **buf, char *elem, int size);
+
+
 //	init_cmnds_utils_1.c
 
 int			if_1(t_pipex *data, int *j);
@@ -250,6 +255,10 @@ void		make_history(t_pipex *data);
 
 int			count_nl(t_pipex *data, int i);
 
+//	none_sense_here_doc.c
+
+void		do_nonesense_here_doc(t_pipex *d, int check, char *buf, char *key);
+
 //	one_of_those.c
 
 int			one_of_those(char *str);
@@ -289,7 +298,10 @@ int			set_err_old(t_pipex *data);
 
 //	parsing_utils_5.c
 
+int			re_calc_limit(t_pipex *data, int limit);
 int			elem_spaces(t_pipex *data, int i);
+int			syntax_redir_check_init(t_pipex *d, int i, int syn_check, int red_check);
+
 
 //	parsing.c
 
@@ -297,17 +309,23 @@ void		parsing(t_pipex *data, int i);
 void		init_ops(t_pipex *data, int index_1);
 void		init_paths(t_pipex *d, int i_1, int i_2);
 
-//	util_checks.c
+//	checks_1.c
 
-void		check_folder(t_pipex *data, int index, int i, int j);
+int			check_reds(t_pipex *d, int i_1, int i, int syn_c);
+
+//	checks_2.c
+
+int			check_open(t_pipex *data, char *line);
+int			syntax_check(t_pipex *data, int i, int count);
 int			check_folder_utils_1(t_pipex *data, int index, int i);
 int			check_folder_utils_2(t_pipex *data, int index, int i, int j);
 void		check_folder_utils_3(t_pipex *data, int index, int i);
 
+//	checks_3.c
+
+void		check_folder(t_pipex *data, int index, int i, int j);
+
 int			is_real_pipe(char *line, int index);
-int			check_reds(t_pipex *data, int index_1, int i, int j);
-int			check_open(t_pipex *data, char *line);
-int			syntax_check(t_pipex *data, int i, int count);
 
 //						execute/
 

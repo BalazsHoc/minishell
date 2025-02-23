@@ -12,25 +12,7 @@
 
 #include "../../minishell.h"
 
-int	is_real_pipe(char *line, int index)
-{
-	if (index == 0)
-		return (0);
-	else if (!line[index])
-		return (0);
-	if (line[index] == '|')
-	{
-		if ((index > 0 && line[index - 1] == '|')
-			|| (index > 1 && line[index - 1] == '>'
-				&& line[index - 2] != '>')
-			|| (line[index + 1] && line[index + 1] == '|'))
-			return (0);
-		return (1);
-	}
-	return (0);
-}
-
-int s(t_pipex *data, int i_1, int i, int j)
+int	s(t_pipex *data, int i_1, int i, int j)
 {
 	return (data->l[i_1]->pos[i][j]);
 }
@@ -61,7 +43,6 @@ int	check_reds(t_pipex *d, int i_1, int i, int syn_c)
 	while (d->l[i_1]->cmnds[++i])
 	{
 		d->buf_int = -1;
-		// printf("THAT1: %d\n", d->l[i_1]->pos[i][d->buf_int + 1]);
 		while (d->l[i_1]->cmnds[i][++d->buf_int]
 			&& d->l[i_1]->pos[i][d->buf_int] < syn_c)
 		{

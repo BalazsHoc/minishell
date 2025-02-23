@@ -24,19 +24,17 @@ int	expand_it_2_utils_1(t_pipex *d, int index_1, int index_2, int index_3)
 
 int	expand_it_2_utils_2(t_pipex *d, int i)
 {
-	// if ((is_space(d->buf_str[i + 1]) || !d->buf_str[i + 1])
-	// 	&& !is_space(d->buf_str[i]) && ++d->buf_int != INT_MIN)
 	if ((d->buf_str[i + 1] == '\n' || !d->buf_str[i + 1])
 		&& d->buf_str[i] != '\n' && ++d->buf_int != INT_MIN)
 		return (1);
 	return (0);
 }
 
-void change_to_spaces(t_pipex *data, int i_1, int i_2, int i_3)
+void	change_to_spaces(t_pipex *data, int i_1, int i_2, int i_3)
 {
-	char *new;
-	char *str;
-	int i;
+	char	*new;
+	char	*str;
+	int		i;
 
 	str = data->l[i_1]->cmnds[i_2][i_3];
 	new = ft_calloc(ft_strlen(str) + 1, 1, data);
@@ -62,11 +60,9 @@ int	expand_it_2(t_pipex *d, int i_1, int i_2, int i_3)
 	i = -1;
 	j = -1;
 	d->buf_int = -1;
-	// printf("CUT THIS: |%s|\n", d->l[i_1]->cmnds[i_2][i_3]);
 	if (expand_it_2_utils_1(d, i_1, i_2, i_3))
 		return (change_to_spaces(d, i_1, i_2, i_3), 0);
 	d->buf_str = d->l[i_1]->cmnds[i_2][i_3];
-	// while ((d->buf_str[++i] && !is_space(d->buf_str[i]) && ++j != INT_MIN)
 	while ((d->buf_str[++i] && d->buf_str[i] != '\n' && ++j != INT_MIN)
 		|| d->buf_str[i])
 	{

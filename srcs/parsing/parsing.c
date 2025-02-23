@@ -89,69 +89,42 @@ void	init_lines(t_pipex *data, int i)
 	}
 }
 
-int re_calc_limit(t_pipex *data, int limit)
-{
-	int i;
-	int check;
-	// int check_2;
+// void	print_that_shit(t_pipex *data, int index_1)
+// {
+// 	int	i;
+// 	int	j;
 
-	i = data->here_2_old;
-	check = 0;
-	if (limit == -1)
-		return (INT_MAX);
-	// printf("THIS: %s | %d\n", data->line + i, limit);
-	while (data->line[++i] && i < limit)
-	{
-		// printf("CUR: %s\n", data->line + i);
-		if (is_real_pipe(data->line, i))
-			check = i;
-		// if (check)
-			// printf("CHECK: %d\n", check);
-		// else if (is_real_pipe(data->line, i))
-		// 	check = i;
-	}
-	if (check && check < limit)
-		return (check);
-	return (limit);
-}
-
-void	print_that_shit(t_pipex *data, int index_1)
-{
-	int	i;
-	int	j;
-
-	// i = -1;
-	printf("|\n");
-	// while (data->cur_env[++i])
-	// 	printf("%s\n", data->cur_env[i]);
-	i = -1;
-	while (data->l[index_1]->cmnds[++i])
-	{
-		j = -1;
-		while (data->l[index_1]->cmnds[i][++j])
-		{
-			if (data->l[index_1]->cmnds[i][j])
-				printf("ELEM: %d:%d | |%s| ", i,
-					j, data->l[index_1]->cmnds[i][j]);
-			if (data->l[index_1]->red_cmnd[i][j])
-				printf("X\n");
-			else if (data->l[index_1]->binary[i])
-				printf("X\n");
-			else
-				printf("\n");
-		}
-		// j = -1;
-		// if (data->l[index_1]->ops && data->l[index_1]->ops[i])
-		// {
-		// 	while (data->l[index_1]->ops[i][++j])
-		// 		printf("OP:   %d:%d | |%s|\n", i,
-		// 			j, data->l[index_1]->ops[i][j]);
-		// }
-		// if (data->l[index_1]->input)
-		// printf("PATH: |%s|\n", data->l[index_1]->paths[i]);
-	}
-}
-
+// 	// i = -1;
+// 	printf("|\n");
+// 	// while (data->cur_env[++i])
+// 	// 	printf("%s\n", data->cur_env[i]);
+// 	i = -1;
+// 	while (data->l[index_1]->cmnds[++i])
+// 	{
+// 		j = -1;
+// 		while (data->l[index_1]->cmnds[i][++j])
+// 		{
+// 			if (data->l[index_1]->cmnds[i][j])
+// 				printf("ELEM: %d:%d | |%s| ", i,
+// 					j, data->l[index_1]->cmnds[i][j]);
+// 			if (data->l[index_1]->red_cmnd[i][j])
+// 				printf("X\n");
+// 			else if (data->l[index_1]->binary[i])
+// 				printf("X\n");
+// 			else
+// 				printf("\n");
+// 		}
+// 		// j = -1;
+// 		// if (data->l[index_1]->ops && data->l[index_1]->ops[i])
+// 		// {
+// 		// 	while (data->l[index_1]->ops[i][++j])
+// 		// 		printf("OP:   %d:%d | |%s|\n", i,
+// 		// 			j, data->l[index_1]->ops[i][j]);
+// 		// }
+// 		// if (data->l[index_1]->input)
+// 		// printf("PATH: |%s|\n", data->l[index_1]->paths[i]);
+// 	}
+// }
 
 int	init_line(t_pipex *data, int i, int limit)
 {
@@ -167,169 +140,18 @@ int	init_line(t_pipex *data, int i, int limit)
 	data->l[i]->binary = ft_calloc(sizeof(int), data->l[i]->cmnd_count, data);
 	init_pos_in_line(data, i);
 	init_cmnds(data, i, -1);
-	// print_that_shit(data, i);
 	handle_here(data, i, -1, 0);
 	init_pipes_pids(data, i);
 	return (1);
-}
-
-int does_key_exist(char *line, int i)
-{
-	while (line[++i])
-	{
-		if (is_char(line[i]))
-			return (i);
-	}
-	return (0);
-}
-
-char *get_key(t_pipex *data, char *line, int i)
-{
-	int		j;
-	char	*key;
-
-	j = 0;
-	while (line[i + j] && !is_delim_front(line, i + j))
-		j++;
-	key = ft_calloc(sizeof(char), j + 1, data);
-	j = -1;
-	while (line[i + ++j] && !is_delim_front(line, i + j))
-		key[j] = line[i + j];
-	return (key);
-}
-
-int	do_nonesense_find_key(t_pipex *d, char *key, int *i)
-{
-	int j;
-	int k;
-	int check;
-
-	j = -1;
-	check = 0;
-	while (d->line[*i + ++j])
-	{
-		k = 0;
-		while (d->line[*i + j + k] && key[k] && d->line[*i + j + k] == key[k])
-			k++;
-		// if (k)
-			// printf("FUCK THIS:%s| K: %d\n",d->line + *i + j, k);
-		if (!key[k] && d->line[*i + j - 1] == '\n'
-			&& (!d->line[*i + j + k] || d->line[*i + j + k] == '\n'))
-		{
-			check = *i + j + k;
-			break ;
-		}
-	}
-	while (check && d->line[check] && d->line[check] == '\n')
-		check++;
-	if (check)
-		d->here_2_old = check;
-	// printf("CHECK THIS OUT: %d\n", check);
-	return (check);
-}
-
-void	do_nonesense_here_doc(t_pipex *d, int check)
-{
-	int i;
-	char *key;
-	char *buf;
-	int	buf_here_2;
-
-	// printf("NEW: %d OLD: %d\n", d->here_2, d->here_2_old);
-	i = d->here_2 - 1;
-	key = NULL;
-	buf = NULL;
-	buf_here_2 = 0;
-	while (free_this(&buf) && ++i < check && !g_signal)
-	{
-		// printf("NEW: %d OLD: %d\n", d->here_2, d->here_2_old);
-		// printf("THIS: %s | I: %d\n",d->line + i, i);
-		if (d->line[i] == '<' && d->line[i + 1] && d->line[i + 1] == '<'
-			&& does_key_exist(d->line, i))
-		{
-			buf_here_2 = d->here_2_old;
-			key = get_key(d, d->line, does_key_exist(d->line, i));
-			// printf("KEY: %s\n", key);
-			// if (d->here_2_old && (!do_nonesense_find_key(d, key, &buf_here_2) && buf_here_2 != d->here_2_old))
-			if (d->here_2_old && (!do_nonesense_find_key(d, key, &buf_here_2)))
-			{
-				buf = readline("> ");
-				while (buf && !g_signal && (!ft_strcmp_2(buf, key)) && free_this(&buf))
-					buf = readline("> ");
-				if (!buf)
-					here_doc_err_msg(key);
-			}
-			free_this(&key);
-		}
-	}
-	// printf("NEW: %d OLD: %d\n", d->here_2, d->here_2_old);
-	if (g_signal)
-		return (free_str(&buf));
-	if (d->here_2_old == buf_here_2)
-		d->here_2_old = count_nl(d, d->here_2_old);
-}
-
-// cat << EOF < <  ls
-// echo hi
-// EOF
-// pwd
-
-int	syntax_redir_check_init(t_pipex *data, int i)
-{
-	int syn_check;
-	int red_check;
-	int check;
-
-	syn_check = syntax_check(data, data->here_2_old, 0);
-	// printf("0NEW: %d | OLD: %d\n", data->here_2, data->here_2_old);
-	// printf("SYN_LMIT: %d\n", syn_check);
-	init_line(data, i, syn_check);
-	// print_that_shit(data, i);
-	// if (!data->l[i]->cmnds[0][0][0])
-	// {
-	// 	printf("NO ELEM!!\n");
-	// 	data->here_2_old = count_nl(data, i);
-	// 	data->here_2 = data->here_2_old;
-	// 	return (0);
-	// }
-	// printf("FUCK THAT\n");
-	// if (!data->l[i]->cmnds[0][0] && syn_check == -1)
-	// 	return (0);
-	red_check = -1;
-	if (syn_check != -1 && data->l[i]->cmnds[0][0] && data->l[i]->cmnds[0][0])
-		red_check = check_reds(data, i, -1, syn_check);
-	else if (syn_check != 0 && data->l[i]->cmnds[0][0] && data->l[i]->cmnds[0][0][0])
-		red_check = check_reds(data, i, -1, INT_MAX - 1);
-	// printf("SYN: %d | RED: %d\n", syn_check, red_check);
-	// printf("0NEW: %d | OLD: %d\n", data->here_2, data->here_2_old);
-	check = -1;
-	if (syn_check != -1 && ((red_check != -1 && syn_check < red_check) || red_check == -1))
-	{
-		write(2, "bash: syntax error near unexpected token `|'\n", 46);
-		data->last_exit_status = 2;
-		check = syn_check;
-	}
-	else if (red_check != -1)
-		check = red_check;
-	// printf("1NEW: %d | OLD: %d\n", data->here_2, data->here_2_old);
-	if (check != -1)
-	{
-		signal_change(NULL, 1);
-		do_nonesense_here_doc(data, check);
-		// data->here_2 = count_nl(data, i);
-		data->here_2 = data->here_2_old;
-	}
-	// printf("CHECK: %d\n", check);
-	return (check);
 }
 
 void	parsing(t_pipex *data, int i)
 {
 	init_lines(data, -1);
 	make_history(data);
-	while (data->l[++i] && data->here_2_old < data->chars_in_line && !g_signal)
+	while (data->l[++i] && data->here_2_old < data->chars_in_line
+		&& !g_signal)
 	{
-		// printf("2NEW: %d | OLD: %d\n", data->here_2, data->here_2_old);
 		signal_change(NULL, 2);
 		if (check_open(data, data->line))
 		{
@@ -337,7 +159,8 @@ void	parsing(t_pipex *data, int i)
 			data->last_exit_status = 1;
 			break ;
 		}
-		if (syntax_redir_check_init(data, i) != -1 || !data->l[i]->cmnds[0][0]
+		if (syntax_redir_check_init(data, i, -1, -1) != -1
+			|| !data->l[i]->cmnds[0][0]
 			|| !data->l[i]->cmnds[0][0][0])
 			continue ;
 		init_rest(data, i);

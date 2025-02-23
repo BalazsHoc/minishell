@@ -15,29 +15,28 @@
 int	if_count_elem_1(t_pipex *data, int j)
 {
 	if (handle_open(data, j, &data->open) && data->line[j]
-	&& ((j == 0 && !is_quote(data->line[j])) || (j > 0 && (
-				(is_red_clean(data->line, j) && !data->open)
-				|| (!data->open && j > 1 && is_d_b(data->line, j - 1, 0)
-					&& !is_d_b(data->line, j, 0))
-				|| (((j > 1 && is_d_b(data->line, j - 2, 0)) || j < 2)
-					&& ((data->open == 1 && is_quote_one(data->line[j - 1])
-							&& !is_quote_one(data->line[j]))
-						|| (data->open == 2 && is_q_2(data->line[j - 1])
-							&& !is_q_2(data->line[j]))))
-				|| (!data->open && !is_real_pipe(data->line, j)
-					&& !is_real_pipe(data->line, j)
-					// && data->line[j] != '|'
-					&& !is_quote(data->line[j]) && !is_space(data->line[j])
-					&& is_d_b(data->line, j - 1, 0)
-					&& !is_red_1(data->line[j]))
-				|| (is_red_1(data->line[j - 1]) && !is_red_1(data->line[j])
-					&& !is_space(data->line[j]) && data->line[j] != '|'
-					&& !data->open)
-				|| (!data->open && is_real_pipe(data->line, j - 1)
-					&& !is_space(data->line[j])))))
-	&& ((d_in(data, j, data->open) >= 0
-			&& count_ex(data, j, data->open, 0))
-		|| d_in(data, j, data->open) == -1))
+		&& ((j == 0 && !is_quote(data->line[j])) || (j > 0 && (
+					(is_red_clean(data->line, j) && !data->open)
+					|| (!data->open && j > 1 && is_d_b(data->line, j - 1, 0)
+						&& !is_d_b(data->line, j, 0))
+					|| (((j > 1 && is_d_b(data->line, j - 2, 0)) || j < 2)
+						&& ((data->open == 1 && is_quote_one(data->line[j - 1])
+								&& !is_quote_one(data->line[j]))
+							|| (data->open == 2 && is_q_2(data->line[j - 1])
+								&& !is_q_2(data->line[j]))))
+					|| (!data->open && !is_real_pipe(data->line, j)
+						&& !is_real_pipe(data->line, j)
+						&& !is_quote(data->line[j]) && !is_space(data->line[j])
+						&& is_d_b(data->line, j - 1, 0)
+						&& !is_red_1(data->line[j]))
+					|| (is_red_1(data->line[j - 1]) && !is_red_1(data->line[j])
+						&& !is_space(data->line[j]) && data->line[j] != '|'
+						&& !data->open)
+					|| (!data->open && is_real_pipe(data->line, j - 1)
+						&& !is_space(data->line[j])))))
+		&& ((d_in(data, j, data->open) >= 0
+				&& count_ex(data, j, data->open, 0))
+			|| d_in(data, j, data->open) == -1))
 		return (1);
 	return (0);
 }

@@ -12,6 +12,24 @@
 
 #include "../../minishell.h"
 
+int	is_real_pipe(char *line, int index)
+{
+	if (index == 0)
+		return (0);
+	else if (!line[index])
+		return (0);
+	if (line[index] == '|')
+	{
+		if ((index > 0 && line[index - 1] == '|')
+			|| (index > 1 && line[index - 1] == '>'
+				&& line[index - 2] != '>')
+			|| (line[index + 1] && line[index + 1] == '|'))
+			return (0);
+		return (1);
+	}
+	return (0);
+}
+
 void	check_folder_utils_4(t_pipex *data, int index, int i)
 {
 	write(2, "bash: ", 7);

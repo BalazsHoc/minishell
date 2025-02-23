@@ -76,7 +76,7 @@ char	*find_path_2(t_pipex *data, char **arr, char *cmnd)
 			return (free_list((void *)arr), free_str(&new), full_path);
 		free_str(&full_path);
 	}
-	if (ft_strncmp((data->cwd), arr[0], ft_strlen((data->cwd) )))
+	if (ft_strncmp((data->cwd), arr[0], ft_strlen((data->cwd))))
 		return (free_str(&new), free_str(&arr[0]),
 			arr[0] = ft_strdup(data, (data->cwd)),
 			find_path_2(data, arr, cmnd));
