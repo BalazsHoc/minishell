@@ -103,8 +103,8 @@ access parent directories: No such file or directory\n", 109))
 		d->l[i_1]->exit_codes[index_2] = 0;
 	update_cwd(d, i_1, index_2, buf);
 	update_env_continue(d, i_1, index_2, buf);
-	get_pwd(d);
-	free_str(&buf);
+	if (!d->cur_env || !*d->cur_env || !get_pwd_2(d))
+		free_str(&buf);
 }
 
 void	update_env(t_pipex *d, int i_1, int index_2)
