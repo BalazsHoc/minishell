@@ -40,7 +40,6 @@ typedef struct lines_s
 
 	pid_t	(*pipes)[2];
 	pid_t	(*buf_pipes)[2];
-
 	int		*exit_codes;
 	int		*binary;
 	int		*fd_infiles;
@@ -88,7 +87,7 @@ typedef struct pipex_s
 extern int	g_signal;
 
 int			main(int argc, char **argv, char **env);
-void	print_that_shit(t_pipex *data, int index_1);
+void		print_that_shit(t_pipex *data, int index_1);
 
 //								srcs/
 
@@ -178,7 +177,6 @@ int			c_e_6(t_pipex *data, int i, int open);
 //	init_cmnds_exp_count_3.c
 
 void		ft_strncpy_4(char **buf, char *elem, int size);
-
 
 //	init_cmnds_utils_1.c
 
@@ -300,14 +298,15 @@ int			set_err_old(t_pipex *data);
 
 int			re_calc_limit(t_pipex *data, int limit);
 int			elem_spaces(t_pipex *data, int i);
-int			syntax_redir_check_init(t_pipex *d, int i, int syn_check, int red_check);
-
+int			syn_red_check_ini(t_pipex *d, int i, int syn_check, int red_check);
 
 //	parsing.c
 
 void		parsing(t_pipex *data, int i);
 void		init_ops(t_pipex *data, int index_1);
 void		init_paths(t_pipex *d, int i_1, int i_2);
+
+int			init_line(t_pipex *data, int i, int limit);
 
 //	checks_1.c
 
@@ -398,7 +397,6 @@ void		unset_cmnd(t_pipex *data, int index_1, int index_2, int i);
 char		*key_this(t_pipex *data, char *s);
 char		**malloc_unset(t_pipex *data, int index_1, int index_2);
 char		**malloc_unset_export(t_pipex *data, int index_1, int index_2);
-
 
 //	start_mini_exec_1.c
 

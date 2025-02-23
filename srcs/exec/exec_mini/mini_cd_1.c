@@ -14,25 +14,14 @@
 
 char	*get_pwd(t_pipex *data)
 {
-	char *buf;
+	char	*buf;
 
 	buf = ft_calloc(500, 100, data);
-	getcwd(buf, 500 * 100);
-	if (!*buf)
-		return (data->cwd);
+	if (!getcwd(buf, 500 * 100))
+		return (free_str(&buf), data->cwd);
 	free_str(&data->cwd);
 	data->cwd = ft_strdup(data, buf);
 	free_str(&buf);
-	// i = -1;
-	// if (!data->cur_env)
-	// 	return (NULL);
-	// while (data->cur_env[++i])
-	// {
-	// 	if (!ft_strncmp(data->cur_env[i], "PWD=", 4))
-	// 		return (buf = data->cwd, data->cwd = ft_strdup(data, data->cur_env[i] + 4),
-	// 			free_str(&buf),
-	// 			data->cur_env[i] + 4);
-	// }
 	return (data->cwd);
 }
 
@@ -78,10 +67,10 @@ void	update_env_2_continue(t_pipex *data, char *buf_1, char *buf_2)
 	}
 }
 
-char *get_pwd_2(t_pipex *data)
+char	*get_pwd_2(t_pipex *data)
 {
-	int j;
-	
+	int	j;
+
 	j = -1;
 	while (data->cur_env[++j])
 	{
@@ -93,8 +82,8 @@ char *get_pwd_2(t_pipex *data)
 
 int	unset_old_export(t_pipex *data)
 {
-	int i;
-	char *buf;
+	int		i;
+	char	*buf;
 
 	i = -1;
 	buf = NULL;
@@ -112,9 +101,9 @@ int	unset_old_export(t_pipex *data)
 
 int	cut_out_old(t_pipex *data)
 {
-	int i;
-	int count;
-	char **arr;
+	int		i;
+	int		count;
+	char	**arr;
 
 	i = -1;
 	count = 0;
@@ -164,7 +153,6 @@ void	update_env_2(t_pipex *data, int index_1, int index_2)
 
 void	cd_cmnd(char **argv, t_pipex *data, int index_1, int index_2)
 {
-
 	if (data->l[index_1]->ops[index_2][0]
 		&& data->l[index_1]->ops[index_2][1]
 			&& data->l[index_1]->ops[index_2][2])

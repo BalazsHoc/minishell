@@ -42,10 +42,6 @@ int	here_doc_util_3(t_pipex *data, int index_1, int index_2, int i)
 	return (0);
 }
 
-// cat << EOF | pwd
-// EOF
-// echo lol
-
 int	here_doc(t_pipex *data, int index_1, int index_2, int i)
 {
 	signal_change(NULL, 1);
@@ -55,25 +51,19 @@ int	here_doc(t_pipex *data, int index_1, int index_2, int i)
 		i = -1;
 		while (data->l[index_1]->cmnds[index_2][++i])
 		{
-			// printf("0HEREDOC: NEW: %d | OLD: %d\n", data->here_2, data->here_2_old);
 			if (here_doc_util_1(data, index_1, index_2, i))
 			{
-				// printf("1HEREDOC: NEW: %d | OLD: %d\n", data->here_2, data->here_2_old);
 				data->buf_str = get_input(data, index_1, index_2, i);
-				// printf("INPUT: %s\n", data->buf_str);
 				if (!data->buf_str && g_signal)
 					return (signal_change(NULL, 2), 0);
-				// printf("2HEREDOC: NEW: %d | OLD: %d\n", data->here_2, data->here_2_old);
 				if (here_doc_util_2(data, index_1, index_2, i))
 					free_str(&data->buf_str);
 				else if (data->buf_str)
 					data->l[index_1]->input[index_2] = data->buf_str ;
-				// printf("3HEREDOC: NEW: %d | OLD: %d\n", data->here_2, data->here_2_old);
 				data->buf_str = NULL;
 			}
 			else if (here_doc_util_3(data, index_1, index_2, i))
 				data->here_2_old = find_key(data, index_1, index_2, i + 1);
-			// printf("4HEREDOC: NEW: %d | OLD: %d\n", data->here_2, data->here_2_old);
 		}
 	}
 	return (1);

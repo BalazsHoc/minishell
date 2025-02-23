@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-void    make_prompt(t_pipex *data)
+void	make_prompt(t_pipex *data)
 {
 	free_str(&data->prompt);
 	if (data->cwd)
@@ -122,9 +122,8 @@ int	main(int argc, char **argv, char **env)
 		signal_change(NULL, 0);
 		data->line = readline(data->prompt);
 		signal_change(data, 0);
-		if (!data->line)
-			return (printf("exit\n"), errno = data->last_exit_status,
-				er_c(data), 0);
+		if (!data->line && printf("exit\n"))
+			return (errno = data->last_exit_status, er_c(data), 0);
 		if (data->line[0] != '\0')
 		{
 			data->line = ft_strtrim_2(data->line, data);

@@ -40,10 +40,7 @@ void	signal_mini_commands(int sig)
 void	signal_exec_cmnd(int sig)
 {
 	if (sig == SIGINT)
-	{
-		// g_signal = 2;
 		return ;
-	}
 	if (sig == SIGQUIT)
 		return ;
 }

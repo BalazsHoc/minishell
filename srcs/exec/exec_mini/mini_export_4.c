@@ -73,7 +73,6 @@ int	is_it_last(t_pipex *data, int index_1, int index_2, int i)
 		count++;
 	j = -1;
 	check = 0;
-	// printf("TEST THIS LAST: %s\n", data->l[index_1]->ops[index_2][i] + count);
 	while (data->l[index_1]->ops[index_2][++j])
 	{
 		if (!ft_strncmp(data->l[index_1]->ops[index_2][j],

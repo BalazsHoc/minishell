@@ -39,12 +39,12 @@ char	*join_this(char *s1, char *s2, t_pipex *data)
 	return (new);
 }
 
-char *ft_strdup_3(t_pipex *data, char *str)
+char	*ft_strdup_3(t_pipex *data, char *str)
 {
-	char *new;
-	int i;
-	int j;
-	int k;
+	char	*new;
+	int		i;
+	int		j;
+	int		k;
 
 	k = 0;
 	i = -1;
@@ -60,7 +60,7 @@ char *ft_strdup_3(t_pipex *data, char *str)
 		i += j;
 		if (!str[i])
 			break ;
-		k++; 
+		k++;
 	}
 	new = ft_calloc(sizeof(char), (k + 1), data);
 	k = 0;
@@ -75,7 +75,7 @@ char *ft_strdup_3(t_pipex *data, char *str)
 		i += j;
 		if (!str[i])
 			break ;
-		new[k++] = str[i]; 
+		new[k++] = str[i];
 	}
 	return (new);
 }
@@ -143,7 +143,6 @@ int	find_key(t_pipex *data, int index_1, int index_2, int index_3)
 	int	j;
 
 	i = data->here_2_old;
-	// printf("FIND KEY START: %d | %d\n", data->here_2, data->here_2_old);
 	if (i == 0 || !data->line[i - 1] || !data->line[i] || !data->line[i + 1])
 		return (i);
 	i--;

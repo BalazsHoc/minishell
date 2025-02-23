@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing_utils_5.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bhocsak <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/23 16:59:45 by bhocsak           #+#    #+#             */
+/*   Updated: 2025/02/23 16:59:48 by bhocsak          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../minishell.h"
 
-int	syntax_redir_check_init(t_pipex *d, int i, int syn_check, int red_check)
+int	syn_red_check_ini(t_pipex *d, int i, int syn_check, int red_check)
 {
 	int	check;
 

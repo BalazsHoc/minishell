@@ -12,7 +12,7 @@
 
 #include "../../../minishell.h"
 
-int if_exec_cmnds_utils_4(t_pipex *data, int index, int i)
+int	if_exec_cmnds_utils_4(t_pipex *data, int index, int i)
 {
 	if (data->l[index]->cmnd_count == 1)
 		return (write(2, "bash: ", 6),

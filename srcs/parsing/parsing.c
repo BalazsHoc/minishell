@@ -159,7 +159,7 @@ void	parsing(t_pipex *data, int i)
 			data->last_exit_status = 1;
 			break ;
 		}
-		if (syntax_redir_check_init(data, i, -1, -1) != -1
+		if (syn_red_check_ini(data, i, -1, -1) != -1
 			|| !data->l[i]->cmnds[0][0]
 			|| !data->l[i]->cmnds[0][0][0])
 			continue ;

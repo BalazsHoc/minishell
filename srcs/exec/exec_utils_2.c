@@ -27,4 +27,3 @@ int	check_cat_inline(t_pipex *data, int i_1)
 		return (1);
 	return (0);
 }
-

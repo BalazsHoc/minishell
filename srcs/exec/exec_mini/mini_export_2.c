@@ -28,7 +28,6 @@ char	*malloc_cpy_export_continue(char *new, char *str, int count)
 		new[i + 1 + count] = str[i];
 	}
 	new[i + 1 + count] = 34;
-	// printf("NEW: %s\n", new);
 	return (new);
 }
 
@@ -82,9 +81,9 @@ void	u_ex_util_2(t_pipex *data, char *str)
 	free_str(&data->buf_str);
 }
 
-int malloc_for_list(t_pipex *d, int count)
+int	malloc_for_list(t_pipex *d, int count)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (d->export[i])

@@ -71,7 +71,7 @@ void	update_env_continue(t_pipex *d, int index_1, int index_2, char *buf)
 
 void	update_cwd(t_pipex *d, int index_1, int index_2, char *buf)
 {
-	char *buf2;
+	char	*buf2;
 
 	buf2 = NULL;
 	get_pwd(d);
@@ -100,10 +100,10 @@ void	update_cwd(t_pipex *d, int index_1, int index_2, char *buf)
 	free_str(&buf2);
 }
 
-void put_old_pwd(t_pipex *data)
+void	put_old_pwd(t_pipex *data)
 {
-	int i;
-	char **arr;
+	int		i;
+	char	**arr;
 
 	i = 0;
 	while (data->cur_env[i])
