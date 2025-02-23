@@ -64,8 +64,8 @@ void	export_env(t_pipex *d, int i_1, int i_2, int count)
 			rand = rand_it_2(d, i_1, i_2, i);
 		if (export_env_util_1(d, i_1, i_2, i))
 			export_env_util_2(d, d->l[i_1]->ops[i_2][i + 1]);
-		else if (count-- && ft_strncmp(d->l[i_1]->ops[i_2][1 + i], "_=", 2)
-			&& is_it_last(d, i_1, i_2, i + 1))
+		else if (ft_strncmp(d->l[i_1]->ops[i_2][1 + i], "_=", 2)
+			&& is_it_last(d, i_1, i_2, i + 1) && count--)
 			buf[rand] = ft_strdup(d, d->l[i_1]->ops[i_2][i + 1]);
 	}
 	set_rest(d, buf);

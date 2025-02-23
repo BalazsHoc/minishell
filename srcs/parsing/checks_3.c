@@ -24,7 +24,7 @@ void	check_folder_utils_5(t_pipex *data, int index, int i)
 {
 	write(2, "bash: ", 7);
 	write(2, data->l[index]->ops[i][0], ft_strlen(data->l[index]->ops[i][0]));
-	write(2, ": No such file or directory\n", 29);
+	write(2, ": NO such file or directory\n", 29);
 	exit_child(data, index, i, 127);
 }
 

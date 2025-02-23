@@ -111,9 +111,9 @@ void	update_export(t_pipex *d, int i_1, int i_2, int count)
 			continue ;
 		if (u_ex_util_1(d, i_1, i_2, j))
 			u_ex_util_2(d, d->l[i_1]->ops[i_2][1 + j]);
-		else if (count-- && (ft_strlen(d->l[i_1]->ops[i_2][1 + j])
+		else if ((ft_strlen(d->l[i_1]->ops[i_2][1 + j])
 			|| ft_strncmp(d->l[i_1]->ops[i_2][1 + j], "_=", 2))
-				&& is_it_last(d, i_1, i_2, 1 + j))
+				&& is_it_last(d, i_1, i_2, 1 + j) && count--)
 			d->buf_array[i++] = malloc_cpy_export(d,
 					d->l[i_1]->ops[i_2][1 + j], 0, -1);
 	}

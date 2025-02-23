@@ -44,7 +44,13 @@ void	exec_cmnds_util_3(t_pipex *data, int index, int i)
 int	exec_cmnds_util_4(t_pipex *data, int index, int i, char *path)
 {
 	if (is_valid_in(data, index, i) == -1 && !data->l[index]->exit_codes[i])
-		return (if_exec_cmnds_utils_4(data, index, i));
+		return (write(2, "bash: ", 6),
+			write(2, data->l[index]->cmnds[i][
+				first_invalid_in(data, index, i)],
+			ft_strlen(data->l[index]->cmnds[i][
+				first_invalid_in(data, index, i)])),
+						write(2, ": No such file or directory\n", 29),
+							exit_child(data, index, i, 1), 1);
 	else if (check_cmnd_as_dir(data, index, i)
 		&& !one_of_those(data->l[index]->ops[i][0])
 		&& one_of_those_3(data->l[index]->ops[i][0])

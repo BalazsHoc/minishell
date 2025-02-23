@@ -21,7 +21,7 @@ int if_exec_cmnds_utils_4(t_pipex *data, int index, int i)
 			ft_strlen(data->l[index]->cmnds[i][
 				first_invalid_in(data, index, i)])),
 						write(2, ": No such file or directory\n", 29),
-							exit_child(data, index, i, 1), 1);
+							exit_child(data, index, i, 127), 1);
 	else
 		return (write(2, "bash: ", 6),
 			write(2, data->l[index]->cmnds[i][
