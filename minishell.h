@@ -144,6 +144,8 @@ int			ft_strlen_2(char *s);
 
 //	init_cmnds_exp_1.c
 
+void		ft_strncpy_4(char **buf, char *elem, int size);
+
 int			expand_it_1(t_pipex *data, int i, int open, char **new);
 
 //	init_cmnds_exp_2.c
@@ -168,7 +170,7 @@ int			count_ex(t_pipex *data, int i, int open, int count);
 void		c_e_3(t_pipex *data, char **str, int *i);
 void		c_e_4(char **elem, int *count);
 
-int			count_elem_spaces(t_pipex *data, char *elem, int check);
+int			count_elem_spaces(t_pipex *data, char *elem);
 int			c_e_5(t_pipex *data, int i, int open);
 int			c_e_6(t_pipex *data, int i, int open);
 

@@ -12,37 +12,38 @@
 
 #include "../../../minishell.h"
 
-int	count_elem_spaces(t_pipex *data, char *elem, int check)
+int	count_elem_spaces(t_pipex *data, char *elem)
 {
 	int	i;
 	int	count;
 
 	count = 0;
-	if (!elem)
+	if (!elem || !*elem)
 		return (0);
 	i = 0;
 	while (elem[i] && elem[i] == ' ')
 		i++;
-	if (!elem[i])
-		return (0);
 	i = -1;
 	data->count_elem++;
+	// printf("DATA COUNT1: %d\n", data->count_elem);
 	while (elem[++i])
 	{
-		if (!is_space(elem[i]))
-			check++;
-		if (check && elem[i + 1] && !is_space(elem[i + 1]) && is_space(elem[i]))
-		{
+		if (elem[i] == '\n' && (i > 0 && elem[i + 1]))
 			data->count_elem++;
+		if (elem[i] == '\n')
 			count++;
-		}
 	}
+	// printf("DATA COUNT2: %d\n", data->count_elem);
+	// printf("COUNT ELEM SPACES %d \n", count);
 	return (count);
 }
 
 void	c_e_3(t_pipex *data, char **elem, int *i)
 {
-	*elem = get_val(data, data->line + *i + 1);
+	data->buf_str = get_val(data, data->line + *i + 1);
+	*elem = ft_calloc(sizeof(char), ft_strlen_2(data->buf_str) + 1, data);
+	ft_strncpy_4(elem, data->buf_str, ft_strlen_2(data->buf_str));
+	free_str(&data->buf_str);
 	if (check_key(data, data->line + *i + 1))
 		*i += check_key(data, data->line + *i + 1) + 1;
 	else
@@ -51,9 +52,10 @@ void	c_e_3(t_pipex *data, char **elem, int *i)
 
 void	c_e_4(char **elem, int *count)
 {
+	if (!*elem)
+		return ;
+	// printf("ELEM |%s|\n", *elem);
 	*count += ft_strlen_2(*elem);
-	if (!*count)
-		*count = 1;
 	free_str(&*elem);
 }
 

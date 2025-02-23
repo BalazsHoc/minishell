@@ -37,6 +37,7 @@ int	elem_spaces(t_pipex *data, int i)
 	int check;
 
 	check = i;
+	// printf("START ELEM SPACES %d\n", data->count_elem);
 	while (data->count_elem && check
 		&& (is_space(data->line[check]) || is_quote(data->line[check])))
 		check--;
@@ -49,7 +50,7 @@ int	elem_spaces(t_pipex *data, int i)
 		&& (!data->count_elem || (data->count_elem && check)))
 	{
 		expand_it_1(data, i, data->open, &elem);
-		check = count_elem_spaces(data, elem, 0);
+		check = count_elem_spaces(data, elem);
 		return (free_str(&elem), check);
 	}
 	free_str(&elem);

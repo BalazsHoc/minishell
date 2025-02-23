@@ -53,9 +53,9 @@ void	ft_strncpy(char *dest, char *src, int size)
 
 int	ft_strlen_2(char *s)
 {
-	size_t	i;
+	int		i;
 	int		count;
-	int k;
+	int 	k;
 
 	i = 0;
 	count = 0;
@@ -64,13 +64,11 @@ int	ft_strlen_2(char *s)
 	while (s[i])
 	{
 		k = 0;
-		while (s[i + k] && s[i + k] == ' ')
+		while (s[i + k] && s[i + k] == '\n')
 			k++;
 		if (!(((i == 0 || !s[i + 1]) || ft_strlen(s) == 1)
 				&& s[i] == 34 && s[i] == 39) || k)
 			count++;
-		if (!s[i + 1])
-			break ;
 		i++;
 	}
 	return (count);
@@ -100,9 +98,9 @@ void	fill_cmnds(t_pipex *d, int i_1, int i, int j)
 			d->l[i_1]->red_cmnd[i][d->i_2] = 2;
 		if (d->line[j] && if_4(d, j))
 		{
-			if (d_in(d, j, d->open) >= 0 && if_5(d, i, i_1))
-				expand_it_1(d, j, d->open, &d->l[i_1]->cmnds[i][++d->i_2]);
-				// d->i_2 += expand_it_2(d, i_1, i, d->i_2);
+			if (d_in(d, j, d->open) >= 0 && if_5(d, i, i_1)
+				&& expand_it_1(d, j, d->open, &d->l[i_1]->cmnds[i][++d->i_2]))
+				d->i_2 += expand_it_2(d, i_1, i, d->i_2);
 			else
 				d->l[i_1]->cmnds[i][++d->i_2] = fill_normal(d, j, d->open);
 			d->l[i_1]->pos[i][d->i_2] = j;

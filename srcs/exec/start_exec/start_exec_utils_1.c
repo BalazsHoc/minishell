@@ -48,6 +48,8 @@ char *ft_strdup_3(t_pipex *data, char *str)
 
 	k = 0;
 	i = -1;
+	if (!str || !*str)
+		return (NULL);
 	while (str[++i])
 	{
 		j = 0;
@@ -56,6 +58,8 @@ char *ft_strdup_3(t_pipex *data, char *str)
 		if (j)
 			k++;
 		i += j;
+		if (!str[i])
+			break ;
 		k++; 
 	}
 	new = ft_calloc(sizeof(char), (k + 1), data);
@@ -69,6 +73,8 @@ char *ft_strdup_3(t_pipex *data, char *str)
 		if (j)
 			new[k++] = ' ';
 		i += j;
+		if (!str[i])
+			break ;
 		new[k++] = str[i]; 
 	}
 	return (new);

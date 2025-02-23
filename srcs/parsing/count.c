@@ -59,7 +59,7 @@ int	count_elem(t_pipex *d, int i_1, int i, int j)
 			if ((!d->open && check_for_empty(d, j) 
 				&& is_quote(d->line[j + 1]) && is_quote(d->line[j])))
 				d->count_elem++;
-			if (!elem_spaces(d, j) && if_count_elem_1(d, j))
+			else if (!elem_spaces(d, j) && if_count_elem_1(d, j))
 				d->count_elem++;
 		}
 		else if (!d->open && is_real_pipe(d->line, j)
@@ -105,7 +105,7 @@ int	count_chars_2(t_pipex *data, int i)
 	count = 0;
 	while (data->line[i])
 	{
-		if (!data->line[i] || is_space(data->line[i]) || data->line[i] == '\n'
+		if (!data->line[i] || is_space(data->line[i])
 			|| is_real_pipe(data->line, i)
 			|| is_red_clean(data->line, i)
 			|| data->line[i] == '/'

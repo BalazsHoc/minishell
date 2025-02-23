@@ -20,6 +20,8 @@ char	*ft_strdup(t_pipex *data, const char *s)
 
 	i = 0;
 	j = 0;
+	if (!s)
+		return (NULL);
 	while (s[j] != '\0')
 		j++;
 	ptr = ft_calloc(sizeof(char), (j + 1), data);

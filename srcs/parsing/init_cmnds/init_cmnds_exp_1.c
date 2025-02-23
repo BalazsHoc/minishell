@@ -34,6 +34,22 @@ void	ex_1_1(t_pipex *data, char **elem, int open, int *i)
 	*i += 2;
 }
 
+void ft_strncpy_4(char **buf, char *elem, int size)
+{
+	int i;
+	char *cur;
+
+	i = -1;
+	cur = *buf;
+	while (++i < size)
+	{
+		if (elem[i] != ' ')
+			cur[i] = elem[i];
+		else
+			cur[i] = '\n';
+	}
+}
+
 void	ex_1_2(t_pipex *data, char **elem, int open, int *i)
 {
 	*elem = get_val(data, data->line + *i + 1);
@@ -42,7 +58,7 @@ void	ex_1_2(t_pipex *data, char **elem, int open, int *i)
 	else
 		*i += count_chars_2(data, *i);
 	data->buf_int = open;
-	ft_strncpy(data->buf_str, *elem, ft_strlen_2(*elem));
+	ft_strncpy_4(&data->buf_str, *elem, ft_strlen_2(*elem));
 }
 
 int	ex_1_3(t_pipex *data, char **elem, int i, int open)
@@ -79,6 +95,7 @@ int	expand_it_1(t_pipex *d, int i, int open, char **s)
 		if (ex_1_6(d, i, open))
 			i++;
 	}
+	// printf("NEW: ELEM: %s\n", *s);
 	d->buf_str = NULL;
 	return (elem = *s, 1);
 }

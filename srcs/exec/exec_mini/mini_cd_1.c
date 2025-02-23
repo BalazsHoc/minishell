@@ -91,6 +91,25 @@ char *get_pwd_2(t_pipex *data)
 	return (NULL);
 }
 
+int	unset_old_export(t_pipex *data)
+{
+	int i;
+	char *buf;
+
+	i = -1;
+	buf = NULL;
+	while (data->export[++i])
+	{
+		if (!ft_strncmp(data->export[i], "OLDPWD=", 7))
+		{
+			buf = data->export[i];
+			data->export[i] = ft_strdup(data, "OLDPWD");
+			free_str(&buf);
+		}
+	}
+	return (1);
+}
+
 int	cut_out_old(t_pipex *data)
 {
 	int i;
@@ -99,6 +118,7 @@ int	cut_out_old(t_pipex *data)
 
 	i = -1;
 	count = 0;
+	printf("CUT OUT OLD!\n");
 	while (data->cur_env[++i])
 	{
 		if (ft_strncmp(data->cur_env[i], "OLDPWD=", 7))
@@ -114,33 +134,31 @@ int	cut_out_old(t_pipex *data)
 	}
 	free_list(data->cur_env);
 	data->cur_env = arr;
-	return (1);
+	return (unset_old_export(data));
 }
 
 void	update_env_2(t_pipex *data, int index_1, int index_2)
 {
-	int		j;
 	char	*buf_1;
 	char	*buf_2;
 
 	buf_1 = NULL;
 	buf_2 = NULL;
-	j = 0;
 	data->buf_str = get_pwd_2(data);
+	buf_1 = ft_strdup(data, get_old(data, index_1, index_2));
+	if (!buf_1)
+		return ;
 	if (data->buf_str)
-		buf_2 = ft_strjoin("OLDPWD", data->buf_str + j, data);
-	else if (cut_out_old(data))
+		buf_2 = ft_strjoin("OLDPWD", data->buf_str, data);
+	else if (cut_out_old(data) && chdir(buf_1) == -1 && free_this(&buf_1))
+		return (print_cd_err(errno, data->buf_str + 7));
+	if (!data->buf_str && free_this(&buf_1) && get_pwd(data))
 		return ;
-	data->buf_str = get_old(data, index_1, index_2);
-	if (!data->buf_str)
-		return ;
-	if (chdir(data->buf_str + 7) == -1)
+	if (chdir(buf_1) == -1 && free_this(&buf_1))
 		print_cd_err(errno, data->buf_str + 7);
-	j = 0;
-	while (data->buf_str[j] && data->buf_str[j] != '=')
-		j++;
-	buf_1 = ft_strjoin("PWD", data->buf_str + j, data);
-	data->buf_str = NULL;
+	data->buf_str = buf_1;
+	buf_1 = ft_strjoin("PWD", buf_1, data);
+	free_str(&data->buf_str);
 	update_env_2_continue(data, buf_1, buf_2);
 	get_pwd(data);
 }

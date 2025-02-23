@@ -59,25 +59,32 @@ int	count_ex(t_pipex *data, int i, int open, int count)
 	char	*elem;
 
 	elem = NULL;
+	// printf("START COUNT EXPANSION\n");
 	while (data->line && data->line[i])
 	{
+		// printf("COUNT EXP1: %s | COUNT: %d | OPEN: %d\n", data->line + i, count, open);
 		if (c_e_0(data, i, open))
 			c_e_1(data, &elem, &i, open);
 		else if (c_e_2(data, i, open))
 			c_e_3(data, &elem, &i);
+		// printf("COUNT EXP2: %s | COUNT: %d | OPEN: %d\n", data->line + i, count, open);
 		if (elem)
 			c_e_4(&elem, &count);
 		if (!data->line[i])
 			break ;
 		if (handle_open(data, i, &open) && c_e_5(data, i, open))
 			break ;
+		// printf("COUNT EXP3: %s | COUNT: %d | OPEN: %d\n", data->line + i, count, open);
 		if (c_e_6(data, i, open))
 			count++;
+		// printf("COUNT EXP4: %s | COUNT: %d | OPEN: %d\n", data->line + i, count, open);
 		if (open || (data->line[i] != '$'
 				|| (data->line[i] == '$'
 					&& is_delim_front(data->line, i + 1))))
 			i++;
 	}
+	if (!count)
+		return (1);
 	// printf("COUNT EXPANSION: %d\n", count);
 	return (count);
 }
