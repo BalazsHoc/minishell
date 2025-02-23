@@ -97,8 +97,6 @@ void	free_struct(t_pipex *data)
 			free_list(data->cur_env);
 		if (data->export)
 			free_list(data->export);
-		if (data->buf_str)
-			free_str(&data->buf_str);
 		if (data->pid)
 		{
 			free(data->pid);

@@ -90,6 +90,8 @@ void	init_data(t_pipex *data, char **env)
 	data->home = NULL;
 	data->main_pid = get_pid(data);
 	init_env(data, env);
+	if (!data->cwd)
+		get_pwd(data);
 	init_export(data);
 }
 
