@@ -46,6 +46,7 @@ int	count_unset_env(t_pipex *data, int index_1, int index_2)
 		{
 			key = key_this(data, data->cur_env[j]);
 			if (ft_strncmp(data->l[index_1]->ops[index_2][i + 1], "_", 2)
+				&& ft_strncmp(data->l[index_1]->ops[index_2][i + 1], "SHLVL", 5)
 				&& !ft_strncmp(data->l[index_1]->ops[index_2][i + 1], key,
 					bigger_one(data->l[index_1]->ops[index_2][i + 1], key)))
 				k++;
@@ -74,6 +75,7 @@ int	count_unset_export(t_pipex *data, int index_1, int index_2)
 		{
 			key = key_this(data, data->export[j]);
 			if (ft_strncmp(data->l[index_1]->ops[index_2][i + 1], "_", 2)
+				&& ft_strncmp(data->l[index_1]->ops[index_2][i + 1], "SHLVL", 5)
 				&& !ft_strncmp(data->l[index_1]->ops[index_2][i + 1], key,
 					bigger_one(data->l[index_1]->ops[index_2][i + 1], key)))
 				k++;

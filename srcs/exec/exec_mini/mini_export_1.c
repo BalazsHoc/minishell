@@ -29,7 +29,7 @@ int	isv(t_pipex *data, int index_1, int index_2, int i)
 	}
 	if (str[j] && j == 0)
 		return (0);
-	return (1);
+	return (j);
 }
 
 void	ex_u_util_2(t_pipex *data, int index_1, int index_2, int i)

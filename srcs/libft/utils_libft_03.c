@@ -76,11 +76,11 @@ size_t	ft_digit_count(long int n)
 	return (digits);
 }
 
-char	*ft_itoa(int n, t_pipex *data)
+char	*ft_itoa(long n, t_pipex *data)
 {
 	char		*result;
 	size_t		digits;
-	long int	num;
+	long long	num;
 
 	num = n;
 	digits = ft_digit_count(num);

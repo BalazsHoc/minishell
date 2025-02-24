@@ -19,11 +19,8 @@ void	make_prompt(t_pipex *data)
 		data->prompt = ft_strjoin(data->cwd, "$ ", data);
 }
 
-void	init_env(t_pipex *data, char **env)
+void	init_env(t_pipex *data, char **env, int i)
 {
-	int	i;
-
-	i = 0;
 	data->cur_env = ft_calloc(sizeof(char *), (count_env(env) + 1), data);
 	i = -1;
 	while (++i < count_env(env))
@@ -31,7 +28,14 @@ void	init_env(t_pipex *data, char **env)
 		if (!ft_strncmp(env[i], "_=", 2))
 			data->cur_env[i] = ft_strdup(data, "_=/usr/bin/env");
 		else if (!ft_strncmp(env[i], "SHLVL=", 6))
-			data->cur_env[i] = ft_strdup(data, "SHLVL=1");
+		{
+			if (env[i] + 6)
+			{
+				data->buf_str = ft_itoa(ft_atoi(env[i] + 6) + 1, data);
+				data->cur_env[i] = ft_strjoin("SHLVL=", data->buf_str, data);
+				free_str(&data->buf_str);
+			}
+		}
 		else
 			data->cur_env[i] = ft_strdup(data, env[i]);
 		if (!ft_strncmp(env[i], "PWD=", 4))
@@ -41,29 +45,35 @@ void	init_env(t_pipex *data, char **env)
 	}
 }
 
-void	init_export(t_pipex *data)
+void	init_export(t_pipex *d, int i, int count, char *buf)
 {
-	int	i;
-	int	count;
-
-	i = -1;
-	count = 0;
-	while (data->cur_env[++i])
+	while (d->cur_env[++i])
 	{
-		if (ft_strncmp(data->cur_env[i], "_=", 2))
+		if (ft_strncmp(d->cur_env[i], "_=", 2))
 			count++;
 	}
-	data->export = ft_calloc(sizeof(char *), (count + 1), data);
-	data->export[count] = 0;
+	d->export = ft_calloc(sizeof(char *), (count + 1), d);
+	d->export[count] = 0;
 	i = -1;
 	count = 0;
-	while (data->cur_env[++i])
+	while (d->cur_env[++i])
 	{
-		if (!ft_strncmp(data->cur_env[i], "SHLVL=", 6))
-			data->export[count++] = ft_strdup(data, "SHLVL=2");
-		else if (ft_strncmp(data->cur_env[i], "_=", 2))
-			data->export[count++]
-				= malloc_cpy_export(data, data->cur_env[i], 0, -1);
+		if (!ft_strncmp(d->cur_env[i], "SHLVL=", 6))
+		{
+			if (d->cur_env[i] + 6)
+			{
+				d->buf_str = ft_itoa(ft_atoi(d->cur_env[i] + 6) + 1, d);
+				buf = ft_strjoin("SHLVL=\"", d->buf_str, d);
+				d->export[count++] = ft_strjoin(buf, "\"", d);
+				free_str(&buf);
+				free_str(&d->buf_str);
+			}
+			else
+				d->export[count++] = ft_strdup(d, "SHLVL=2");
+		}
+		else if (ft_strncmp(d->cur_env[i], "_=", 2))
+			d->export[count++]
+				= malloc_cpy_export(d, d->cur_env[i], 0, -1);
 	}
 }
 
@@ -89,10 +99,10 @@ void	init_data(t_pipex *data, char **env)
 	data->count_elem = 0;
 	data->home = NULL;
 	data->main_pid = get_pid(data);
-	init_env(data, env);
+	init_env(data, env, 0);
 	if (!data->cwd)
 		get_pwd(data);
-	init_export(data);
+	init_export(data, -1, 0, NULL);
 }
 
 int	main(int argc, char **argv, char **env)

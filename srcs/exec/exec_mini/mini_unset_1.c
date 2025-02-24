@@ -15,6 +15,7 @@
 int	unset_env_utils_1(char *str, char *key)
 {
 	if (ft_strncmp(str, "_", 2)
+		&& ft_strncmp(str, "SHLVL", 5)
 		&& !ft_strncmp(str, key,
 			bigger_one(str, key)))
 		return (1);
@@ -52,7 +53,7 @@ void	unset_env(t_pipex *data, int index_1, int index_2, int i)
 
 int	unset_export_utils_1(char *str, char *key)
 {
-	if (ft_strncmp(str, "_", 2)
+	if (ft_strncmp(str, "_", 2) && ft_strncmp(str, "SHLVL", 5)
 		&& !ft_strncmp(str,
 			key, bigger_one(str, key)))
 		return (1);
