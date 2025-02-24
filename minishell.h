@@ -184,7 +184,7 @@ void		ft_strncpy_4(char **buf, char *elem, int size);
 
 //	init_cmnds_utils_1.c
 
-int			if_1(t_pipex *data, int *j);
+int			if_1(t_pipex *data, int i_1, int *j);
 int			if_2(t_pipex *data, int j);
 int			if_3(t_pipex *data, int j, int i_1, int i);
 int			if_4(t_pipex *data, int j);

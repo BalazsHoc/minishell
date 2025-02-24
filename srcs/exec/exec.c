@@ -93,7 +93,7 @@ void	handle_parent_child(t_pipex *d, int i_1, int i_2)
 	else if (d->l[i_1]->fd_ou[i_2] == -2 && d->l[i_1]->buf_pipes[i_2][1] != -1)
 		d->fd_out = dup2(d->l[i_1]->buf_pipes[i_2][1], STDOUT_FILENO);
 	if (d->fd_out == -1 || d->fd_in == -1)
-		return (perror("error dup2"), er_c(d));
+		return (perror("error dup2"), cl_chi_pipes(d, i_1, i_2), er_c(d));
 	cl_chi_pipes(d, i_1, i_2);
 	return (parent_child(d, i_1, i_2), close_pipe(d, &d->fd_out),
 		close_children_pipe(d, &d->fd_in), er_c(d));

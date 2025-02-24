@@ -35,8 +35,8 @@ int	check_home(t_pipex *data, int *i, int i_1, int i_2)
 		}
 		else
 			data->l[i_1]->cmnds[i_2][++data->i_2] = ft_strdup(data, buf);
+		*i = *i + 1;
 		free_str(&buf);
-		(*i)++;
 	}
 	return (1);
 }

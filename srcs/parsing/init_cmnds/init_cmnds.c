@@ -88,7 +88,7 @@ void	fill_cmnds(t_pipex *d, int i_1, int i, int j)
 	d->k = -i;
 	d->open = 0;
 	d->i_2 = -1;
-	while (if_1(d, &j) && j < d->l[i_1]->limit)
+	while (if_1(d, i_1, &j) && j < d->l[i_1]->limit)
 	{
 		if (d->k < 0)
 			handle_open(d, j, &d->open);
