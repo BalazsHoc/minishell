@@ -47,29 +47,19 @@ void	init_env(t_pipex *data, char **env, int i)
 
 void	init_export(t_pipex *d, int i, int count, char *buf)
 {
-	while (d->cur_env[++i])
-	{
-		if (ft_strncmp(d->cur_env[i], "_=", 2))
-			count++;
-	}
-	d->export = ft_calloc(sizeof(char *), (count + 1), d);
-	d->export[count] = 0;
-	i = -1;
+	while (d->cur_env[i])
+		i++;
+	d->export = ft_calloc(sizeof(char *), (i - 1 + 1), d);
 	count = 0;
 	while (d->cur_env[++i])
 	{
 		if (!ft_strncmp(d->cur_env[i], "SHLVL=", 6))
 		{
-			if (d->cur_env[i] + 6)
-			{
-				d->buf_str = ft_itoa(ft_atoi(d->cur_env[i] + 6) + 1, d);
-				buf = ft_strjoin("SHLVL=\"", d->buf_str, d);
-				d->export[count++] = ft_strjoin(buf, "\"", d);
-				free_str(&buf);
-				free_str(&d->buf_str);
-			}
-			else
-				d->export[count++] = ft_strdup(d, "SHLVL=2");
+			d->buf_str = ft_itoa(ft_atoi(d->cur_env[i] + 6) + 1, d);
+			buf = ft_strjoin("SHLVL=\"", d->buf_str, d);
+			d->export[count++] = ft_strjoin(buf, "\"", d);
+			free_str(&buf);
+			free_str(&d->buf_str);
 		}
 		else if (ft_strncmp(d->cur_env[i], "_=", 2))
 			d->export[count++]
@@ -102,7 +92,7 @@ void	init_data(t_pipex *data, char **env)
 	init_env(data, env, 0);
 	if (!data->cwd)
 		get_pwd(data);
-	init_export(data, -1, 0, NULL);
+	init_export(data, 0, 0, NULL);
 }
 
 int	main(int argc, char **argv, char **env)
