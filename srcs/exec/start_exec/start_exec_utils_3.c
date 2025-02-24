@@ -15,6 +15,7 @@
 int	exec_cmnds_util_1(t_pipex *data, int index, int i)
 {
 	if (ft_strncmp(data->l[index]->paths[i], "pathnfound", 11)
+		&& !data->l[index]->exit_codes[i]
 		&& is_valid_in(data, index, i) >= 0 && data->fd_out >= 0
 		&& data->l[index]->ops[i][0][0]
 				&& data->l[index]->pipes[i][1] != -1

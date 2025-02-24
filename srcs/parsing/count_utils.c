@@ -34,8 +34,7 @@ int	if_count_elem_1(t_pipex *data, int j)
 						&& !data->open)
 					|| (!data->open && is_real_pipe(data->line, j - 1)
 						&& !is_space(data->line[j])))))
-		&& ((d_in(data, j, data->open) >= 0
-				&& count_ex(data, j, data->open, 0))
+		&& ((d_in(data, j, data->open) >= 0)
 			|| d_in(data, j, data->open) == -1))
 		return (1);
 	return (0);

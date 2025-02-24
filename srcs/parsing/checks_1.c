@@ -48,8 +48,7 @@ int	check_reds(t_pipex *d, int i_1, int i, int syn_c)
 		{
 			if (is_red_basic(d, i_1, i, d->buf_int) && d->l[
 					i_1]->red_cmnd[i][d->buf_int] == 2)
-				return (write(2, "bash: ambigiuous redirect\n", 27),
-					d->last_exit_status = 1, s(d, i_1, i, d->buf_int));
+				continue ;
 			else if (is_red(d, i_1, i, d->buf_int) && !d->l[
 					i_1]->cmnds[i][d->buf_int + 1] && !d->l[
 							i_1]->red_cmnd[i][d->buf_int])

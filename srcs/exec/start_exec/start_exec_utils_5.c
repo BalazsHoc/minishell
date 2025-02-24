@@ -71,6 +71,8 @@ int	open_out_util_1(t_pipex *data, int index_1, int index_2)
 
 void	open_out_util_2(t_pipex *data, int index_1, int index_2, int i)
 {
+	if (data->l[index_1]->exit_codes[index_2])
+		return ;
 	write(2, "bash: ", 7);
 	write(2, data->l[index_1]->cmnds[index_2][i + 1],
 		ft_strlen(data->l[index_1]->cmnds[index_2][i + 1]));

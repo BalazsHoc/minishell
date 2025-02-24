@@ -89,6 +89,7 @@ void	init_rest(t_pipex *data, int i)
 	init_paths(data, i, -1);
 	init_paths_3(data, i, -1, -1);
 	init_paths_2(data, i);
+	check_ambigious(data, i);
 	check_folder(data, i, -1, -1);
 	start_exec(data, i, -1, 0);
 }

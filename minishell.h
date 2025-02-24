@@ -306,6 +306,10 @@ int			re_calc_limit(t_pipex *data, int limit);
 int			elem_spaces(t_pipex *data, int i);
 int			syn_red_check_ini(t_pipex *d, int i, int syn_check, int red_check);
 
+//	parsing_utils_6.c
+
+void		check_ambigious(t_pipex *d, int i_1);
+
 //	parsing.c
 
 void		parsing(t_pipex *data, int i);
