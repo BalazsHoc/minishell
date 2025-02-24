@@ -301,6 +301,7 @@ int			set_err_old(t_pipex *data);
 
 //	parsing_utils_5.c
 
+int			c_3(t_pipex *data, int i_1, int i);
 int			re_calc_limit(t_pipex *data, int limit);
 int			elem_spaces(t_pipex *data, int i);
 int			syn_red_check_ini(t_pipex *d, int i, int syn_check, int red_check);

@@ -12,6 +12,30 @@
 
 #include "../../minishell.h"
 
+int	c_3(t_pipex *data, int i_1, int i)
+{
+	int	count;
+	int	check;
+	int	j;
+
+	count = 0;
+	check = 0;
+	j = -1;
+	while (data->line[data->l[i_1]->pos[i][data->buf_int] + ++j])
+	{
+		if (!is_space(data->line[data->l[i_1]->pos[i][data->buf_int] + j]))
+			check++;
+		while (check && data->line[
+				data->l[i_1]->pos[i][data->buf_int] + j + count]
+			&& is_space(data->line[
+					data->l[i_1]->pos[i][data->buf_int] + j + count]))
+			count++;
+		if (count)
+			return (count + 2);
+	}
+	return (2);
+}
+
 int	syn_red_check_ini(t_pipex *d, int i, int syn_check, int red_check)
 {
 	int	check;
