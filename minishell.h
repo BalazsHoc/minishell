@@ -237,7 +237,7 @@ void		init_red_cmnds(t_pipex *data, int index_1);
 
 //	init_ops.c
 
-void		fill_ops(t_pipex *data, int index_1, int index_2);
+void		fill_ops(t_pipex *data, int index_1, int index_2, int i);
 
 int			count_env(char **env);
 int			count_reds(t_pipex *data, int index_1, int index_2);
@@ -363,11 +363,15 @@ void		exit_cmnd(t_pipex *data, int index_1, int index_2);
 
 //	mini_exit_2.c
 
-void		mini_exit_close_childs(t_pipex *d, int i_1, int i_2);
+void		mini_exit_close_childs(t_pipex *d, int i_1, int i_2, int err_num);
 
 int			is_overflow(t_pipex *data, int index_1, int index_2);
 int			is_overflow_continue(char *str, int sign);
 int			only_dec(char *str);
+
+//	mini_exit_2.c
+
+int			quotes_after(t_pipex *d, int i_1, int i_2);
 
 //	mini_export_1.c
 

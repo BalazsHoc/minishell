@@ -12,12 +12,12 @@
 
 #include "../../../minishell.h"
 
-void	mini_exit_close_childs(t_pipex *d, int i_1, int i_2)
+void	mini_exit_close_childs(t_pipex *d, int i_1, int i_2, int err_num)
 {
+	d->l[i_1]->exit_codes[i_2] = err_num;
 	close_children_pipe(d, &d->fd_in);
 	close_pipe(d, &d->fd_out);
 	cl_chi_pipes(d, i_1, i_2);
-	er_c(d);
 }
 
 int	only_dec(char *str)

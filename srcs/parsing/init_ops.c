@@ -57,36 +57,37 @@ int	count_ops(t_pipex *data, int index_1, int index_2)
 	count = 0;
 	while (data->l[index_1]->cmnds[index_2][i])
 	{
-		count++;
+		if (*data->l[index_1]->cmnds[index_2][i])
+			count++;
 		i++;
 	}
 	count = count - (count_reds(data, index_1, index_2) * 2);
 	return (count);
 }
 
-void	fill_ops(t_pipex *data, int index_1, int index_2)
+void	fill_ops(t_pipex *d, int i_1, int i_2, int i)
 {
-	int	i;
 	int	j;
 
-	i = -1;
 	j = -1;
-	while (data->l[index_1]->cmnds[index_2][++i]
-		&& j < count_ops(data, index_1, index_2))
+	while (d->l[i_1]->cmnds[i_2][++i]
+		&& j < count_ops(d, i_1, i_2))
 	{
-		while (data->l[index_1]->cmnds[index_2][i]
-			&& is_red(data, index_1, index_2, i))
+		while (d->l[i_1]->cmnds[i_2][i]
+			&& is_red(d, i_1, i_2, i))
 		{
 			i += 2;
-			if (!data->l[index_1]->cmnds[index_2][i])
+			if (!d->l[i_1]->cmnds[i_2][i])
 				break ;
 		}
-		if (data->l[index_1]->cmnds[index_2][i])
+		if (d->l[i_1]->cmnds[i_2][i])
 		{
-			data->l[index_1]->ops[index_2][++j] = ft_calloc(sizeof(char *),
-					(ft_strlen(data->l[index_1]->cmnds[index_2][i]) + 1), data);
-			ft_strcpy(data->l[index_1]->cmnds[index_2][i], data->l[
-				index_1]->ops[index_2][j]);
+			if (*d->l[i_1]->cmnds[i_2][i])
+			{
+				d->l[i_1]->ops[i_2][++j] = ft_calloc(sizeof(char *),
+						(ft_strlen(d->l[i_1]->cmnds[i_2][i]) + 1), d);
+				ft_strcpy(d->l[i_1]->cmnds[i_2][i], d->l[i_1]->ops[i_2][j]);
+			}
 		}
 		else
 			break ;

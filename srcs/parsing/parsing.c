@@ -65,7 +65,7 @@ void	init_ops(t_pipex *data, int index_1)
 			data->l[index_1]->ops[i] = ft_calloc(sizeof(char *), (j + 1), data);
 			data->l[index_1]->ops[i][j] = 0;
 			if (j > 0)
-				fill_ops(data, index_1, i);
+				fill_ops(data, index_1, i, -1);
 		}
 	}
 }
@@ -162,8 +162,7 @@ void	parsing(t_pipex *data, int i)
 			break ;
 		}
 		if (syn_red_check_ini(data, i, -1, -1) != -1
-			|| !data->l[i]->cmnds[0][0]
-			|| !data->l[i]->cmnds[0][0][0])
+			|| !data->l[i]->cmnds[0][0])
 			continue ;
 		init_rest(data, i);
 	}

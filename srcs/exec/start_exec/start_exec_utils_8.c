@@ -80,8 +80,8 @@ int	if_exec_cmnds_utils_4(t_pipex *data, int index, int i, int check)
 {
 	write(2, "bash: ", 6);
 	write(2, data->l[index]->cmnds[i][
-			first_invalid_in(data, index, i)],
-			ft_strlen(data->l[index]->cmnds[i][
+		first_invalid_in(data, index, i)],
+		ft_strlen(data->l[index]->cmnds[i][
 			first_invalid_in(data, index, i)]));
 	write(2, ": No such file or directory\n", 29);
 	if (i > 0 && !ft_strncmp(data->l[index]->paths[i], "pathnfound", 11))

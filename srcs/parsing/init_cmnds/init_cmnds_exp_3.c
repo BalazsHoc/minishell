@@ -14,7 +14,9 @@
 
 int	expand_2_util_1(t_pipex *d, int index_1, int index_2, int index_3)
 {
-	if (!d->l[index_1]->cmnds[index_2][index_3] && index_3 > 0 && ft_strncmp(
+	if (!d->l[index_1]->cmnds[index_2][index_3])
+		d->l[index_1]->cmnds[index_2][index_3] = ft_calloc(sizeof(char), 1, d);
+	if (!*d->l[index_1]->cmnds[index_2][index_3] && index_3 > 0 && ft_strncmp(
 			d->l[index_1]->cmnds[index_2][index_3 - 1], "<<", 3)
 				&& is_red(d, index_1, index_2, index_3 - 1))
 		return (d->l[index_1]->red_cmnd[index_2][index_3 - 1] = 2, -1);
