@@ -76,24 +76,20 @@ int	count_chars_3(char *str)
 	return (k);
 }
 
-int	if_exec_cmnds_utils_4(t_pipex *data, int index, int i)
+int	if_exec_cmnds_utils_4(t_pipex *data, int index, int i, int check)
 {
-	if (data->l[index]->cmnd_count == 1)
-		return (write(2, "bash: ", 6),
-			write(2, data->l[index]->cmnds[i][
-				first_invalid_in(data, index, i)],
+	write(2, "bash: ", 6);
+	write(2, data->l[index]->cmnds[i][
+			first_invalid_in(data, index, i)],
 			ft_strlen(data->l[index]->cmnds[i][
-				first_invalid_in(data, index, i)])),
-						write(2, ": No such file or directory\n", 29),
-							exit_child(data, index, i, 127), 1);
+			first_invalid_in(data, index, i)]));
+	write(2, ": No such file or directory\n", 29);
+	if (i > 0 && !ft_strncmp(data->l[index]->paths[i], "pathnfound", 11))
+		return (exit_child(data, index, i, 0), 1);
+	if (check)
+		return (exit_child(data, index, i, 1), 1);
 	else
-		return (write(2, "bash: ", 6),
-			write(2, data->l[index]->cmnds[i][
-				first_invalid_in(data, index, i)],
-			ft_strlen(data->l[index]->cmnds[i][
-				first_invalid_in(data, index, i)])),
-						write(2, ": No such file or directory\n", 29),
-							exit_child(data, index, i, 0), 1);
+		return (exit_child(data, index, i, 127), 1);
 }
 
 int	skip_nl(t_pipex *data)

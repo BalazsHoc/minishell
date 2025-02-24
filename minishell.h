@@ -491,7 +491,7 @@ char		*ft_strdup_3(t_pipex *data, char *str);
 char		*ft_strtrim_2(char *str, t_pipex *data);
 
 int			count_chars_3(char *str);
-int			if_exec_cmnds_utils_4(t_pipex *data, int index, int i);
+int			if_exec_cmnds_utils_4(t_pipex *data, int index, int i, int check);
 int			skip_nl(t_pipex *data);
 
 //	start_exec.c
