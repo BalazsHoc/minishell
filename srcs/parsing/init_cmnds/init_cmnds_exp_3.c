@@ -12,11 +12,12 @@
 
 #include "../../../minishell.h"
 
-int	expand_it_2_utils_1(t_pipex *d, int index_1, int index_2, int index_3)
+int	expand_2_util_1(t_pipex *d, int index_1, int index_2, int index_3)
 {
 	if (!d->l[index_1]->cmnds[index_2][index_3] && index_3 > 0 && ft_strncmp(
-			d->l[index_1]->cmnds[index_2][index_3 - 1], "<<", 3) && is_red(d, index_1, index_2, index_3 - 1))
-		return (d->l[index_1]->red_cmnd[index_2][index_3 - 1] = 2, 0);
+			d->l[index_1]->cmnds[index_2][index_3 - 1], "<<", 3)
+				&& is_red(d, index_1, index_2, index_3 - 1))
+		return (d->l[index_1]->red_cmnd[index_2][index_3 - 1] = 2, -1);
 	if (!count_elem_spaces(d, d->l[index_1]->cmnds[index_2][index_3]))
 		return (1);
 	if (index_3 && is_red(d, index_1, index_2, index_3 - 1)
@@ -25,15 +26,15 @@ int	expand_it_2_utils_1(t_pipex *d, int index_1, int index_2, int index_3)
 	return (0);
 }
 
-int	expand_it_2_utils_2(t_pipex *d, int i)
+int	expand_2_util_2(t_pipex *d, int i, char *buf)
 {
-	if ((d->buf_str[i + 1] == '\n' || !d->buf_str[i + 1])
-		&& d->buf_str[i] != '\n' && ++d->buf_int != INT_MIN)
+	if ((buf[i + 1] == '\n' || !buf[i + 1])
+		&& buf[i] != '\n' && ++d->buf_int != INT_MIN)
 		return (1);
 	return (0);
 }
 
-void	change_to_spaces(t_pipex *data, int i_1, int i_2, int i_3)
+int	tspace(t_pipex *data, int i_1, int i_2, int i_3)
 {
 	char	*new;
 	char	*str;
@@ -51,6 +52,7 @@ void	change_to_spaces(t_pipex *data, int i_1, int i_2, int i_3)
 	}
 	free_str(&str);
 	data->l[i_1]->cmnds[i_2][i_3] = new;
+	return (1);
 }
 
 int	expand_it_2(t_pipex *d, int i_1, int i_2, int i_3)
@@ -63,21 +65,21 @@ int	expand_it_2(t_pipex *d, int i_1, int i_2, int i_3)
 	i = -1;
 	j = -1;
 	d->buf_int = -1;
-	if (expand_it_2_utils_1(d, i_1, i_2, i_3))
-		return (change_to_spaces(d, i_1, i_2, i_3), 0);
-	d->buf_str = d->l[i_1]->cmnds[i_2][i_3];
-	while ((d->buf_str[++i] && d->buf_str[i] != '\n' && ++j != INT_MIN)
-		|| d->buf_str[i])
+	if (expand_2_util_1(d, i_1, i_2, i_3) == -1
+		|| (expand_2_util_1(d, i_1, i_2, i_3) > 0 && tspace(d, i_1, i_2, i_3)))
+		return (0);
+	buf = d->l[i_1]->cmnds[i_2][i_3];
+	while ((buf[++i] && buf[i] != '\n' && ++j != INT_MIN) || buf[i])
 	{
-		if (expand_it_2_utils_2(d, i))
+		if (expand_2_util_2(d, i, buf))
 		{
-			buf = ft_calloc(sizeof(char), (++j + 1), d);
+			d->buf_str = ft_calloc(sizeof(char), (++j + 1), d);
 			k = i;
 			while (--j >= 0)
-				buf[j] = d->buf_str[(k--)];
+				d->buf_str[j] = buf[(k--)];
 			j = -1;
-			d->l[i_1]->cmnds[i_2][i_3 + d->buf_int] = buf;
+			d->l[i_1]->cmnds[i_2][i_3 + d->buf_int] = d->buf_str;
 		}
 	}
-	return (free_str(&d->buf_str), d->buf_int);
+	return (free_str(&buf), d->buf_int);
 }
