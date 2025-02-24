@@ -37,8 +37,8 @@ int	export_env_util_1(t_pipex *data, int index_1, int index_2, int i)
 
 void	export_env_util_2(t_pipex *data, char *str)
 {
-	int i;
-	
+	int	i;
+
 	if (!ft_strncmp(str, "SHLVL", 5))
 	{
 		i = -1;
@@ -58,12 +58,12 @@ void	export_env_util_2(t_pipex *data, char *str)
 	free_str(&data->buf_str);
 }
 
-void	export_env(t_pipex *d, int i_1, int i_2, int count)
+void	export_env(t_pipex *d, int i_1, int i_2, int c)
 {
 	int		i;
 	int		rand;
 
-	d->buf_array = ft_calloc(sizeof(char *), count + count_env(d->cur_env) + 1, d);
+	d->buf_array = ft_calloc(sizeof(char *), c + count_env(d->cur_env) + 1, d);
 	rand = 0;
 	i = -1;
 	while (d->l[i_1]->ops[i_2][++i + 1])
@@ -79,7 +79,7 @@ void	export_env(t_pipex *d, int i_1, int i_2, int count)
 			|| !ft_strncmp(d->l[i_1]->ops[i_2][i + 1], "SHLVL", 5))
 			export_env_util_2(d, d->l[i_1]->ops[i_2][i + 1]);
 		else if (ft_strncmp(d->l[i_1]->ops[i_2][1 + i], "_=", 2)
-			&& is_it_last(d, i_1, i_2, i + 1) && count--)
+			&& is_it_last(d, i_1, i_2, i + 1) && c--)
 			d->buf_array[rand] = ft_strdup(d, d->l[i_1]->ops[i_2][i + 1]);
 	}
 	set_rest(d, d->buf_array);
