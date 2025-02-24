@@ -133,6 +133,8 @@ int	init_line(t_pipex *data, int i, int limit)
 		= count_cmnds(data->line + data->here_2, data->l[i]->limit);
 	data->l[i]->exit_codes = ft_calloc(sizeof(int),
 			(data->l[i]->cmnd_count), data);
+	data->l[i]->elem_count = ft_calloc(sizeof(int),
+			(data->l[i]->cmnd_count), data);
 	data->l[i]->ex = INT_MAX;
 	init_red_cmnds(data, i);
 	data->l[i]->input = ft_calloc(sizeof(char *),

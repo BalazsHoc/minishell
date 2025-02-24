@@ -27,6 +27,7 @@ void	free_line_continue(t_pipex *data, int index)
 	free_void(data->l[index]->pipes);
 	free_void(data->l[index]->buf_pipes);
 	free_void(data->l[index]->exit_codes);
+	free_void(data->l[index]->elem_count);
 	free(data->l[index]);
 	data->l[index] = NULL;
 }

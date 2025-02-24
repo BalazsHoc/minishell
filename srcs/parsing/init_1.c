@@ -14,19 +14,23 @@
 
 void	init_cmnds(t_pipex *d, int index_1, int i)
 {
+	int	elem_count;
+
 	d->l[index_1]->cmnds = ft_calloc(sizeof(char **),
 			(d->l[index_1]->cmnd_count + 1), d);
 	d->l[index_1]->cmnds[d->l[index_1]->cmnd_count] = NULL;
 	while (++i < d->l[index_1]->cmnd_count)
 	{
-		if (!count_elem(d, index_1, i, d->here_2 - 1)
-			&& d_in(d, 0, 0) != -1)
+		elem_count = count_elem(d, index_1, i, d->here_2 - 1);
+		if (!elem_count && d_in(d, 0, 0) != -1)
 		{
+			d->l[index_1]->elem_count[i] = 1;
 			d->l[index_1]->cmnds[i] = ft_calloc(sizeof(char *), (1 + 1), d);
 			d->l[index_1]->cmnds[i][0] = ft_calloc(sizeof(char), (1 + 1), d);
 		}
 		else
 		{
+			d->l[index_1]->elem_count[i] = elem_count;
 			d->l[index_1]->cmnds[i] = ft_calloc(sizeof(char *),
 					(count_elem(d, index_1, i, d->here_2 - 1) + 1), d);
 			fill_cmnds(d, index_1, i, d->here_2 - 1);

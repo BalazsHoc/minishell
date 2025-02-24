@@ -44,6 +44,7 @@ typedef struct lines_s
 	int		*binary;
 	int		*fd_infiles;
 	int		*fd_ou;
+	int		*elem_count;
 
 	int		cmnd_count;
 	int		ex;
