@@ -73,7 +73,7 @@ void	u_ex_util_2(t_pipex *data, char *str)
 	data->buf_str = data->buf_array[is_there_2(data, str)];
 	while (str[i] && str[i] != '=')
 		i++;
-	if (!ft_strncmp(str, "SHLVL", 5))
+	if (is_shlvl(str))
 		new = ft_strdup(data, "SHLVL=\"1\"");
 	else if (!str[i])
 		new = ft_strdup(data, str);
@@ -100,7 +100,7 @@ void	update_export(t_pipex *d, int i_1, int i_2, int count)
 		if (!isv(d, i_1, i_2, 1 + j))
 			continue ;
 		if (u_ex_util_1(d, i_1, i_2, j)
-			|| !ft_strncmp(d->l[i_1]->ops[i_2][1 + j], "SHLVL", 5))
+			|| is_shlvl(d->l[i_1]->ops[i_2][1 + j]))
 			u_ex_util_2(d, d->l[i_1]->ops[i_2][1 + j]);
 		else if ((ft_strlen(d->l[i_1]->ops[i_2][1 + j])
 			|| ft_strncmp(d->l[i_1]->ops[i_2][1 + j], "_=", 2))

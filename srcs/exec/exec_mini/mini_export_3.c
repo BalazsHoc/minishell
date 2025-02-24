@@ -39,7 +39,7 @@ void	export_env_util_2(t_pipex *data, char *str)
 {
 	int	i;
 
-	if (!ft_strncmp(str, "SHLVL", 5))
+	if (is_shlvl(str))
 	{
 		i = -1;
 		while (data->cur_env[++i])
@@ -68,7 +68,7 @@ void	export_env(t_pipex *d, int i_1, int i_2, int c)
 	i = -1;
 	while (d->l[i_1]->ops[i_2][++i + 1])
 	{
-		if (ft_strncmp(d->l[i_1]->ops[i_2][i + 1], "SHLVL", 5) && (!has_equal(
+		if (!is_shlvl(d->l[i_1]->ops[i_2][i + 1]) && (!has_equal(
 				d->l[i_1]->ops[i_2][i + 1]) || !isv(d, i_1, i_2, i + 1)))
 			continue ;
 		if (rand != rand_it(d, i_1, i_2, i))
@@ -76,7 +76,7 @@ void	export_env(t_pipex *d, int i_1, int i_2, int c)
 		else
 			rand = rand_it_2(d, i_1, i_2, i);
 		if (export_env_util_1(d, i_1, i_2, i)
-			|| !ft_strncmp(d->l[i_1]->ops[i_2][i + 1], "SHLVL", 5))
+			|| is_shlvl(d->l[i_1]->ops[i_2][i + 1]))
 			export_env_util_2(d, d->l[i_1]->ops[i_2][i + 1]);
 		else if (ft_strncmp(d->l[i_1]->ops[i_2][1 + i], "_=", 2)
 			&& is_it_last(d, i_1, i_2, i + 1) && c--)

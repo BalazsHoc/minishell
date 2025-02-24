@@ -12,6 +12,14 @@
 
 #include "../../../minishell.h"
 
+int	is_shlvl(char *str)
+{
+	if (!ft_strncmp(str, "SHLVL", 5)
+		&& (ft_strlen(str) == 5 || !ft_strncmp(str, "SHLVL=", 6)))
+		return (1);
+	return (0);
+}
+
 char	*get_old(t_pipex *data, int index_1, int index_2)
 {
 	int	i;
