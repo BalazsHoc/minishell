@@ -51,6 +51,7 @@ void	init_export(t_pipex *d, int i, int count, char *buf)
 		i++;
 	d->export = ft_calloc(sizeof(char *), (i - 1 + 1), d);
 	count = 0;
+	i = -1;
 	while (d->cur_env[++i])
 	{
 		if (!ft_strncmp(d->cur_env[i], "SHLVL=", 6))
