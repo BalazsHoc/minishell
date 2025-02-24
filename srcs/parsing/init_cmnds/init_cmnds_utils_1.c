@@ -16,7 +16,7 @@ int	if_1(t_pipex *data, int i_1, int *j)
 {
 	if (*j > 0 && !data->line[*j])
 		return (0);
-	if (data->i_2 >= data->l[i_1]->cmnd_count)
+	if (data->i_2 > data->l[i_1]->cmnd_count)
 		return (0);
 	if (data->line[++*j] && ((*j > 0 && !data->open
 				&& is_real_pipe(data->line, *j)
