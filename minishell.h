@@ -366,7 +366,7 @@ void		exit_cmnd(t_pipex *data, int index_1, int index_2);
 
 void		mini_exit_close_childs(t_pipex *d, int i_1, int i_2, int err_num);
 
-int			is_overflow(t_pipex *data, int index_1, int index_2);
+int			is_overflow(t_pipex *data, int index_1, int index_2, int i);
 int			is_overflow_continue(char *str, int sign);
 int			only_dec(char *str);
 

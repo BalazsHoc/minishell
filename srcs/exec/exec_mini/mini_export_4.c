@@ -63,29 +63,29 @@ int	is_there_2(t_pipex *data, char *str)
 
 int	is_it_last(t_pipex *d, int i_1, int i_2, int i)
 {
-	int	j;
-	int k;
-
-	k = count_till_equal(d, i_1, i_2, i);
-	j = -1;
-	while (d->l[i_1]->ops[i_2][++j])
+	d->k = count_till_equal(d, i_1, i_2, i);
+	d->i_2 = -1;
+	while (d->l[i_1]->ops[i_2][++d->i_2])
 	{
-		if (isv(d, i_1, i_2, j) && ((j > i
-			&& has_equal(d->l[i_1]->ops[i_2][i])
-			&& !ft_strncmp(d->l[i_1]->ops[i_2][j],
-			d->l[i_1]->ops[i_2][i], k + 1))
+		if (isv(d, i_1, i_2, d->i_2) && ((d->i_2 > i
+					&& has_equal(d->l[i_1]->ops[i_2][i])
+				&& !ft_strncmp(d->l[i_1]->ops[i_2][d->i_2],
+				d->l[i_1]->ops[i_2][i], d->k + 1))
 		|| (!has_equal(d->l[i_1]->ops[i_2][i]) &&
-			(
-				(has_equal(d->l[i_1]->ops[i_2][j]) && j != i && !ft_strncmp(d->l[i_1]->ops[i_2][j], d->l[i_1]->ops[i_2][i], k) && d->l[i_1]->ops[i_2][j][k] == '=')
-				|| (!has_equal(d->l[i_1]->ops[i_2][j]) && j > i && !ft_strncmp(d->l[i_1]->ops[i_2][j], d->l[i_1]->ops[i_2][i], bigger_one_2(k, ft_strlen(d->l[i_1]->ops[i_2][j]))))
-			))
-		|| ((!ft_strncmp(d->l[i_1]->ops[i_2][j],
-			d->l[i_1]->ops[i_2][i], k + 1) 
-			&& !has_equal(d->l[i_1]->ops[i_2][j])
-			&& !has_equal(d->l[i_1]->ops[i_2][i]) && j > i))))
+			((has_equal(d->l[i_1]->ops[i_2][d->i_2]) && d->i_2 != i
+				&& !ft_strncmp(d->l[i_1]->ops[i_2][d->i_2], d->l[i_1]->ops[
+						i_2][i], d->k) && d->l[i_1]->ops[i_2][d->i_2][
+								d->k] == '=')
+				|| (!has_equal(d->l[i_1]->ops[i_2][d->i_2]) && d->i_2 > i
+					&& !ft_strncmp(d->l[i_1]->ops[i_2][d->i_2], d->l[
+							i_1]->ops[i_2][i], bigger_one_2(d->k,
+								ft_strlen(d->l[i_1]->ops[i_2][d->i_2]))))))
+		|| ((!ft_strncmp(d->l[i_1]->ops[i_2][d->i_2],
+			d->l[i_1]->ops[i_2][i], d->k + 1)
+			&& !has_equal(d->l[i_1]->ops[i_2][d->i_2])
+			&& !has_equal(d->l[i_1]->ops[i_2][i]) && d->i_2 > i))))
 			return (0);
 	}
-	// printf("CORRECT: %s\n", d->l[i_1]->ops[i_2][i]);
 	return (1);
 }
 

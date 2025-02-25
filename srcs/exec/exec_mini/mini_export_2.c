@@ -22,13 +22,12 @@ void	u_ex_util_3(t_pipex *data, char *str)
 		new = ft_strdup(data, "SHLVL=\"1\"");
 	else if (!has_equal(str))
 		return ;
-		// new = ft_strdup(data, str);
 	else
 		new = malloc_cpy_export(data, str, 0, -1);
 	data->buf_array[is_there_2(data, str)] = new;
 	free_str(&data->buf_str);
 }
- 
+
 int	u_ex_util_2(t_pipex *data, int index_1, int index_2, int j)
 {
 	if (ft_strncmp(data->l[index_1]->ops[index_2][j], "_=", 2)
@@ -43,7 +42,7 @@ int	u_ex_util_1(t_pipex *d, int i_1, int i_2, int j)
 	if (*d->l[i_1]->ops[i_2][j] && is_there_2(
 			d, d->l[i_1]->ops[i_2][j]) == -1
 			&& ft_strncmp(d->l[i_1]->ops[i_2][j],
-				 "_=", 2) && !is_shlvl(d->l[i_1]->ops[i_2][j])
+				"_=", 2) && !is_shlvl(d->l[i_1]->ops[i_2][j])
 				&& is_it_last(d, i_1, i_2, j))
 		return (1);
 	return (0);

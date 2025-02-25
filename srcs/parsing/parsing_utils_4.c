@@ -91,7 +91,6 @@ void	init_rest(t_pipex *data, int i)
 	init_paths_2(data, i);
 	check_ambigious(data, i);
 	check_folder(data, i, -1, -1);
-	print_list(data->l[i]->cmnds[0]);
 	start_exec(data, i, -1, 0);
 }
 

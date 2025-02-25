@@ -14,7 +14,7 @@
 
 int	count_till_equal(t_pipex *data, int index_1, int index_2, int i)
 {
-	int count;
+	int	count;
 
 	count = 0;
 	while (data->l[index_1]->cmnds[index_2][i][count]
@@ -22,18 +22,19 @@ int	count_till_equal(t_pipex *data, int index_1, int index_2, int i)
 		count++;
 	return (count);
 }
+
 int	rand_it(t_pipex *data, int index_1, int index_2, int i)
 {
 	if (i < env_count(data) && data->cur_env[i] && data->cur_env[i][index_1])
 		return ((int)(((INT_MAX / (int)(data->cur_env[i][index_1] - '0'))
 				% (env_count(data) + 1)) + (env_count(data) + 1))
 					% (env_count(data) + 1));
-	if ((i - (index_1 + index_2)) < env_count(data) && (i - (index_1 + index_2)) > 0)
+	if ((i - (index_1 + index_2)) < env_count(data)
+		&& (i - (index_1 + index_2)) > 0)
 		return (i - (index_1 + index_2));
 	else
 		return (i % env_count(data));
 }
-
 
 int	export_env_util_1(t_pipex *data, int index_1, int index_2, int i)
 {

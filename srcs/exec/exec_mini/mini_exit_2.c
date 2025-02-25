@@ -88,16 +88,19 @@ char	*ft_strtrim_3(char *s1, char const *set, t_pipex *data)
 	return (ft_substr(s1, i, j + 1, data));
 }
 
-int	is_overflow(t_pipex *data, int index_1, int index_2)
+int	is_overflow(t_pipex *data, int index_1, int index_2, int i)
 {
-	int		i;
 	int		sign;
 	char	*nptr;
 
-	i = 0;
 	sign = 1;
 	if (!*data->l[index_1]->ops[index_2][1])
 		return (0);
+	while (is_space(data->l[index_1]->ops[index_2][1][i]))
+		i++;
+	if (!data->l[index_1]->ops[index_2][1][i])
+		return (0);
+	i = 0;
 	data->l[index_1]->ops[index_2][1]
 		= ft_strtrim_3(data->l[index_1]->ops[index_2][1], " /t/b/v/f/r", data);
 	nptr = data->l[index_1]->ops[index_2][1];
