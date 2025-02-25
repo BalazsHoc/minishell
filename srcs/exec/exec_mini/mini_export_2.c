@@ -57,8 +57,7 @@ int	u_ex_util_1(t_pipex *data, int index_1, int index_2, int j)
 {
 	if (ft_strncmp(data->l[index_1]->ops[index_2][1 + j], "_=", 2)
 		&& is_there_2(data, data->l[index_1]->ops[index_2][1 + j]) != -1
-		&& is_it_last(data, index_1, index_2, 1 + j)
-		&& has_equal(data->l[index_1]->ops[index_2][1 + j]))
+		&& is_it_last(data, index_1, index_2, 1 + j))
 		return (1);
 	return (0);
 }
