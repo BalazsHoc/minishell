@@ -72,12 +72,25 @@ int	is_it_last(t_pipex *data, int index_1, int index_2, int i)
 		&& data->l[index_1]->ops[index_2][i][count] != '=')
 		count++;
 	j = -1;
-	check = 0;
-	while (data->l[index_1]->ops[index_2][++j])
+	check = -1;
+	if (has_equal(data->l[index_1]->ops[index_2][i]))
 	{
-		if (!ft_strncmp(data->l[index_1]->ops[index_2][j],
-			data->l[index_1]->ops[index_2][i], count + 1))
-			check = j;
+		while (data->l[index_1]->ops[index_2][++j])
+		{
+			if (!ft_strncmp(data->l[index_1]->ops[index_2][j],
+				data->l[index_1]->ops[index_2][i], count + 1))
+				check = j;
+		}
+	}
+	else 
+	{
+		while (data->l[index_1]->ops[index_2][++j])
+		{
+			if (i != j && !ft_strncmp(data->l[index_1]->ops[index_2][j],
+				data->l[index_1]->ops[index_2][i], count + 1)
+					&& !has_equal(data->l[index_1]->ops[index_2][j]))
+				check = j;
+		}
 	}
 	if (check == i)
 		return (1);
