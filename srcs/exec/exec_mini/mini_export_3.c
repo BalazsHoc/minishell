@@ -14,20 +14,16 @@
 
 int	rand_it(t_pipex *data, int index_1, int index_2, int i)
 {
-	return ((int)(((INT_MAX / data->l[index_1]->ops[index_2][i + 1][
-			ft_strlen(data->l[index_1]->ops[index_2][i + 1]) - 1])
-			% (env_count(data) + 1)) + (env_count(data) + 1))
-				% (env_count(data) + 1));
+	if (i < env_count(data) && data->cur_env[i] && data->cur_env[i][index_1])
+		return ((int)(((INT_MAX / (int)(data->cur_env[i][index_1] - '0'))
+				% (env_count(data) + 1)) + (env_count(data) + 1))
+					% (env_count(data) + 1));
+	if ((i - (index_1 + index_2)) < env_count(data) && (i - (index_1 + index_2)) > 0)
+		return (i - (index_1 + index_2));
+	else
+		return (i % env_count(data));
 }
 
-int	rand_it_2(t_pipex *data, int index_1, int index_2, int i)
-{
-	return ((((data->l[index_1]->ops[index_2][i + 1][0] / data->l[
-				index_1]->ops[index_2][i + 1][ft_strlen(data->l[
-				index_1]->ops[index_2][i + 1]) - 1]) - 1)
-				% (env_count(data) + 1) + (env_count(data) + 1))
-					% (env_count(data) + 1));
-}
 
 int	export_env_util_1(t_pipex *data, int index_1, int index_2, int i)
 {
@@ -69,15 +65,14 @@ void	export_env(t_pipex *d, int i_1, int i_2, int c)
 	d->buf_array = ft_calloc(sizeof(char *), c + count_env(d->cur_env) + 1, d);
 	rand = 0;
 	i = -1;
+	d->buf_int = 0;
 	while (d->l[i_1]->ops[i_2][++i + 1])
 	{
 		if (!is_shlvl(d->l[i_1]->ops[i_2][i + 1]) && (!has_equal(
 				d->l[i_1]->ops[i_2][i + 1]) || !isv(d, i_1, i_2, i + 1)))
 			continue ;
-		if (rand != rand_it(d, i_1, i_2, i))
-			rand = rand_it(d, i_1, i_2, i);
-		else
-			rand = rand_it_2(d, i_1, i_2, i);
+		while (d->buf_array[rand])
+			rand = rand_it(d, i_1, i_2, ++d->buf_int);
 		if (export_env_util_1(d, i_1, i_2, i)
 			|| is_shlvl(d->l[i_1]->ops[i_2][i + 1]))
 			export_env_util_2(d, d->l[i_1]->ops[i_2][i + 1]);
