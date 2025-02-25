@@ -76,7 +76,7 @@ int	is_it_last(t_pipex *data, int index_1, int index_2, int i)
 	while (data->l[index_1]->ops[index_2][++j])
 	{
 		if (!ft_strncmp(data->l[index_1]->ops[index_2][j],
-			data->l[index_1]->ops[index_2][i], count))
+			data->l[index_1]->ops[index_2][i], count + 1))
 			check = j;
 	}
 	if (check == i)
