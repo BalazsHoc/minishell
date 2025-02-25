@@ -40,8 +40,8 @@ int	u_ex_util_2(t_pipex *data, int index_1, int index_2, int j)
 
 int	u_ex_util_1(t_pipex *d, int i_1, int i_2, int j)
 {
-	if (*d->l[i_1]->ops[i_2][1 + j] && is_there_2(
-			d, d->l[i_1]->ops[i_2][1 + j]) == -1
+	if (*d->l[i_1]->ops[i_2][j] && is_there_2(
+			d, d->l[i_1]->ops[i_2][j]) == -1
 			&& ft_strncmp(d->l[i_1]->ops[i_2][j],
 				 "_=", 2) && !is_shlvl(d->l[i_1]->ops[i_2][j])
 				&& is_it_last(d, i_1, i_2, j))

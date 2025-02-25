@@ -12,7 +12,6 @@
 
 #include "../../../minishell.h"
 
-
 char	*malloc_cpy_export_continue(char *new, char *str, int count)
 {
 	int	i;
