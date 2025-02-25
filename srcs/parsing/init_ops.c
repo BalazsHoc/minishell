@@ -57,7 +57,8 @@ int	count_ops(t_pipex *data, int index_1, int index_2)
 	count = 0;
 	while (data->l[index_1]->cmnds[index_2][i])
 	{
-		if (*data->l[index_1]->cmnds[index_2][i])
+		if (*data->l[index_1]->cmnds[index_2][i] 
+			|| is_empty_quotes(data, index_1, index_2, i))
 			count++;
 		i++;
 	}
@@ -82,7 +83,7 @@ void	fill_ops(t_pipex *d, int i_1, int i_2, int i)
 		}
 		if (d->l[i_1]->cmnds[i_2][i])
 		{
-			if (*d->l[i_1]->cmnds[i_2][i])
+			if (*d->l[i_1]->cmnds[i_2][i] || is_empty_quotes(d, i_1, i_2, i))
 			{
 				d->l[i_1]->ops[i_2][++j] = ft_calloc(sizeof(char *),
 						(ft_strlen(d->l[i_1]->cmnds[i_2][i]) + 1), d);

@@ -46,11 +46,9 @@ void	exit_cmnd(t_pipex *data, int index_1, int index_2)
 
 	i = 0;
 	printf("exit\n");
-	if (data->l[index_1]->ops[index_2][1]
-		|| quotes_after(data, index_1, index_2))
+	if (data->l[index_1]->ops[index_2][1])
 	{
-		if (quotes_after(data, index_1, index_2)
-			|| is_overflow(data, index_1, index_2)
+		if (is_overflow(data, index_1, index_2)
 			|| !only_dec(data->l[index_1]->ops[index_2][1]))
 			return (exit_cmnd_util_1(data, index_1, index_2), er_c(data));
 		i = ft_atoi(data->l[index_1]->ops[index_2][1]);
@@ -75,11 +73,9 @@ void	exit_cmnd_child(t_pipex *d, int i_1, int i_2)
 	i = 0;
 	if (!d->l[i_1]->ops || !d->l[i_1]->ops[i_2])
 		return ;
-	if (d->l[i_1]->ops[i_2][1]
-		|| quotes_after(d, i_1, i_2))
+	if (d->l[i_1]->ops[i_2][1])
 	{
-		if (quotes_after(d, i_1, i_2)
-			|| is_overflow(d, i_1, i_2)
+		if (is_overflow(d, i_1, i_2)
 			|| !only_dec(d->l[i_1]->ops[i_2][1]))
 			return (exit_cmnd_util_1(d, i_1, i_2),
 				mini_exit_close_childs(d, i_1, i_2, 2), errno = 2, er_c(d));

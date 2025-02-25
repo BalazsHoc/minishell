@@ -310,6 +310,8 @@ int			syn_red_check_ini(t_pipex *d, int i, int syn_check, int red_check);
 
 void		check_ambigious(t_pipex *d, int i_1);
 
+int			is_empty_quotes(t_pipex *d, int i_1, int i_2, int i_3);
+
 //	parsing.c
 
 void		parsing(t_pipex *data, int i);
@@ -368,10 +370,6 @@ void		mini_exit_close_childs(t_pipex *d, int i_1, int i_2, int err_num);
 int			is_overflow(t_pipex *data, int index_1, int index_2);
 int			is_overflow_continue(char *str, int sign);
 int			only_dec(char *str);
-
-//	mini_exit_2.c
-
-int			quotes_after(t_pipex *d, int i_1, int i_2);
 
 //	mini_export_1.c
 

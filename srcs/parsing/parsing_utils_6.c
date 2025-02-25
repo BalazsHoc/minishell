@@ -12,6 +12,14 @@
 
 #include "../../minishell.h"
 
+int	is_empty_quotes(t_pipex *d, int i_1, int i_2, int i_3)
+{
+	if (d->line[d->l[i_1]->pos[i_2][i_3]] == 34
+		|| d->line[d->l[i_1]->pos[i_2][i_3]] == 39)
+		return (1);
+	return (0);
+}
+
 void	check_ambigious(t_pipex *d, int i_1)
 {
 	int	i;

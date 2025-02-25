@@ -37,15 +37,15 @@
 // 			else
 // 				printf("\n");
 // 		}
-// 		// j = -1;
-// 		// if (data->l[index_1]->ops && data->l[index_1]->ops[i])
-// 		// {
-// 		// 	while (data->l[index_1]->ops[i][++j])
-// 		// 		printf("OP:   %d:%d | |%s|\n", i,
-// 		// 			j, data->l[index_1]->ops[i][j]);
-// 		// }
-// 		// if (data->l[index_1]->input)
-// 		// printf("PATH: |%s|\n", data->l[index_1]->paths[i]);
+// 		j = -1;
+// 		if (data->l[index_1]->ops && data->l[index_1]->ops[i])
+// 		{
+// 			while (data->l[index_1]->ops[i][++j])
+// 				printf("OP:   %d:%d | |%s|\n", i,
+// 					j, data->l[index_1]->ops[i][j]);
+// 		}
+// 		if (data->l[index_1]->input)
+// 		printf("PATH: |%s|\n", data->l[index_1]->paths[i]);
 // 	}
 // }
 
