@@ -14,16 +14,19 @@
 
 int	rand_it(t_pipex *data, int index_1, int index_2, int i)
 {
-	return ((int)((INT_MAX / data->l[index_1]->ops[index_2][i + 1][
-		ft_strlen(data->l[index_1]->ops[index_2][i + 1]) - 1])
-			% (env_count(data) + 1)));
+	return ((int)(((INT_MAX / data->l[index_1]->ops[index_2][i + 1][
+			ft_strlen(data->l[index_1]->ops[index_2][i + 1]) - 1])
+			% (env_count(data) + 1)) + (env_count(data) + 1))
+				% (env_count(data) + 1));
 }
 
 int	rand_it_2(t_pipex *data, int index_1, int index_2, int i)
 {
-	return (((data->l[index_1]->ops[index_2][i + 1][0] / data->l[
-			index_1]->ops[index_2][i + 1][ft_strlen(data->l[
-			index_1]->ops[index_2][i + 1]) - 1]) - 1) % (env_count(data) + 1));
+	return ((((data->l[index_1]->ops[index_2][i + 1][0] / data->l[
+				index_1]->ops[index_2][i + 1][ft_strlen(data->l[
+				index_1]->ops[index_2][i + 1]) - 1]) - 1)
+				% (env_count(data) + 1) + (env_count(data) + 1))
+					% (env_count(data) + 1));
 }
 
 int	export_env_util_1(t_pipex *data, int index_1, int index_2, int i)
