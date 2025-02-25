@@ -12,6 +12,48 @@
 
 #include "../../../minishell.h"
 
+
+char	*malloc_cpy_export_continue(char *new, char *str, int count)
+{
+	int	i;
+
+	i = -1;
+	while (str[++i] && (i == 0 || (str[i - 1] != '=')))
+		new[i] = str[i];
+	new[i--] = 34;
+	count = 0;
+	while (str[++i])
+	{
+		if (str[i] == 34)
+			new[i + 1 + count++] = 92;
+		new[i + 1 + count] = str[i];
+	}
+	new[i + 1 + count] = 34;
+	return (new);
+}
+
+char	*malloc_cpy_export(t_pipex *data, char *str, int track, int i)
+{
+	char	*new;
+	int		count;
+
+	new = NULL;
+	count = 0;
+	while (str[++i])
+	{
+		count++;
+		if (!track && str[i] == '=')
+			track = 1;
+		if (str[i] == 34)
+			count++;
+	}
+	if (!track)
+		return (ft_strdup(data, str));
+	else if (track == 1)
+		new = ft_calloc(sizeof(char), (count + 2 + 1), data);
+	return (malloc_cpy_export_continue(new, str, count));
+}
+
 int	is_shlvl(char *str)
 {
 	if (!ft_strncmp(str, "SHLVL", 5)

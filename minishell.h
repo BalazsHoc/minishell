@@ -408,6 +408,7 @@ int			malloc_for_list(t_pipex *d, int count);
 
 int			is_shlvl(char *str);
 
+char		*malloc_cpy_export(t_pipex *data, char *str, int track, int i);
 char		*get_old(t_pipex *data, int index_1, int index_2);
 char		*get_path(t_pipex *data);
 
