@@ -15,7 +15,7 @@ NAME = minishell
 #	COMPILING
 
 CC				= cc
-CFLAGS			= -Wall -Wextra -Werror -g
+CFLAGS			= -Wall -Wextra -Werror
 RL_FLAGS		= -lreadline -lncurses
 
 

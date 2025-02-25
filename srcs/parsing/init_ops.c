@@ -57,7 +57,7 @@ int	count_ops(t_pipex *data, int index_1, int index_2)
 	count = 0;
 	while (data->l[index_1]->cmnds[index_2][i])
 	{
-		if (*data->l[index_1]->cmnds[index_2][i] 
+		if (*data->l[index_1]->cmnds[index_2][i]
 			|| is_empty_quotes(data, index_1, index_2, i))
 			count++;
 		i++;
