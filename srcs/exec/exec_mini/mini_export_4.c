@@ -61,40 +61,33 @@ int	is_there_2(t_pipex *data, char *str)
 	return (-1);
 }
 
-int	is_it_last(t_pipex *data, int index_1, int index_2, int i)
+int	is_it_last(t_pipex *d, int i_1, int i_2, int i)
 {
 	int	j;
-	int	count;
-	int	check;
+	int k;
 
-	count = 0;
-	while (data->l[index_1]->ops[index_2][i][count]
-		&& data->l[index_1]->ops[index_2][i][count] != '=')
-		count++;
+	k = count_till_equal(d, i_1, i_2, i);
 	j = -1;
-	check = -1;
-	if (has_equal(data->l[index_1]->ops[index_2][i]))
+	while (d->l[i_1]->ops[i_2][++j])
 	{
-		while (data->l[index_1]->ops[index_2][++j])
-		{
-			if (!ft_strncmp(data->l[index_1]->ops[index_2][j],
-				data->l[index_1]->ops[index_2][i], count + 1))
-				check = j;
-		}
+		if (isv(d, i_1, i_2, j) && ((j > i
+			&& has_equal(d->l[i_1]->ops[i_2][i])
+			&& !ft_strncmp(d->l[i_1]->ops[i_2][j],
+			d->l[i_1]->ops[i_2][i], k + 1))
+		|| (has_equal(d->l[i_1]->ops[i_2][j])
+			&& ((!has_equal(d->l[i_1]->ops[i_2][i]) && j != i)
+				|| (j > i && !ft_strncmp(d->l[i_1]->ops[i_2][j],
+				d->l[i_1]->ops[i_2][i], k + 1)))
+			&& (!ft_strncmp(d->l[i_1]->ops[i_2][j], d->l[i_1]->ops[i_2][i], k)
+				|| (!ft_strncmp(d->l[i_1]->ops[i_2][j], d->l[i_1]->ops[i_2][i],
+					k + 1) && !d->l[i_1]->ops[i_2][j + 1])))
+		|| ((!ft_strncmp(d->l[i_1]->ops[i_2][j],
+			d->l[i_1]->ops[i_2][i], k) 
+			&& !has_equal(d->l[i_1]->ops[i_2][j])
+			&& !has_equal(d->l[i_1]->ops[i_2][i]) && j > i))))
+			return (0);
 	}
-	else 
-	{
-		while (data->l[index_1]->ops[index_2][++j])
-		{
-			if (i != j && !ft_strncmp(data->l[index_1]->ops[index_2][j],
-				data->l[index_1]->ops[index_2][i], count + 1)
-					&& !has_equal(data->l[index_1]->ops[index_2][j]))
-				check = j;
-		}
-	}
-	if (check == i)
-		return (1);
-	return (0);
+	return (1);
 }
 
 int	has_equal(char *str)

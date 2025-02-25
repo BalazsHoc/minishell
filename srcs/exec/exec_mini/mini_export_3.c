@@ -12,6 +12,16 @@
 
 #include "../../../minishell.h"
 
+int	count_till_equal(t_pipex *data, int index_1, int index_2, int i)
+{
+	int count;
+
+	count = 0;
+	while (data->l[index_1]->cmnds[index_2][i][count]
+		&& data->l[index_1]->cmnds[index_2][i][count] != '=')
+		count++;
+	return (count);
+}
 int	rand_it(t_pipex *data, int index_1, int index_2, int i)
 {
 	if (i < env_count(data) && data->cur_env[i] && data->cur_env[i][index_1])

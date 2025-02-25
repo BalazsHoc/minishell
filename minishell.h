@@ -386,6 +386,8 @@ char		*malloc_cpy_export(t_pipex *data, char *str, int track, int i);
 
 void		export_env(t_pipex *data, int index_1, int index_2, int count);
 
+int			count_till_equal(t_pipex *data, int index_1, int index_2, int i);
+
 //	mini_export_4.c
 
 int			has_equal(char *str);
