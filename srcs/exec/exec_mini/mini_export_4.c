@@ -74,19 +74,18 @@ int	is_it_last(t_pipex *d, int i_1, int i_2, int i)
 			&& has_equal(d->l[i_1]->ops[i_2][i])
 			&& !ft_strncmp(d->l[i_1]->ops[i_2][j],
 			d->l[i_1]->ops[i_2][i], k + 1))
-		|| (has_equal(d->l[i_1]->ops[i_2][j])
-			&& ((!has_equal(d->l[i_1]->ops[i_2][i]) && j != i)
-				|| (j > i && !ft_strncmp(d->l[i_1]->ops[i_2][j],
-				d->l[i_1]->ops[i_2][i], k + 1)))
-			&& (!ft_strncmp(d->l[i_1]->ops[i_2][j], d->l[i_1]->ops[i_2][i], k)
-				|| (!ft_strncmp(d->l[i_1]->ops[i_2][j], d->l[i_1]->ops[i_2][i],
-					k + 1) && !d->l[i_1]->ops[i_2][j + 1])))
+		|| (!has_equal(d->l[i_1]->ops[i_2][i]) &&
+			(
+				(has_equal(d->l[i_1]->ops[i_2][j]) && j != i && !ft_strncmp(d->l[i_1]->ops[i_2][j], d->l[i_1]->ops[i_2][i], k) && d->l[i_1]->ops[i_2][j][k] == '=')
+				|| (!has_equal(d->l[i_1]->ops[i_2][j]) && j > i && !ft_strncmp(d->l[i_1]->ops[i_2][j], d->l[i_1]->ops[i_2][i], bigger_one_2(k, ft_strlen(d->l[i_1]->ops[i_2][j]))))
+			))
 		|| ((!ft_strncmp(d->l[i_1]->ops[i_2][j],
-			d->l[i_1]->ops[i_2][i], k) 
+			d->l[i_1]->ops[i_2][i], k + 1) 
 			&& !has_equal(d->l[i_1]->ops[i_2][j])
 			&& !has_equal(d->l[i_1]->ops[i_2][i]) && j > i))))
 			return (0);
 	}
+	// printf("CORRECT: %s\n", d->l[i_1]->ops[i_2][i]);
 	return (1);
 }
 

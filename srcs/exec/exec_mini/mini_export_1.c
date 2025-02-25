@@ -72,6 +72,7 @@ void	export_update(t_pipex *data, int index_1, int index_2, int i)
 		else
 			ex_u_util_2(data, index_1, index_2, 1 + i);
 	}
+	// printf("COUNT: %d | %d\n", count, count_export);
 	export_env(data, index_1, index_2, count);
 	update_export(data, index_1, index_2, count + count_export);
 }
